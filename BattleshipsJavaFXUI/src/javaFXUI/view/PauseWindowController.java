@@ -1,6 +1,7 @@
 package javaFXUI.view;
 
 import javaFXUI.JavaFXManager;
+import javaFXUI.model.AlertHandlingUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.LoadException;
@@ -43,8 +44,7 @@ public class PauseWindowController {
             try {
                 program.getGamesManager().loadGameFile(file.getPath());
             } catch (LoadException e) {
-
-                e.printStackTrace();
+                AlertHandlingUtils.showErrorMessage(e,"Error while loading xml file");
             }
         }
     }
