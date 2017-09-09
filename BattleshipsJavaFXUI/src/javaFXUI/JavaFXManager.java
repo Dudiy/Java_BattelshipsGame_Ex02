@@ -3,6 +3,7 @@ package javaFXUI;
 import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
 import gameLogic.game.Game;
+import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
 import javafx.application.Application;
@@ -15,7 +16,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class JavaFXManager extends Application {
     private IGamesLogic gamesManager = new GamesManager();
@@ -24,7 +24,7 @@ public class JavaFXManager extends Application {
     private boolean exitGameSelected = false;
     private int computerPlayerIndex = 0;
 
-    private Stage primaryStage;
+    private static Stage primaryStage;
     private Stage secondaryStage = new Stage();
     private BorderPane mainWindowLayout;
     private VBox pauseWindowLayout;
@@ -56,8 +56,7 @@ public class JavaFXManager extends Application {
 
             primaryStage.show();
         } catch (IOException e) {
-            // TODO handle exception
-            e.printStackTrace();
+            AlertHandlingUtils.showErrorMessage(e,"Error while loading main window");
         }
     }
 
@@ -77,14 +76,17 @@ public class JavaFXManager extends Application {
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
             secondaryStage.showAndWait();
         } catch (IOException e) {
-            // TODO handle exception
-            e.printStackTrace();
+            AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
         }
 
     }
 
     public Stage getSecondaryStage() {
         return secondaryStage;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 
     public IGamesLogic getGamesManager() {
