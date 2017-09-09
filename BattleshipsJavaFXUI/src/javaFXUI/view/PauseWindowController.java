@@ -42,7 +42,8 @@ public class PauseWindowController {
 
         if (file != null) {
             try {
-                program.getGamesManager().loadGameFile(file.getPath());
+                program.setActiveGame(program.getGamesManager().loadGameFile(file.getPath()));
+
             } catch (LoadException e) {
                 AlertHandlingUtils.showErrorMessage(e,"Error while loading xml file");
             }
@@ -51,7 +52,6 @@ public class PauseWindowController {
 
     @FXML
     void buttonContinueGame_Clicked(ActionEvent event) {
-
     }
 
     @FXML
@@ -61,9 +61,9 @@ public class PauseWindowController {
 
     @FXML
     void buttonStartGame_Clicked(ActionEvent event) {
-
     }
 
+    @FXML
     public void buttonExitApplication_Clicked(ActionEvent actionEvent) {
     }
 
