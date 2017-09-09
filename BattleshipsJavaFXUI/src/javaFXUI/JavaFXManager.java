@@ -3,10 +3,12 @@ package javaFXUI;
 import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
 import gameLogic.game.Game;
+import gameLogic.game.eGameState;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -14,6 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -51,8 +54,8 @@ public class JavaFXManager extends Application {
             Scene scene = new Scene(mainWindowLayout);
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
-            MainWindowController controller = loader.getController();
-            controller.setProgram(this);
+            MainWindowController mainWindowController = loader.getController();
+            mainWindowController.setProgram(this);
 
             primaryStage.show();
         } catch (IOException e) {
@@ -70,10 +73,14 @@ public class JavaFXManager extends Application {
             secondaryStage.setScene(scene);
             secondaryStage.initOwner(primaryStage);
             secondaryStage.initModality(Modality.WINDOW_MODAL);
-            PauseWindowController controller = loader.getController();
-            controller.setProgram(this);
+            PauseWindowController pauseWindowController = loader.getController();
+            pauseWindowController.setProgram(this);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
+            secondaryStage.setOnShown(event -> {
+                eGameState gameState = activeGame!= null ? activeGame.getGameState() : eGameState.INVALID;
+                pauseWindowController.updateButtonState(gameState);
+            });
             secondaryStage.showAndWait();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");

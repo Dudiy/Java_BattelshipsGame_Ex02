@@ -1,6 +1,8 @@
 package javaFXUI.view;
 
+import gameLogic.game.eGameState;
 import javaFXUI.JavaFXManager;
+import javaFXUI.eButtonOption;
 import javaFXUI.model.AlertHandlingUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,5 +71,13 @@ public class PauseWindowController {
 
     public void setProgram(JavaFXManager program) {
         this.program = program;
+    }
+
+    public void updateButtonState(eGameState gameState){
+        buttonLoadGameFromXML.setDisable(!eButtonOption.LOAD_GAME.isVisibleAtGameState(gameState));
+        buttonStartGame.setDisable(!eButtonOption.START_GAME.isVisibleAtGameState(gameState));
+        buttonEndGame.setDisable(!eButtonOption.END_GAME.isVisibleAtGameState(gameState));
+        buttonContinueGame.setDisable(!eButtonOption.CONTINUE_GAME.isVisibleAtGameState(gameState));
+        buttonExitApplication.setDisable(!eButtonOption.EXIT.isVisibleAtGameState(gameState));
     }
 }
