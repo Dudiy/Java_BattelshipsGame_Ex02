@@ -1,0 +1,1 @@
+java -jar .\out\artifacts\BattleshipsGame\BattleshipsConsoleUI.jar
