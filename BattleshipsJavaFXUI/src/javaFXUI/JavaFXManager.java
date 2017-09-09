@@ -19,18 +19,23 @@ import java.io.IOException;
 
 public class JavaFXManager extends Application {
     private IGamesLogic gamesManager = new GamesManager();
+
     // JavaFX application may have only 1 game
+
     private Game activeGame;
     private boolean exitGameSelected = false;
     private int computerPlayerIndex = 0;
-
     private static Stage primaryStage;
+
     private Stage secondaryStage = new Stage();
     private BorderPane mainWindowLayout;
     private VBox pauseWindowLayout;
-
     public static void Run(String[] args) {
         launch(args);
+    }
+
+    public void setActiveGame(Game activeGame) {
+        this.activeGame = activeGame;
     }
 
     @Override
@@ -47,13 +52,12 @@ public class JavaFXManager extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
             mainWindowLayout = loader.load();
-
             Scene scene = new Scene(mainWindowLayout);
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
             MainWindowController controller = loader.getController();
             controller.setProgram(this);
-
+            mainWindowLayout.setRight(controller.getRightPane());
             primaryStage.show();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e,"Error while loading main window");
