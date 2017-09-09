@@ -1,40 +1,30 @@
 package javaFXUI.view;
 
 import javaFXUI.JavaFXManager;
-import javaFXUI.model.AlertHandlingUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
-
-import java.io.IOException;
+import javafx.scene.layout.GridPane;
 
 public class MainWindowController {
+    @FXML
+    public GridPane gridPaneMyBoard;
+
+    @FXML
+    private GridPane gridPaneOpponentsBoard;
+
     private JavaFXManager program;
 
     @FXML
-    private ScrollPane rightPane;
-
-    public ScrollPane getRightPane() {
-        if (rightPane == null){
-            initRightPane();
-        }
-
-        return rightPane;
-    }
-
-    public void initRightPane(){
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/LayoutCurrentTurnInfo.fxml"));
-            rightPane = loader.load();
-        } catch (IOException e) {
-            AlertHandlingUtils.showErrorMessage(e,"Error while loading right pane of main window");
+    private void initialize() {
+        // TODO this doesnt work...add columns and rows
+        for (int i = 0; i < program.getActiveGame().getActivePlayer().getMyBoard().getBoardSize() - 5; i++) {
+            gridPaneMyBoard.addColumn(i + 5);
+            gridPaneMyBoard.addRow(i + 5);
         }
     }
 
     public void setProgram(JavaFXManager mainApp) {
         this.program = mainApp;
     }
+
+
 }

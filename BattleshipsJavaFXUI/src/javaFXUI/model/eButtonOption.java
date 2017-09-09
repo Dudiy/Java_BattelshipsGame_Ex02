@@ -1,4 +1,4 @@
-package javaFXUI;
+package javaFXUI.model;
 
 import gameLogic.game.eGameState;
 
