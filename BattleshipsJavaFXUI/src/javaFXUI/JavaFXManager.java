@@ -3,6 +3,7 @@ package javaFXUI;
 import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
 import gameLogic.game.Game;
+import gameLogic.game.eGameState;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
@@ -78,6 +79,10 @@ public class JavaFXManager extends Application {
             controller.setProgram(this);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
+            secondaryStage.setOnShown(event -> {
+                eGameState gameState = activeGame!= null ? activeGame.getGameState() : eGameState.INVALID;
+                controller.updateButtonState(gameState);
+            });
             secondaryStage.showAndWait();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
