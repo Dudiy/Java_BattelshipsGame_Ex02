@@ -52,17 +52,17 @@ public class PauseWindowController {
     }
 
     @FXML
+    void buttonStartGame_Clicked(ActionEvent event) {
+        program.startGame();
+    }
+
+    @FXML
     void buttonContinueGame_Clicked(ActionEvent event) {
     }
 
     @FXML
     void buttonEndGame_Clicked(ActionEvent event) {
 
-    }
-
-    @FXML
-    void buttonStartGame_Clicked(ActionEvent event) {
-        program.startGame();
     }
 
     @FXML

@@ -108,12 +108,11 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Setters =====================================
-
     public void setActiveGame(Game activeGame) {
         this.activeGame = activeGame;
     }
-    // ===================================== Getters =====================================
 
+    // ===================================== Getters =====================================
     public Stage getPrimaryStage() {
         return primaryStage;
     }
