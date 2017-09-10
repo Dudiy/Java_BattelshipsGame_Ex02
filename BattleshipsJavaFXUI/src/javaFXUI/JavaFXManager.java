@@ -14,6 +14,7 @@ import javafx.application.Application;
 import javafx.beans.property.*;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.LoadException;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -131,6 +132,10 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== menu option handlers =====================================
+    public void loadGame(String xmlFilePath) throws LoadException {
+        activeGame = gamesManager.loadGameFile(xmlFilePath);
+    }
+
     public void startGame() {
         try {
             ComputerPlayer computerPlayer = computerPlayerIndex == 0 ? null :

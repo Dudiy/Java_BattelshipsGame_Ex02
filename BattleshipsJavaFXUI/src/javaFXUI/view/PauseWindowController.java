@@ -40,8 +40,8 @@ public class PauseWindowController {
         if (file != null) {
             Game loadedGame = null;
             try {
-                loadedGame = program.getGamesManager().loadGameFile(file.getPath());
-                program.setActiveGame(loadedGame);
+//                loadedGame = program.getGamesManager().loadGameFile(file.getPath());
+                program.loadGame(file.getPath());
             } catch (LoadException e) {
                 AlertHandlingUtils.showErrorMessage(e, "Error while loading xml file");
             } finally {
