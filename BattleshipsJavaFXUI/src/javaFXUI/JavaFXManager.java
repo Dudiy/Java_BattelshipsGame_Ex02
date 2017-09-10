@@ -29,6 +29,18 @@ import java.io.IOException;
 public class JavaFXManager extends Application {
     private IGamesLogic gamesManager = new GamesManager();
 
+    private Property<eGameState> eGameStateProperty = new SimpleObjectProperty<>();
+
+    private Property<Player> activePlayerProperty = new SimpleObjectProperty<>();
+
+    public Property<Player> getActivePlayerProperty() {
+        return activePlayerProperty;
+    }
+
+    public Property<eGameState> getGameStateProperty() {
+        return eGameStateProperty;
+    }
+
     // JavaFX application may have only 1 game
 
     private Game activeGame;
@@ -134,6 +146,7 @@ public class JavaFXManager extends Application {
     // ===================================== menu option handlers =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
         activeGame = gamesManager.loadGameFile(xmlFilePath);
+        eGameStateProperty.setValue(activeGame.getGameState());
     }
 
     public void startGame() {

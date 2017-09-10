@@ -1,5 +1,7 @@
 package javaFXUI.view;
 
+import gameLogic.users.Player;
+import javaFXUI.JavaFXManager;
 import javaFXUI.Program;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
@@ -38,10 +40,15 @@ public class CurrentTurnInfoControl {
     @FXML
     private Label labelMissCounter;
 
-    private Program program;
+    private JavaFXManager program;
 
-    public void setProgram(Program program) {
+    public void setProgram(JavaFXManager program) {
         this.program = program;
+        program.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
+    }
+
+    private void playerChanged(Player newPlayer){
+        labelCurrentPlayer.setText(newPlayer.getName());
     }
 
     @FXML

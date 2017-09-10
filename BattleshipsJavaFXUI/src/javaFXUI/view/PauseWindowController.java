@@ -38,15 +38,10 @@ public class PauseWindowController {
         File file = new FileChooserProxy().showOpenDialog(program.getSecondaryStage());
 
         if (file != null) {
-            Game loadedGame = null;
             try {
-//                loadedGame = program.getGamesManager().loadGameFile(file.getPath());
                 program.loadGame(file.getPath());
             } catch (LoadException e) {
                 AlertHandlingUtils.showErrorMessage(e, "Error while loading xml file");
-            } finally {
-                updateButtonState(
-                        loadedGame != null ? loadedGame.getGameState() : eGameState.INVALID);
             }
         }
     }
@@ -67,15 +62,12 @@ public class PauseWindowController {
 
     @FXML
     public void buttonExitApplication_Clicked(ActionEvent actionEvent) {
-        exitApplication();
-    }
-
-    private void exitApplication() {
         program.exitGame();
     }
 
     public void setProgram(JavaFXManager program) {
         this.program = program;
+        program.getGameStateProperty().addListener((observable, oldValue, newValue) -> updateButtonState(newValue));
     }
 
     public void updateButtonState(eGameState gameState) {
