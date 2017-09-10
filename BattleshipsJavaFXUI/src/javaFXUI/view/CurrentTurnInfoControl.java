@@ -12,6 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import javax.naming.Binding;
+import java.time.Duration;
 
 public class CurrentTurnInfoControl {
     @FXML
@@ -46,15 +47,23 @@ public class CurrentTurnInfoControl {
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
         javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
+        javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
+    }
+
+    private void updateStatistics() {
+        Player activePlayer = javaFXManager.getActivePlayerProperty().getValue();
+
+        labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
+        Duration avgDuration = activePlayer.getAvgTurnDuration();
+        labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
+        labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
+        labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
     }
 
 
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
-        labelCurrentScore.setText(((Integer) currentPlayer.getScore()).toString());
-        labelAvgTurnDuration.setText(currentPlayer.getAvgTurnDuration().toString());
-        labelHitsCounter.setText(((Integer) currentPlayer.getTimesHit()).toString());
-        labelMissCounter.setText(((Integer) currentPlayer.getTimesMissed()).toString());
+        updateStatistics();
     }
 
     @FXML

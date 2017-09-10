@@ -92,6 +92,6 @@ public class BoardCoordinates implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("(%c,%d)", col, row);
+        return String.format("%c%d", col, row);
     }
 }

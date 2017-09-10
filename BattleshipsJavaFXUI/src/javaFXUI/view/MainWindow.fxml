@@ -12,8 +12,9 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../TestCss.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
+<BorderPane prefHeight="600.0" prefWidth="1060.0" stylesheets="@../TestCss.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -38,13 +39,23 @@
    <center>
       <HBox BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane HBox.hgrow="ALWAYS">
+            <AnchorPane prefWidth="420.0" HBox.hgrow="ALWAYS">
                <children>
-                  <ScrollPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane prefWidth="420.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <VBox>
+                        <VBox fx:id="vBoxMyBoard">
                            <children>
-                              <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="My Board" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                              <HBox>
+                                 <children>
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label alignment="CENTER" text="My Board" textAlignment="CENTER">
+                                       <font>
+                                          <Font size="22.0" />
+                                       </font>
+                                    </Label>
+                                    <Region HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
                               <Region prefHeight="54.0" prefWidth="281.0" />
                               <TilePane fx:id="tilePaneMyBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
                            </children>
@@ -53,10 +64,20 @@
                   </ScrollPane>
                </children>
             </AnchorPane>
-             <AnchorPane HBox.hgrow="ALWAYS">
+             <AnchorPane prefWidth="420.0" HBox.hgrow="ALWAYS">
                  <ScrollPane layoutX="250.0" layoutY="26.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <VBox>
-                         <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="Opponent's Board" textAlignment="CENTER" />
+                     <VBox fx:id="vBoxOpponentsBoard">
+                     <HBox>
+                        <children>
+                           <Region HBox.hgrow="ALWAYS" />
+                               <Label alignment="TOP_CENTER" text="Opponent's Board" textAlignment="CENTER">
+                              <font>
+                                 <Font size="22.0" />
+                              </font>
+                           </Label>
+                           <Region HBox.hgrow="ALWAYS" />
+                        </children>
+                     </HBox>
                          <Region prefHeight="54.0" prefWidth="281.0" />
                      <TilePane fx:id="tilePaneOpponentsBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
                      </VBox>

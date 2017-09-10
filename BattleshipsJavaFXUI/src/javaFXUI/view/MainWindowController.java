@@ -1,75 +1,125 @@
 package javaFXUI.view;
 
-import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.game.Game;
 import gameLogic.game.board.Board;
 import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
+import gameLogic.game.eAttackResult;
+import gameLogic.game.eGameState;
 import gameLogic.users.Player;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.AlertHandlingUtils;
-import javaFXUI.model.BoardCellAdapter;
+import javaFXUI.model.BoardAdapter;
+import javaFXUI.model.ImageViewProxy;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+
+import java.beans.EventHandler;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class MainWindowController {
-    private final int BOARD_WIDTH = 400;
+
+    @FXML
+    private VBox vBoxMyBoard;
+
+    @FXML
+    private VBox vBoxOpponentsBoard;
+
     @FXML
     private TilePane tilePaneMyBoard;
 
     @FXML
     private TilePane tilePaneOpponentsBoard;
 
+    private Map<Player, TilePane> myBoardAsTilePane = new HashMap<>();
+    private Map<Player, TilePane> opponentsBoardAsTilePane = new HashMap<>();
     private JavaFXManager javaFXManager;
-
-    @FXML
-    private void initialize() {
-//        // TODO this doesnt work...add columns and rows
-//        for (int i = 0; i < program.getActiveGame().getActivePlayer().getMyBoard().getBoardSize() - 5; i++) {
-//            TableColumn column = new TableColumn("Test");
-//            tablViewTest.setEditable(true);
-//            tablViewTest.getColumns().add(column);
-//        }
-    }
+    private boolean boardsInitialized;
 
     public void setProgram(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
-        javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> activeGameChanged(newValue));
+        javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+        javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
+        javaFXManager.totalMovesCounterProperty().addListener(
+                (observable, oldValue, newValue) -> movePlayed());
     }
 
-    private void activeGameChanged(Player activePlayer) {
-        try {
-            redrawBoards(activePlayer);
-        } catch (Exception e) {
-            AlertHandlingUtils.showErrorMessage(e,"Error while drawing boards");
+    private void movePlayed() {
+    }
+
+    private void gameStateChanged(eGameState newValue) {
+        switch (newValue) {
+
+            case INVALID:
+                break;
+            case LOADED:
+                break;
+            case INITIALIZED:
+                break;
+            case STARTED:
+                initBoards();
+                break;
+            case PLAYER_WON:
+                break;
+            case PLAYER_QUIT:
+                break;
         }
     }
 
-    private void redrawBoards(Player activePlayer) throws Exception {
-        int boardSize = activePlayer.getMyBoard().getBoardSize();
-        int cellSize = BOARD_WIDTH / boardSize;
-        Board MyBoard = activePlayer.getMyBoard();
-        Board OpponentsBoard = activePlayer.getOpponentBoard();
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
-                BoardCoordinates coordinates = BoardCoordinates.Parse(i, j);
-                drawCell(MyBoard.getBoardCellAtCoordinates(coordinates), cellSize, tilePaneMyBoard);
-                drawCell(OpponentsBoard.getBoardCellAtCoordinates(coordinates), cellSize, tilePaneOpponentsBoard);
+
+    private void initBoards() {
+        for (Player currentPlayer : javaFXManager.getActiveGameProperty().getValue().getPlayers()) {
+            try {
+                if (!myBoardAsTilePane.containsKey(currentPlayer)) {
+                    BoardAdapter boardAdapter = new BoardAdapter(currentPlayer.getMyBoard(), true);
+                    myBoardAsTilePane.put(currentPlayer, boardAdapter.getBoardAsTilePane());
+                }
+                if (!opponentsBoardAsTilePane.containsKey(currentPlayer)) {
+                    BoardAdapter boardAdapter = new BoardAdapter(currentPlayer.getOpponentBoard(), false);
+                    // set onClick event
+                    for (Node imageView : boardAdapter.getBoardAsTilePane().getChildren()) {
+                        if (imageView instanceof ImageViewProxy) {
+                            imageView.setOnMouseClicked(event -> makeMove((ImageViewProxy) imageView));
+                        }
+                    }
+
+                    opponentsBoardAsTilePane.put(currentPlayer, boardAdapter.getBoardAsTilePane());
+                }
+            } catch (Exception e) {
+                AlertHandlingUtils.showErrorMessage(e, "Error while drawing boards");
             }
         }
+
+        boardsInitialized = true;
+        redrawBoards(javaFXManager.getActiveGameProperty().getValue().getActivePlayer());
     }
 
-    private void drawCell(BoardCell boardCell, int cellSize, TilePane tilePane) throws Exception {
-        if (boardCell != null) {
-            BoardCellAdapter boardCellAdapter = new BoardCellAdapter(boardCell, tilePane == tilePaneMyBoard);
-            ImageView cell = boardCellAdapter.getImageView(cellSize);
-            tilePane.getChildren().add(cell);
-        } else {
-            throw new Exception("input boardCell was not initialized");
+    private void makeMove(ImageViewProxy imageView) {
+        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()));
+        imageView.updateImage();
+    }
+
+    private void activePlayerChanged(Player activePlayer) {
+        try {
+            if (boardsInitialized) {
+                redrawBoards(activePlayer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    private void redrawBoards(Player activePlayer) {
+        BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));
+        vBoxMyBoard.getChildren().set(2, myBoardAsTilePane.get(activePlayer));
+        vBoxOpponentsBoard.getChildren().set(2, opponentsBoardAsTilePane.get(activePlayer));
     }
 }
