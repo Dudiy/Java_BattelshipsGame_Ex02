@@ -6,18 +6,14 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../TestCss.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -48,18 +44,9 @@
                      <content>
                         <VBox>
                            <children>
-                              <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="Label" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+                              <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="My Board" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
                               <Region prefHeight="54.0" prefWidth="281.0" />
-                              <TableView fx:id="tablViewTest">
-                                <columns>
-                                  <TableColumn prefWidth="75.0" />
-                                  <TableColumn prefWidth="75.0" text="A" />
-                                    <TableColumn prefWidth="75.0" text="B" />
-                                    <TableColumn prefWidth="75.0" text="C" />
-                                    <TableColumn prefWidth="75.0" text="D" />
-                                    <TableColumn prefWidth="75.0" text="E" />
-                                </columns>
-                              </TableView>
+                              <TilePane fx:id="tilePaneMyBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
                            </children>
                         </VBox>
                      </content>
@@ -69,24 +56,9 @@
              <AnchorPane HBox.hgrow="ALWAYS">
                  <ScrollPane layoutX="250.0" layoutY="26.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <VBox>
-                         <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="Label" textAlignment="CENTER" />
+                         <Label alignment="TOP_CENTER" prefHeight="40.0" prefWidth="280.0" text="Opponent's Board" textAlignment="CENTER" />
                          <Region prefHeight="54.0" prefWidth="281.0" />
-                         <GridPane fx:id="gridPaneOpponentsBoard" gridLinesVisible="true" prefHeight="245.0" prefWidth="281.0">
-                             <columnConstraints>
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                             </columnConstraints>
-                             <rowConstraints>
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                             </rowConstraints>
-                         </GridPane>
+                     <TilePane fx:id="tilePaneOpponentsBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
                      </VBox>
                  </ScrollPane>
              </AnchorPane>

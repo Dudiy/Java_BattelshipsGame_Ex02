@@ -2,12 +2,16 @@ package javaFXUI;
 
 import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
+import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import gameLogic.game.Game;
+import gameLogic.game.board.BoardCoordinates;
+import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.users.ComputerPlayer;
 import gameLogic.users.Player;
 import javaFXUI.model.AlertHandlingUtils;
+import javaFXUI.view.CurrentTurnInfoControl;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
 import javafx.application.Application;
@@ -31,7 +35,13 @@ public class JavaFXManager extends Application {
 
     private Property<eGameState> eGameStateProperty = new SimpleObjectProperty<>();
 
+    private Property<Game> activeGameProperty = new SimpleObjectProperty<>();
+
     private Property<Player> activePlayerProperty = new SimpleObjectProperty<>();
+
+    public Property<Game> getActiveGameProperty() {
+        return activeGameProperty;
+    }
 
     public Property<Player> getActivePlayerProperty() {
         return activePlayerProperty;
@@ -43,14 +53,10 @@ public class JavaFXManager extends Application {
 
     // JavaFX application may have only 1 game
 
-    private Game activeGame;
     private boolean exitGameSelected = false;
     private int computerPlayerIndex = 0;
     private Stage primaryStage;
-    private Property<Game> activeGameProperty = new SimpleObjectProperty<>();
-
     private Stage secondaryStage = new Stage();
-
     private BorderPane mainWindowLayout;
     private VBox pauseWindowLayout;
 
@@ -80,6 +86,8 @@ public class JavaFXManager extends Application {
             loader = new FXMLLoader();
             loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/LayoutCurrentTurnInfo.fxml"));
             ScrollPane rightPane = loader.load();
+            CurrentTurnInfoControl curretntTurneInfoController = loader.getController();
+            curretntTurneInfoController.setJavaFXManager(this);
             mainWindowLayout.setRight(rightPane);
 
             Scene scene = new Scene(mainWindowLayout);
@@ -97,6 +105,8 @@ public class JavaFXManager extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/PauseWindow.fxml"));
             pauseWindowLayout = loader.load();
+            PauseWindowController controller = loader.getController();
+            controller.setJavaFXManager(this);
 
             Scene scene = new Scene(pauseWindowLayout);
             secondaryStage.setScene(scene);
@@ -104,14 +114,8 @@ public class JavaFXManager extends Application {
             secondaryStage.initModality(Modality.WINDOW_MODAL);
             secondaryStage.setResizable(false);
             secondaryStage.initStyle(StageStyle.UTILITY);
-            PauseWindowController controller = loader.getController();
-            controller.setJavaFXManager(this);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
-            secondaryStage.setOnShown(event -> {
-                eGameState gameState = activeGame != null ? activeGame.getGameState() : eGameState.INVALID;
-                controller.updateButtonState(gameState);
-            });
             secondaryStage.setOnCloseRequest(Event::consume);
             secondaryStage.showAndWait();
         } catch (IOException e) {
@@ -121,9 +125,6 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Setters =====================================
-    public void setActiveGame(Game activeGame) {
-        this.activeGame = activeGame;
-    }
 
     // ===================================== Getters =====================================
     public Stage getPrimaryStage() {
@@ -134,22 +135,20 @@ public class JavaFXManager extends Application {
         return secondaryStage;
     }
 
-    public Game getActiveGame() {
-        return activeGame;
-    }
-
     public IGamesLogic getGamesManager() {
         return gamesManager;
     }
 
     // ===================================== menu option handlers =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
-        activeGame = gamesManager.loadGameFile(xmlFilePath);
-        eGameStateProperty.setValue(activeGame.getGameState());
+        Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
+        activeGameProperty.setValue(loadedGame);
+        eGameStateProperty.setValue(loadedGame.getGameState());
     }
 
     public void startGame() {
         try {
+            Game activeGame = activeGameProperty.getValue();
             ComputerPlayer computerPlayer = computerPlayerIndex == 0 ? null :
                     new ComputerPlayer("ComputerPlayer2", "Computer Player", activeGame.getSizeOfMinimalShipOnBoard());
             Player player1 = computerPlayerIndex == 1 ?
@@ -161,16 +160,18 @@ public class JavaFXManager extends Application {
 
             gamesManager.startGame(activeGame, player1, player2);
             if (computerPlayerIndex == 1) {
-                activeGame.swapPlayers();
+                activeGameProperty.getValue().swapPlayers();
             }
 
-            drawBoards();
+            // TODO draw boards?
+//            drawBoards();
             // TODO set mines
             // give each player 2 mines
             player1.getMyBoard().setMinesAvailable(2);
             player2.getMyBoard().setMinesAvailable(2);
 //            TODO show game state
 //            showGameState();
+            activePlayerProperty.setValue(activeGame.getActivePlayer());
             secondaryStage.close();
         } catch (InvalidGameObjectPlacementException e) {
             String message = "Cannot place a given " + e.getGameObjectType() + " at position " + e.GetCoordinates() + ".\n" +
@@ -191,8 +192,23 @@ public class JavaFXManager extends Application {
         primaryStage.close();
     }
 
+    public eAttackResult makeMove(BoardCoordinates cellToAttack) {
+        eAttackResult attackResult = null;
+
+        try {
+            Game activeGame = activeGameProperty.getValue();
+            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
+            activePlayerProperty.setValue(activeGame.getActivePlayer());
+        } catch (CellNotOnBoardException e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while making move");
+        }
+
+        return attackResult;
+    }
+
+
     private void errorWhileStartingGame() {
-        activeGame = null;
+        activeGameProperty.setValue(null);
         String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
         AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
     }

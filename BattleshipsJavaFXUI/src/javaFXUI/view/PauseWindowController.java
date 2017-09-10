@@ -16,7 +16,6 @@ import java.io.File;
 
 public class PauseWindowController {
     private JavaFXManager javaFXManager;
-    private Stage pauseWindowStage = new Stage();
 
     @FXML
     private Button buttonLoadGameFromXML;
@@ -32,6 +31,16 @@ public class PauseWindowController {
 
     @FXML
     private Button buttonExitApplication;
+
+    @FXML
+    private void initialize(){
+        if (javaFXManager == null || javaFXManager.getGameStateProperty().getValue() == null){
+            updateButtonState(eGameState.INVALID);
+        }
+        else{
+            updateButtonState(javaFXManager.getGameStateProperty().getValue());
+        }
+    }
 
     @FXML
     void buttonLoadGameFromXML_Clicked(ActionEvent event) {

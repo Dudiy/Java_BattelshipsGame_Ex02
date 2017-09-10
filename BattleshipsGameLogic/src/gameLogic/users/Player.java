@@ -2,6 +2,7 @@ package gameLogic.users;
 
 import java.time.Duration;
 import java.io.Serializable;
+
 import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import gameLogic.exceptions.NoMinesAvailableException;
@@ -16,6 +17,9 @@ public class Player implements User, Serializable {
     private final String ID;
     private String name;
     private int score = 0;
+
+    private int timesHit = 0;
+
     private int timesMissed = 0;
     // duration of a turn is from the time the user selects make move until he enters the cell to attack
     private Duration totalTurnsDuration = Duration.ZERO;
@@ -29,6 +33,11 @@ public class Player implements User, Serializable {
     }
 
     // ======================================= setters =======================================
+
+    public void setTimesHit(int timesHit) {
+        this.timesHit = timesHit;
+    }
+
     public void setMyBoard(Board board) {
         this.myBoard = board;
     }
@@ -38,6 +47,10 @@ public class Player implements User, Serializable {
     }
 
     // ======================================= getters =======================================
+    public int getTimesHit() {
+        return timesHit;
+    }
+
     public String getID() {
         return ID;
     }
@@ -112,7 +125,7 @@ public class Player implements User, Serializable {
             throw new NoMinesAvailableException();
         }
 
-        if (cellToPlantMine.wasAttacked()){
+        if (cellToPlantMine.wasAttacked()) {
             throw new InvalidGameObjectPlacementException(Mine.class.getSimpleName(), position, "Cannot place mine on a cell that was attacked");
         }
 

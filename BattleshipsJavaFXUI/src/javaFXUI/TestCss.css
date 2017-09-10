@@ -1,0 +1,6 @@
+.imageView {
+    -fx-border-insets: 1px;
+    -fx-border-color: black;
+    -fx-highlight-fill: yellow;
+}
+

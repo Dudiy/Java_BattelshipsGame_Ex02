@@ -42,6 +42,14 @@ public class Game implements Serializable {
     }
     // ======================================= getters =======================================
 
+    public int getBoardSize(){
+        return gameSettings.getBoardSize();
+    }
+
+    public Set<String> getShipTypesOnBoard(){
+        return gameSettings.getShipTypes().keySet();
+    }
+
     public int getID() {
         return ID;
     }
