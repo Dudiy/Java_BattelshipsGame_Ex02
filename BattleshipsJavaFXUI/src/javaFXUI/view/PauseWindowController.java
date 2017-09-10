@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class PauseWindowController {
-    private JavaFXManager program;
+    private JavaFXManager javaFXManager;
     private Stage pauseWindowStage = new Stage();
 
     @FXML
@@ -35,15 +35,20 @@ public class PauseWindowController {
 
     @FXML
     void buttonLoadGameFromXML_Clicked(ActionEvent event) {
-        File file = new FileChooserProxy().showOpenDialog(program.getSecondaryStage());
+        File file = new FileChooserProxy().showOpenDialog(javaFXManager.getSecondaryStage());
 
         if (file != null) {
             try {
-                program.loadGame(file.getPath());
+                javaFXManager.loadGame(file.getPath());
             } catch (LoadException e) {
                 AlertHandlingUtils.showErrorMessage(e, "Error while loading xml file");
             }
         }
+    }
+
+    @FXML
+    void buttonStartGame_Clicked(ActionEvent event) {
+        javaFXManager.startGame();
     }
 
     @FXML
@@ -56,18 +61,13 @@ public class PauseWindowController {
     }
 
     @FXML
-    void buttonStartGame_Clicked(ActionEvent event) {
-        program.startGame();
-    }
-
-    @FXML
     public void buttonExitApplication_Clicked(ActionEvent actionEvent) {
-        program.exitGame();
+        javaFXManager.exitGame();
     }
 
-    public void setProgram(JavaFXManager program) {
-        this.program = program;
-        program.getGameStateProperty().addListener((observable, oldValue, newValue) -> updateButtonState(newValue));
+    public void setJavaFXManager(JavaFXManager javaFXManager) {
+        this.javaFXManager = javaFXManager;
+        javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> updateButtonState(newValue));
     }
 
     public void updateButtonState(eGameState gameState) {

@@ -105,7 +105,7 @@ public class JavaFXManager extends Application {
             secondaryStage.setResizable(false);
             secondaryStage.initStyle(StageStyle.UTILITY);
             PauseWindowController controller = loader.getController();
-            controller.setProgram(this);
+            controller.setJavaFXManager(this);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
             secondaryStage.setOnShown(event -> {
@@ -121,12 +121,11 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Setters =====================================
-
     public void setActiveGame(Game activeGame) {
         this.activeGame = activeGame;
     }
-    // ===================================== Getters =====================================
 
+    // ===================================== Getters =====================================
     public Stage getPrimaryStage() {
         return primaryStage;
     }
