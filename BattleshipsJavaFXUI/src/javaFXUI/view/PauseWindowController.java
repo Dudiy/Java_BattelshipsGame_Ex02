@@ -62,11 +62,12 @@ public class PauseWindowController {
 
     @FXML
     void buttonContinueGame_Clicked(ActionEvent event) {
+        javaFXManager.hidePauseMenu();
     }
 
     @FXML
     void buttonEndGame_Clicked(ActionEvent event) {
-
+        javaFXManager.endGame(false);
     }
 
     @FXML

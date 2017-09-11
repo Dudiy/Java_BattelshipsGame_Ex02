@@ -74,9 +74,9 @@ public class JavaFXManager extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
             mainWindowLayout = fxmlLoader.load();
-            MainWindowController mainWindowController= fxmlLoader.getController();
+            MainWindowController mainWindowController = fxmlLoader.getController();
             mainWindowController.setJavaFXManager(this);
-            resetGameEvent.add(()->mainWindowController.resetGame());
+            resetGameEvent.add(() -> mainWindowController.resetGame());
 
             // load right pane
             fxmlLoader = new FXMLLoader();
@@ -203,7 +203,8 @@ public class JavaFXManager extends Application {
             activePlayerProperty.setValue(activeGame.getActivePlayer());
             totalMovesCounter.setValue(activeGame.getMovesCounter());
             if (activeGame.getGameState() == eGameState.PLAYER_WON) {
-                onGameEnded(eGameState.STARTED);
+//                onGameEnded(eGameState.STARTED,true);
+                endGame(true);
             }
             gameStateProperty.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
@@ -214,7 +215,8 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== End Game =====================================
-    public void endGame() {
+    public void endGame(boolean moveFinish) {
+        onGameEnded(activeGameProperty.getValue().getGameState(),moveFinish);
     }
 
     // ===================================== Exit Game =====================================
@@ -236,18 +238,29 @@ public class JavaFXManager extends Application {
         AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
     }
 
-    public void showPauseMenu(){
+    public void showPauseMenu() {
         secondaryStage.showAndWait();
     }
 
-    public void hidePauseMenu(){
+    public void hidePauseMenu() {
         secondaryStage.hide();
     }
 
-    private void onGameEnded(eGameState stateBeforeEndingGame) {
+    private void onGameEnded(eGameState stateBeforeEndingGame, boolean moveFinish) {
         if (stateBeforeEndingGame.gameHasStarted()) {
-            String message = "Congratulations! " + activeGameProperty.getValue().getWinnerPlayer().getName() + " has won the game!";
-            Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+            StringBuilder message = new StringBuilder();
+            Game activeGame = activeGameProperty.getValue();
+            if (activeGame.getWinnerPlayer() != null) {
+                message.append("Congratulations!" + activeGame.getWinnerPlayer().getName() + "has won the game!");
+            } else {
+                if(moveFinish){
+                    activeGame.swapPlayers();
+                }
+                message.append(activeGame.getActivePlayer().getName() + " was left the game. ");
+                activeGame.swapPlayers();
+                message.append("So, " + activeGame.getActivePlayer().getName() + " you won the game !!");
+            }
+            Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message.toString(), ButtonType.OK);
             playerWonAlert.showAndWait();
         }
 
@@ -258,12 +271,14 @@ public class JavaFXManager extends Application {
     private void resetGame(Game activeGame) {
         try {
             activeGame.resetGame();
+            gameStateProperty.setValue(activeGame.getGameState());
             resetGameEvent.forEach(Runnable::run);
-            showPauseMenu();
+            if(!secondaryStage.isShowing()){
+                showPauseMenu();
+            }
         } catch (Exception e) {
-            AlertHandlingUtils.showErrorMessage(e,"Error while reloading the game, Please load the file again or choose another file", e.getMessage());
+            AlertHandlingUtils.showErrorMessage(e, "Error while reloading the game, Please load the file again or choose another file", e.getMessage());
             activeGame.setGameState(eGameState.INVALID);
-        } finally {
             gameStateProperty.setValue(activeGame.getGameState());
         }
     }

@@ -9,6 +9,7 @@ import javaFXUI.JavaFXManager;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.MenuItem;
@@ -124,5 +125,21 @@ public class MainWindowController {
     public void resetGame(){
         myBoardAsTilePane.clear();
         opponentsBoardAsTilePane.clear();
+    }
+
+    // ===================================== ToolBar Methods =====================================
+    @FXML
+    public void OnClickPauseMenu(ActionEvent actionEvent) {
+        javaFXManager.showPauseMenu();
+    }
+
+    @FXML
+    public void OnClickEndCurrentGame(ActionEvent actionEvent) {
+        javaFXManager.endGame(false);
+    }
+
+    @FXML
+    public void OnClickExit(ActionEvent actionEvent) {
+        javaFXManager.exitGame();
     }
 }

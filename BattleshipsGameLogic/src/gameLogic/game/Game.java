@@ -179,7 +179,6 @@ public class Game implements Serializable {
             swapPlayers();
         }
 
-
         return attackResult;
     }
 
