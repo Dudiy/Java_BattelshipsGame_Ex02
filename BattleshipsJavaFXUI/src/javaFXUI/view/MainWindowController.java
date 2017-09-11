@@ -1,5 +1,6 @@
 package javaFXUI.view;
 
+import gameLogic.game.Game;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
@@ -10,6 +11,7 @@ import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainWindowController {
+
     private Map<Player, TilePane> myBoardAsTilePane = new HashMap<>();
     private Map<Player, TilePane> opponentsBoardAsTilePane = new HashMap<>();
     private JavaFXManager javaFXManager;
@@ -30,18 +33,24 @@ public class MainWindowController {
     private TilePane tilePaneMyBoard;
     @FXML
     private TilePane tilePaneOpponentsBoard;
+    @FXML
+    private MenuItem buttonPauseGame;
+    @FXML
+    private MenuItem buttonEndCurrentGame;
+    @FXML
+    private MenuItem buttonExit;
 
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
         javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
         javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
-        javaFXManager.getTotalMovesCounterProperty().addListener(
-                (observable, oldValue, newValue) -> movePlayed());
+        javaFXManager.getTotalMovesCounterProperty().addListener((observable, oldValue, newValue) -> movePlayed());
     }
 
     private void initBoards() {
-        for (Player currentPlayer : javaFXManager.getActiveGameProperty().getValue().getPlayers()) {
+        Game activeGame = javaFXManager.getActiveGameProperty().getValue();
+        for (Player currentPlayer : activeGame.getPlayers()) {
             try {
                 if (!myBoardAsTilePane.containsKey(currentPlayer)) {
                     BoardAdapter boardAdapter = new BoardAdapter(currentPlayer.getMyBoard(), true);
@@ -64,7 +73,7 @@ public class MainWindowController {
         }
 
         boardsInitialized = true;
-        redrawBoards(javaFXManager.getActiveGameProperty().getValue().getActivePlayer());
+        redrawBoards(activeGame.getActivePlayer());
     }
 
     // ===================================== Other Methods =====================================
@@ -109,5 +118,11 @@ public class MainWindowController {
     private void makeMove(ImageViewProxy imageView) {
         eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()),
                 ()->imageView.updateImage());
+    }
+
+
+    public void resetGame(){
+        myBoardAsTilePane.clear();
+        opponentsBoardAsTilePane.clear();
     }
 }
