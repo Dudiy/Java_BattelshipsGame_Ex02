@@ -10,11 +10,12 @@ public class FileChooserProxy {
     public FileChooser FileChooser = new FileChooser();
 
     public File showOpenDialog(final Window ownerWindow){
-        // Set extension filter
+        // set extension filter
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter(
                 "XML files (*.xml)", "*.xml");
         FileChooser.getExtensionFilters().add(extensionFilter);
         // set initial directory
+        // TODO ?
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         FileChooser.setInitialDirectory(new File(currentPath));
         // Show open file dialog

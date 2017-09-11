@@ -9,16 +9,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 
 public class BoardAdapter {
-    private final int BOARD_WIDTH = 400;
     private Board board;
-
     private TilePane boardAsTilePane;
     private boolean isVisible;
 
-    public TilePane getBoardAsTilePane() {
-        return boardAsTilePane;
-    }
+    private final int BOARD_WIDTH = 400;
 
+    // ===================================== Init =====================================
     public BoardAdapter(Board board, boolean isVisible) {
         this.board = board;
         this.isVisible = isVisible;
@@ -33,7 +30,8 @@ public class BoardAdapter {
             for (int j = 0; j < boardSize; j++) {
                 BoardCoordinates coordinates = BoardCoordinates.Parse(i, j);
                 try {
-                    addCellToTilePane(board.getBoardCellAtCoordinates(coordinates), cellSize, boardAsTilePane);
+                    BoardCell cell = board.getBoardCellAtCoordinates(coordinates);
+                    addCellToTilePane(cell, cellSize);
                 } catch (CellNotOnBoardException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -43,19 +41,24 @@ public class BoardAdapter {
         }
     }
 
-    private void addCellToTilePane(BoardCell boardCell, int cellSize, TilePane tilePane) throws Exception {
+    private void addCellToTilePane(BoardCell boardCell, int cellSize) throws Exception {
         if (boardCell != null) {
             ImageViewProxy boardCellAsImageView = new ImageViewProxy(boardCell, cellSize, isVisible);
-            tilePane.getChildren().add(boardCellAsImageView);
+            boardAsTilePane.getChildren().add(boardCellAsImageView);
         } else {
             throw new Exception("input boardCell was not initialized");
         }
     }
 
+    // ===================================== Other Methods =====================================
+    public TilePane getBoardAsTilePane() {
+        return boardAsTilePane;
+    }
+
     public static void updateImages(TilePane tilePane){
         for (Node image : tilePane.getChildren()){
             if (image instanceof ImageViewProxy){
-                ((ImageViewProxy) image).updateImage();
+                ((ImageViewProxy)image).updateImage();
             }
         }
     }

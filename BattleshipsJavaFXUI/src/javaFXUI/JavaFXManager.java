@@ -11,12 +11,10 @@ import gameLogic.game.eGameState;
 import gameLogic.users.ComputerPlayer;
 import gameLogic.users.Player;
 import javaFXUI.model.AlertHandlingUtils;
-import javaFXUI.view.CurrentTurnInfoControl;
+import javaFXUI.view.LayoutCurrentTurnInfoController;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
 import javafx.application.Application;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -33,7 +31,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javax.naming.Binding;
 import java.io.IOException;
 
 public class JavaFXManager extends Application {
@@ -42,48 +39,14 @@ public class JavaFXManager extends Application {
     private Property<Game> activeGameProperty = new SimpleObjectProperty<>();
     private Property<Player> activePlayerProperty = new SimpleObjectProperty<>();
     private IntegerProperty totalMovesCounter = new SimpleIntegerProperty();
-
-    public int getTotalMovesCounter() {
-        return totalMovesCounter.get();
-    }
-
-    public IntegerProperty totalMovesCounterProperty() {
-        return totalMovesCounter;
-    }
-
-    public Property<Game> getActiveGameProperty() {
-        return activeGameProperty;
-    }
-
-    public Property<Player> getActivePlayerProperty() {
-        return activePlayerProperty;
-    }
-
-    public Property<eGameState> getGameStateProperty() {
-        return eGameStateProperty;
-    }
-
-    // JavaFX application may have only 1 game
-
-    private boolean exitGameSelected = false;
     private int computerPlayerIndex = 0;
+    private boolean exitGameSelected = false;
     private Stage primaryStage;
     private Stage secondaryStage = new Stage();
     private BorderPane mainWindowLayout;
     private VBox pauseWindowLayout;
 
-    @FXML
-    private void initialize() {
-        eGameStateProperty.addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
-    }
-
-    private void gameStateChanged(eGameState newValue) {
-        if (newValue == eGameState.STARTED) {
-
-        }
-    }
-
-
+    // ===================================== Init =====================================
     public static void Run(String[] args) {
         launch(args);
     }
@@ -97,6 +60,11 @@ public class JavaFXManager extends Application {
         initPauseWindow();
     }
 
+    @FXML
+    private void initialize() {
+        eGameStateProperty.addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+    }
+
     private void initMainWindow() {
         try {
             // load main window
@@ -104,13 +72,13 @@ public class JavaFXManager extends Application {
             loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
             mainWindowLayout = loader.load();
             MainWindowController controller = loader.getController();
-            controller.setProgram(this);
+            controller.setJavaFXManager(this);
 
             // load right pane
             loader = new FXMLLoader();
             loader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/LayoutCurrentTurnInfo.fxml"));
             ScrollPane rightPane = loader.load();
-            CurrentTurnInfoControl curretntTurneInfoController = loader.getController();
+            LayoutCurrentTurnInfoController curretntTurneInfoController = loader.getController();
             curretntTurneInfoController.setJavaFXManager(this);
             mainWindowLayout.setRight(rightPane);
 
@@ -151,6 +119,26 @@ public class JavaFXManager extends Application {
     // ===================================== Setters =====================================
 
     // ===================================== Getters =====================================
+    public Property<Game> getActiveGameProperty() {
+        return activeGameProperty;
+    }
+
+    public Property<eGameState> getGameStateProperty() {
+        return eGameStateProperty;
+    }
+
+    public Property<Player> getActivePlayerProperty() {
+        return activePlayerProperty;
+    }
+
+    public int getTotalMovesCounter() {
+        return totalMovesCounter.get();
+    }
+
+    public IntegerProperty getTotalMovesCounterProperty() {
+        return totalMovesCounter;
+    }
+
     public Stage getPrimaryStage() {
         return primaryStage;
     }
@@ -159,17 +147,14 @@ public class JavaFXManager extends Application {
         return secondaryStage;
     }
 
-    public IGamesLogic getGamesManager() {
-        return gamesManager;
-    }
-
-    // ===================================== menu option handlers =====================================
+    // ===================================== Load Game =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
         activeGameProperty.setValue(loadedGame);
         eGameStateProperty.setValue(loadedGame.getGameState());
     }
 
+    // ===================================== Start Game =====================================
     public void startGame() {
         try {
             Game activeGame = activeGameProperty.getValue();
@@ -207,17 +192,14 @@ public class JavaFXManager extends Application {
         }
     }
 
-    public void exitGame() {
-        // TODO say goodbye before closing :)
-        primaryStage.close();
-    }
-
-    public eAttackResult makeMove(BoardCoordinates cellToAttack) {
+    // ===================================== Make Move =====================================
+    public eAttackResult makeMove(BoardCoordinates cellToAttack, Runnable updateCellDisplay) {
         eAttackResult attackResult = null;
 
         try {
             Game activeGame = activeGameProperty.getValue();
             attackResult = gamesManager.makeMove(activeGame, cellToAttack);
+            updateCellDisplay.run();
             activePlayerProperty.setValue(activeGame.getActivePlayer());
             totalMovesCounter.setValue(activeGame.getMovesCounter());
             if (activeGame.getGameState() == eGameState.PLAYER_WON) {
@@ -230,6 +212,37 @@ public class JavaFXManager extends Application {
 
         return attackResult;
     }
+
+    // ===================================== End Game =====================================
+    public void endGame() {
+    }
+
+    // ===================================== Exit Game =====================================
+    public void exitGame() {
+        // TODO say goodbye before closing :)
+        primaryStage.close();
+    }
+
+    // ===================================== Other Methods =====================================
+    private void gameStateChanged(eGameState newValue) {
+        if (newValue == eGameState.STARTED) {
+
+        }
+    }
+
+    private void errorWhileStartingGame() {
+        activeGameProperty.setValue(null);
+        String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
+        AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
+    }
+
+//    public void showPauseMenu(){
+//        secondaryStage.showAndWait();
+//    }
+//
+//    public void hidePauseMenu(){
+//        secondaryStage.hide();
+//    }
 
     private void onGameEnded(eGameState stateBeforeEndingGame) {
         if (stateBeforeEndingGame.gameHasStarted()) {
@@ -256,11 +269,5 @@ public class JavaFXManager extends Application {
 
     public void showPauseMenu(){
         secondaryStage.show();
-    }
-
-    private void errorWhileStartingGame() {
-        activeGameProperty.setValue(null);
-        String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
-        AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
     }
 }

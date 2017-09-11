@@ -1,8 +1,5 @@
 package javaFXUI.view;
 
-import gameLogic.game.Game;
-import gameLogic.game.board.Board;
-import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
@@ -13,67 +10,35 @@ import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
-import java.beans.EventHandler;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class MainWindowController {
-
-    @FXML
-    private VBox vBoxMyBoard;
-
-    @FXML
-    private VBox vBoxOpponentsBoard;
-
-    @FXML
-    private TilePane tilePaneMyBoard;
-
-    @FXML
-    private TilePane tilePaneOpponentsBoard;
-
     private Map<Player, TilePane> myBoardAsTilePane = new HashMap<>();
     private Map<Player, TilePane> opponentsBoardAsTilePane = new HashMap<>();
     private JavaFXManager javaFXManager;
     private boolean boardsInitialized;
 
-    public void setProgram(JavaFXManager javaFXManager) {
+    @FXML
+    private VBox vBoxMyBoard;
+    @FXML
+    private VBox vBoxOpponentsBoard;
+    @FXML
+    private TilePane tilePaneMyBoard;
+    @FXML
+    private TilePane tilePaneOpponentsBoard;
+
+    // ===================================== Init =====================================
+    public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
         javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
         javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
-        javaFXManager.totalMovesCounterProperty().addListener(
+        javaFXManager.getTotalMovesCounterProperty().addListener(
                 (observable, oldValue, newValue) -> movePlayed());
     }
-
-    private void movePlayed() {
-    }
-
-    private void gameStateChanged(eGameState newValue) {
-        switch (newValue) {
-
-            case INVALID:
-                break;
-            case LOADED:
-                break;
-            case INITIALIZED:
-                break;
-            case STARTED:
-                initBoards();
-                break;
-            case PLAYER_WON:
-                break;
-            case PLAYER_QUIT:
-                break;
-        }
-    }
-
 
     private void initBoards() {
         for (Player currentPlayer : javaFXManager.getActiveGameProperty().getValue().getPlayers()) {
@@ -102,9 +67,24 @@ public class MainWindowController {
         redrawBoards(javaFXManager.getActiveGameProperty().getValue().getActivePlayer());
     }
 
-    private void makeMove(ImageViewProxy imageView) {
-        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()));
-        imageView.updateImage();
+    // ===================================== Other Methods =====================================
+    private void gameStateChanged(eGameState newValue) {
+        switch (newValue) {
+
+            case INVALID:
+                break;
+            case LOADED:
+                break;
+            case INITIALIZED:
+                break;
+            case STARTED:
+                initBoards();
+                break;
+            case PLAYER_WON:
+                break;
+            case PLAYER_QUIT:
+                break;
+        }
     }
 
     private void activePlayerChanged(Player activePlayer) {
@@ -121,5 +101,13 @@ public class MainWindowController {
         BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));
         vBoxMyBoard.getChildren().set(2, myBoardAsTilePane.get(activePlayer));
         vBoxOpponentsBoard.getChildren().set(2, opponentsBoardAsTilePane.get(activePlayer));
+    }
+
+    private void movePlayed() {
+    }
+
+    private void makeMove(ImageViewProxy imageView) {
+        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()),
+                ()->imageView.updateImage());
     }
 }

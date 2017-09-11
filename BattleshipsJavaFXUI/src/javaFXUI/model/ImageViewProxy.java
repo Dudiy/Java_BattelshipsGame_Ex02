@@ -13,6 +13,7 @@ public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
     private int cellSize;
     private boolean isVisible;
+
     private static final String BASE_IMAGE_URL = "/resources/images";
     private static final Image WATER_IMAGE = new Image(BASE_IMAGE_URL + "/Water.png");
     private static final Image SHIP_IMAGE = new Image(BASE_IMAGE_URL + "/Ship.jpg");
@@ -20,7 +21,6 @@ public class ImageViewProxy extends ImageView {
     private static final Image HIT_IMAGE = new Image(BASE_IMAGE_URL + "/Hit.png");
     private static final Image MISS_IMAGE = new Image(BASE_IMAGE_URL + "/Miss.png");
     private static final Image PROBLEM_IMAGE = new Image(BASE_IMAGE_URL + "/Problem.png");
-
 
     public ImageViewProxy(BoardCell boardCell, int cellSize, boolean isVisible) {
         this.boardCell = boardCell;
@@ -36,14 +36,6 @@ public class ImageViewProxy extends ImageView {
         } else {
             setOnMouseDragEntered(event -> minePlaced());
         }
-    }
-
-    private void minePlaced() {
-        setImage(BOMB_IMAGE);
-    }
-
-    public void updateImage(){
-        setImage(getImageForCell());
     }
 
     private Image getImageForCell() {
@@ -76,7 +68,16 @@ public class ImageViewProxy extends ImageView {
     private void mouseEnteredCell() {
         ColorAdjust highlight = new ColorAdjust();
         highlight.setBrightness(0.5);
-
         setEffect(highlight);
     }
+
+    private void minePlaced() {
+        setImage(BOMB_IMAGE);
+    }
+
+    public void updateImage(){
+        setImage(getImageForCell());
+    }
+
+
 }
