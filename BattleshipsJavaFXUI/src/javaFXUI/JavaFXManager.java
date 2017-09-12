@@ -49,6 +49,7 @@ public class JavaFXManager extends Application {
     private VBox pauseWindowLayout;
     private List<Runnable> resetGameEvent = new ArrayList<>();
 
+
     // ===================================== Init =====================================
     public static void Run(String[] args) {
         launch(args);

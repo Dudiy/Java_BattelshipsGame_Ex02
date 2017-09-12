@@ -13,7 +13,7 @@ public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
     private int cellSize;
     private boolean isVisible;
-
+    //TODO put in manager
     private static final String BASE_IMAGE_URL = "/resources/images";
     private static final Image WATER_IMAGE = new Image(BASE_IMAGE_URL + "/Water.png");
     private static final Image SHIP_IMAGE = new Image(BASE_IMAGE_URL + "/Ship.jpg");

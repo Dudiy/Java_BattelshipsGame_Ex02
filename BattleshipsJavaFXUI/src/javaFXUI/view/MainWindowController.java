@@ -12,7 +12,13 @@ import javaFXUI.model.ImageViewProxy;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
@@ -38,6 +44,8 @@ public class MainWindowController {
     private MenuItem buttonPauseGame;
     @FXML
     private MenuItem buttonEndCurrentGame;
+    @FXML
+    public VBox vboxMines;
     @FXML
     private MenuItem buttonExit;
 
@@ -101,9 +109,20 @@ public class MainWindowController {
         try {
             if (boardsInitialized) {
                 redrawBoards(activePlayer);
+                addMine(activePlayer);
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void addMine(Player activePlayer) {
+        // TODO use manger prefix
+        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
+        int minesToAdd=activePlayer.getMyBoard().getMinesAvailable();
+        vboxMines.getChildren().removeAll();
+        for(int i=0;i<minesToAdd;i++){
+            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
         }
     }
 
@@ -141,5 +160,25 @@ public class MainWindowController {
     @FXML
     public void OnClickExit(ActionEvent actionEvent) {
         javaFXManager.exitGame();
+    }
+
+
+    // ===================================== Mines Methods =====================================
+    @FXML
+    public void OnMouseDragEntered(MouseDragEvent mouseDragEvent) {
+        /* drag was detected, start drag-and-drop gesture*/
+        System.out.println("onDragDetected");
+
+                /* allow any transfer mode */
+        Dragboard db = vboxMines.startDragAndDrop(TransferMode.ANY);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("!!");
+
+        mouseDragEvent.consume();
+    }
+
+    @FXML
+    public void OnMouseDragExited(MouseDragEvent mouseDragEvent) {
+
     }
 }
