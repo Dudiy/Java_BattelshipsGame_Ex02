@@ -10,14 +10,17 @@ import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -116,13 +119,29 @@ public class MainWindowController {
         }
     }
 
+    // TODO just a test
     private void addMine(Player activePlayer) {
         // TODO use manger prefix
-        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
+//        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
         int minesToAdd=activePlayer.getMyBoard().getMinesAvailable();
         vboxMines.getChildren().removeAll();
         for(int i=0;i<minesToAdd;i++){
-            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
+            final ImageView mineImage = new ImageView("/resources/images/Bomb.png");
+
+            mineImage.setOnDragDetected(event -> {
+                Dragboard db = mineImage.startDragAndDrop(TransferMode.ANY);
+                event.consume();
+                //Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, "a", ButtonType.OK);
+               // playerWonAlert.showAndWait();
+            });
+            mineImage.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    mineImage.setX(mineImage.getX()+90);
+                }
+            });
+//            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
+            vboxMines.getChildren().add(mineImage);
         }
     }
 
