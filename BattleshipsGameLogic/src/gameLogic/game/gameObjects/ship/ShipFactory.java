@@ -13,7 +13,7 @@ public class ShipFactory implements Serializable {
     }
 
     public AbstractShip createShip(BattleShipGame.Boards.Board.Ship ship) throws Exception {
-        BattleShipGame.ShipTypes.ShipType shipType = getShipType(ship.getShipTypeId());
+        ShipType shipType = gameSettings.getShipTypesOnBoard().get(ship.getShipTypeId());
         String shipCategory = shipType.getCategory();
         AbstractShip shipObject;
         BoardCoordinates coordinates = BoardCoordinates.convertFromXmlToBoard(ship.getPosition().getX(), ship.getPosition().getY());
@@ -34,9 +34,5 @@ public class ShipFactory implements Serializable {
         }
 
         return shipObject;
-    }
-
-    private BattleShipGame.ShipTypes.ShipType getShipType(String shipTypeID) {
-        return gameSettings.getShipTypes().get(shipTypeID);
     }
 }
