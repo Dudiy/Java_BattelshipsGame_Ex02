@@ -52,7 +52,6 @@ public class LayoutCurrentTurnInfoController {
     private void updateStatistics() {
         Player activePlayer = javaFXManager.getActivePlayerProperty().getValue();
 
-        labelCurrentPlayer
 
         labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
         Duration avgDuration = activePlayer.getAvgTurnDuration();
