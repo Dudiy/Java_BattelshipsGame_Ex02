@@ -7,18 +7,19 @@ import gameLogic.game.eAttackResult;
 
 public abstract class AbstractShip extends GameObject {
     private ShipType shipType;
-    private int length;
+//    private int length;
     private int hitsRemainingUntilSunk;
     eShipDirection direction;
     // TODO implement in exercise 2
-    private int score;
+//    private int score;
 
-    AbstractShip(int length, BoardCoordinates position, eShipDirection direction, int score) {
+    AbstractShip(ShipType shipType, BoardCoordinates position, eShipDirection direction) {
         super(position, !VISIBLE);
-        this.length = length;
-        this.hitsRemainingUntilSunk = length;
+//        this.length = length;
+        this.shipType = shipType;
+        this.hitsRemainingUntilSunk = shipType.getLength();
         this.direction = direction;
-        this.score = score;
+//        this.score = score;
     }
 
     protected abstract void setDirection(String direction) throws Exception;
@@ -26,11 +27,11 @@ public abstract class AbstractShip extends GameObject {
     // ======================================= getters =======================================
 
     public int getLength() {
-        return length;
+        return shipType.getLength();
     }
 
     public int getScore() {
-        return score;
+        return shipType.getScore();
     }
 
     public abstract eShipDirection getDirection();
