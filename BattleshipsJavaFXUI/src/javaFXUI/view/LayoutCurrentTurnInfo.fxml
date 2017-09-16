@@ -6,6 +6,8 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,15 +17,15 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.RadialGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane prefWidth="220.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.LayoutCurrentTurnInfoController">
+<ScrollPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.LayoutCurrentTurnInfoController">
    <content>
-      <AnchorPane>
+      <AnchorPane prefHeight="513.0" prefWidth="219.0">
          <children>
-            <VBox prefHeight="398.0" prefWidth="219.0">
+            <VBox prefHeight="511.0" prefWidth="219.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
                <children>
                   <Label text="Current Player: " />
                   <Label fx:id="labelCurrentPlayer" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="300.0" text="Label" textAlignment="CENTER">
@@ -53,34 +55,46 @@
                         <Region prefHeight="34.0" prefWidth="16.0" />
                         <StackPane>
                            <children>
-                              <ImageView fx:id="imageViewMinesAvailable" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
-                              <Label fx:id="labelMinesAvailable" text="#" StackPane.alignment="BOTTOM_RIGHT">
+                              <ImageView fx:id="imageViewMinesAvailable" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                                 <image>
+                                    <Image url="@../../resources/images/Multiple%20mines.png" />
+                                 </image></ImageView>
+                              <Label fx:id="labelMinesAvailable" mouseTransparent="true" text="#" StackPane.alignment="BOTTOM_RIGHT">
                                  <font>
-                                    <Font name="System Bold" size="15.0" />
+                                    <Font name="System Bold" size="21.0" />
                                  </font>
                                  <StackPane.margin>
-                                    <Insets bottom="2.0" right="2.0" />
+                                    <Insets bottom="-3.0" right="10.0" />
                                  </StackPane.margin>
                                  <textFill>
-                                    <LinearGradient endX="1.0" endY="1.0">
+                                    <RadialGradient centerX="0.5055555555555555" centerY="0.5285714285714286" radius="1.0">
                                        <stops>
-                                          <Stop color="BLACK" />
-                                          <Stop color="WHITE" offset="1.0" />
+                                          <Stop color="WHITE" />
+                                          <Stop color="#87efff" offset="1.0" />
                                        </stops>
-                                    </LinearGradient>
+                                    </RadialGradient>
                                  </textFill>
+                                 <effect>
+                                    <DropShadow height="10.0" offsetX="0.5" offsetY="0.5" radius="4.5" width="10.0" />
+                                 </effect>
                               </Label>
                            </children>
                         </StackPane>
                      </children>
                   </HBox>
-                  <Separator layoutX="15.0" layoutY="98.0" prefWidth="200.0" />
+                  <Separator layoutX="15.0" layoutY="98.0" prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin></Separator>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="315.0" text="Ships state" textAlignment="CENTER">
                      <padding>
                         <Insets bottom="5.0" />
                      </padding>
                   </Label>
-                  <TableView fx:id="TableShipsState">
+                  <TableView fx:id="TableShipsState" prefHeight="197.0" prefWidth="205.0">
                     <columns>
                       <TableColumn fx:id="columnShipType" prefWidth="75.0" text="Ship Type" />
                         <TableColumn fx:id="columnInitialShips" prefWidth="75.0" text="Initial" />
