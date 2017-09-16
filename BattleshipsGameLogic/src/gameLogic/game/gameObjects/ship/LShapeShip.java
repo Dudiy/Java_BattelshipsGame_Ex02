@@ -6,9 +6,9 @@ public class LShapeShip extends AbstractShip {
     // position is the meeting point of the row and column
     public LShapeShip(ShipType shipType, BoardCoordinates position, eShipDirection direction) {
         super(shipType, position, direction);
+        this.hitsRemainingUntilSunk = 2 * shipType.getLength() - 1;
     }
     // ======================================= setters =======================================
-
     @Override
     public void setDirection(String direction) throws Exception {
         eShipDirection inputDirection = eShipDirection.valueOf(direction);

@@ -1,7 +1,5 @@
 package gameLogic.game.board;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.Serializable;
 import java.util.LinkedList;
 
@@ -160,10 +158,11 @@ public class Board implements Cloneable, Serializable {
         BoardCoordinates currCoordinates = ship.getPosition();
         eShipDirection shipDirection = ship.getDirection();
 
-        // set the value of the first cell
-        setCellValue(currCoordinates, ship);
+//        // set the value of the first cell
+//        setCellValue(currCoordinates, ship);
         // set the values of the next size-1 cells
-        for (int i = 0; i < ship.getLength() - 1; i++) {
+        for (int i = 0; i < ship.getLength(); i++) {
+            setCellValue(currCoordinates, ship);
             if (shipDirection == eShipDirection.COLUMN) {
                 currCoordinates.OffsetRow(1);
             } else if (shipDirection == eShipDirection.ROW) {
@@ -171,7 +170,6 @@ public class Board implements Cloneable, Serializable {
             } else {
                 throw new IllegalArgumentException("The given ship has an unknown direction value");
             }
-            setCellValue(currCoordinates, ship);
         }
     }
 
@@ -232,10 +230,6 @@ public class Board implements Cloneable, Serializable {
             setCellValue(currCoordinates, ship);
             currCoordinates.offsetCol(offsetCol);
         }
-    }
-
-    private void getLShipDirectionOffset(eShipDirection shipDirection, Object offsetRow, Object offsetCol) {
-
     }
 
     // check if the given coordinates are on this board
