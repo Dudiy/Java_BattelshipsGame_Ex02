@@ -91,7 +91,6 @@ public class MainWindowController {
     // ===================================== Other Methods =====================================
     private void gameStateChanged(eGameState newValue) {
         switch (newValue) {
-
             case INVALID:
                 break;
             case LOADED:

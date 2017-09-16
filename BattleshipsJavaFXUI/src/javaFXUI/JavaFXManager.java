@@ -77,7 +77,7 @@ public class JavaFXManager extends Application {
             mainWindowLayout = fxmlLoader.load();
             MainWindowController mainWindowController = fxmlLoader.getController();
             mainWindowController.setJavaFXManager(this);
-            resetGameEvent.add(() -> mainWindowController.resetGame());
+            resetGameEvent.add(mainWindowController::resetGame);
 
             // load right pane
             fxmlLoader = new FXMLLoader();
@@ -89,8 +89,8 @@ public class JavaFXManager extends Application {
 
             Scene scene = new Scene(mainWindowLayout);
             primaryStage.setScene(scene);
-            primaryStage.getIcons().add(
-                    new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
+            primaryStage.getIcons().add(new Image
+                    (JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
             primaryStage.show();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading main window");
@@ -217,7 +217,7 @@ public class JavaFXManager extends Application {
 
     // ===================================== End Game =====================================
     public void endGame(boolean moveFinish) {
-        onGameEnded(activeGameProperty.getValue().getGameState(),moveFinish);
+        onGameEnded(activeGameProperty.getValue().getGameState(), moveFinish);
     }
 
     // ===================================== Exit Game =====================================
@@ -254,7 +254,7 @@ public class JavaFXManager extends Application {
             if (activeGame.getWinnerPlayer() != null) {
                 message.append("Congratulations!" + activeGame.getWinnerPlayer().getName() + "has won the game!");
             } else {
-                if(moveFinish){
+                if (moveFinish) {
                     activeGame.swapPlayers();
                 }
                 message.append(activeGame.getActivePlayer().getName() + " was left the game. ");
@@ -274,7 +274,7 @@ public class JavaFXManager extends Application {
             activeGame.resetGame();
             gameStateProperty.setValue(activeGame.getGameState());
             resetGameEvent.forEach(Runnable::run);
-            if(!secondaryStage.isShowing()){
+            if (!secondaryStage.isShowing()) {
                 showPauseMenu();
             }
         } catch (Exception e) {

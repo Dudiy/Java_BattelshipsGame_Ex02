@@ -41,12 +41,18 @@ public class LayoutCurrentTurnInfoController {
 
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
+        addListeners();
+    }
+
+    private void addListeners() {
         javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
         javaFXManager.getTotalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
     }
 
     private void updateStatistics() {
         Player activePlayer = javaFXManager.getActivePlayerProperty().getValue();
+
+        labelCurrentPlayer
 
         labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
         Duration avgDuration = activePlayer.getAvgTurnDuration();
