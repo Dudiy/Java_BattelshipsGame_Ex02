@@ -192,28 +192,12 @@ public class Board implements Cloneable, Serializable {
     private void addLShapeShipToBoard(LShapeShip ship) throws InvalidGameObjectPlacementException {
         BoardCoordinates currCoordinates = ship.getPosition();
         eShipDirection shipDirection = ship.getDirection();
-        Integer offsetRow = null;
-        Integer offsetCol = null;
+        int offsetRow;
+        int offsetCol;
 
-        getLShipDirectionOffset(shipDirection, offsetRow, offsetCol);
-        // set the values of row
-        for (int i = 0; i < ship.getLength() - 1; i++) {
-            currCoordinates.OffsetRow(offsetRow);
-            setCellValue(currCoordinates, ship);
-        }
-        // return to the meeting point of the row and column
-        currCoordinates = ship.getPosition();
-        // set the values of col
-        for (int i = 0; i < ship.getLength() - 2; i++) {
-            currCoordinates.offsetCol(offsetCol);
-            setCellValue(currCoordinates, ship);
-        }
-    }
-
-    private void getLShipDirectionOffset(eShipDirection shipDirection, Integer offsetRow, Integer offsetCol) {
         switch (shipDirection) {
             case RIGHT_DOWN:
-                offsetRow = -1;
+                offsetRow=-1;
                 offsetCol = 1;
                 break;
             case RIGHT_UP:
@@ -231,6 +215,27 @@ public class Board implements Cloneable, Serializable {
             default:
                 throw new IllegalArgumentException("The given ship has an unknown direction value");
         }
+        setLShipByOffset(ship, currCoordinates, offsetRow, offsetCol);
+    }
+
+    private void setLShipByOffset(LShapeShip ship, BoardCoordinates currCoordinates, int offsetRow, int offsetCol) throws InvalidGameObjectPlacementException {
+        // set the values of row
+        for (int i = 0; i < ship.getLength(); i++) {
+            setCellValue(currCoordinates, ship);
+            currCoordinates.OffsetRow(offsetRow);
+        }
+        // return to the meeting point of the row and column
+        currCoordinates = ship.getPosition();
+        currCoordinates.offsetCol(offsetCol);
+        // set the values of col
+        for (int i = 0; i < ship.getLength() - 1; i++) {
+            setCellValue(currCoordinates, ship);
+            currCoordinates.offsetCol(offsetCol);
+        }
+    }
+
+    private void getLShipDirectionOffset(eShipDirection shipDirection, Object offsetRow, Object offsetCol) {
+
     }
 
     // check if the given coordinates are on this board
