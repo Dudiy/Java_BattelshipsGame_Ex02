@@ -5,6 +5,7 @@ import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
 import gameLogic.game.gameObjects.ship.AbstractShip;
+import javaFXUI.Constants;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,13 +15,12 @@ public class ImageViewProxy extends ImageView {
     private int cellSize;
     private boolean isVisible;
     //TODO put in manager
-    private static final String BASE_IMAGE_URL = "/resources/images";
-    private static final Image WATER_IMAGE = new Image(BASE_IMAGE_URL + "/Water.png");
-    private static final Image SHIP_IMAGE = new Image(BASE_IMAGE_URL + "/Ship.jpg");
-    private static final Image BOMB_IMAGE = new Image(BASE_IMAGE_URL + "/Bomb.png");
-    private static final Image HIT_IMAGE = new Image(BASE_IMAGE_URL + "/Hit.png");
-    private static final Image MISS_IMAGE = new Image(BASE_IMAGE_URL + "/Miss.png");
-    private static final Image PROBLEM_IMAGE = new Image(BASE_IMAGE_URL + "/Problem.png");
+    private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
+    private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
+    private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
+    private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
+    private static final Image MISS_IMAGE = new Image(Constants.MISS_IMAGE_URL);
+    private static final Image PROBLEM_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
 
     public ImageViewProxy(BoardCell boardCell, int cellSize, boolean isVisible) {
         this.boardCell = boardCell;
@@ -56,7 +56,7 @@ public class ImageViewProxy extends ImageView {
             } else if (cellValue instanceof Water) {
                 imageToReturn = WATER_IMAGE;
             } else if (cellValue instanceof Mine) {
-                imageToReturn = isVisible ? BOMB_IMAGE : WATER_IMAGE;
+                imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
             } else {
                 imageToReturn = PROBLEM_IMAGE;
             }
@@ -72,7 +72,7 @@ public class ImageViewProxy extends ImageView {
     }
 
     private void minePlaced() {
-        setImage(BOMB_IMAGE);
+        setImage(MINE_IMAGE);
     }
 
     public void updateImage(){

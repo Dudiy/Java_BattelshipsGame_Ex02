@@ -6,12 +6,17 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
 <ScrollPane prefWidth="220.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.LayoutCurrentTurnInfoController">
@@ -38,6 +43,38 @@
                         <Insets bottom="10.0" top="10.0" />
                      </VBox.margin>
                   </Separator>
+                  <HBox>
+                     <children>
+                        <Label prefHeight="55.0" prefWidth="92.0" text="Mines available:" textAlignment="CENTER">
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
+                        </Label>
+                        <Region prefHeight="34.0" prefWidth="16.0" />
+                        <StackPane>
+                           <children>
+                              <ImageView fx:id="imageViewMinesAvailable" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" />
+                              <Label fx:id="labelMinesAvailable" text="#" StackPane.alignment="BOTTOM_RIGHT">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                                 <StackPane.margin>
+                                    <Insets bottom="2.0" right="2.0" />
+                                 </StackPane.margin>
+                                 <textFill>
+                                    <LinearGradient endX="1.0" endY="1.0">
+                                       <stops>
+                                          <Stop color="BLACK" />
+                                          <Stop color="WHITE" offset="1.0" />
+                                       </stops>
+                                    </LinearGradient>
+                                 </textFill>
+                              </Label>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <Separator layoutX="15.0" layoutY="98.0" prefWidth="200.0" />
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="315.0" text="Ships state" textAlignment="CENTER">
                      <padding>
                         <Insets bottom="5.0" />
