@@ -13,6 +13,8 @@ import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.eAttackResult;
+import gameLogic.game.gameObjects.ship.AbstractShip;
+import gameLogic.game.gameObjects.ship.IShipListener;
 import gameLogic.game.gameObjects.ship.ShipType;
 
 
@@ -27,7 +29,7 @@ public class Player implements User, Serializable {
     private int numTurnsPlayed = 0;
     protected Board myBoard;
     protected Board opponentBoard;
-    private HashMap<ShipType, Integer> activeShipsOnBoard = new HashMap<>();
+    private HashMap<String, Integer> activeShipsOnBoard = new HashMap<>();
 
     public Player(String playerID, String name) {
         this.ID = playerID;
@@ -37,7 +39,7 @@ public class Player implements User, Serializable {
     // ======================================= setters =======================================
     public void setActiveShipsOnBoard(HashMap<String, Integer> activeShipsOnBoard) {
         for (Map.Entry<String, Integer> entry : activeShipsOnBoard.entrySet()) {
-            activeShipsOnBoard.put(entry.getKey(),entry.getValue());
+            this.activeShipsOnBoard.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -121,6 +123,10 @@ public class Player implements User, Serializable {
         return attackResult;
     }
 
+    public void setShipListeners(IShipListener listener){
+        myBoard.setShipListeners(listener);
+    }
+
     public void incrementScore() {
         score++;
     }
@@ -142,5 +148,10 @@ public class Player implements User, Serializable {
         } else {
             throw new InvalidGameObjectPlacementException(Mine.class.getSimpleName(), position, "All surrounding cells must be clear.");
         }
+    }
+
+    public void OnShipSunk(AbstractShip shipSunk) {
+        int shipsRemaining = activeShipsOnBoard.get(shipSunk.getID());
+        activeShipsOnBoard.put(shipSunk.getID(), shipsRemaining - 1);
     }
 }

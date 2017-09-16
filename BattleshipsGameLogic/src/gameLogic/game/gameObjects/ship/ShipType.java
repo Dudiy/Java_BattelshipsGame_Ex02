@@ -2,7 +2,9 @@ package gameLogic.game.gameObjects.ship;
 
 import jaxb.generated.BattleShipGame;
 
-public class ShipType {
+import java.io.Serializable;
+
+public class ShipType implements Serializable {
     private String category;
     private int initialAmount;
     private int length;

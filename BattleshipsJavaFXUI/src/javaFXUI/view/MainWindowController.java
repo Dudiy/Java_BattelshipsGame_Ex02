@@ -111,38 +111,38 @@ public class MainWindowController {
         try {
             if (boardsInitialized) {
                 redrawBoards(activePlayer);
-                addMine(activePlayer);
+//                addMine(activePlayer);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // TODO just a test
-    private void addMine(Player activePlayer) {
-        // TODO use manger prefix
-//        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
-        int minesToAdd=activePlayer.getMyBoard().getMinesAvailable();
-        tilePaneMines.getChildren().removeAll();
-        for(int i=0;i<minesToAdd;i++){
-            final ImageView mineImage = new ImageView("/resources/images/Bomb.png");
-
-            mineImage.setOnDragDetected(event -> {
-                Dragboard db = mineImage.startDragAndDrop(TransferMode.ANY);
-                event.consume();
-                //Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, "a", ButtonType.OK);
-               // playerWonAlert.showAndWait();
-            });
-            mineImage.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    mineImage.setX(mineImage.getX()+90);
-                }
-            });
-//            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
-            tilePaneMines.getChildren().add(mineImage);
-        }
-    }
+//    // TODO just a test
+//    private void addMine(Player activePlayer) {
+//        // TODO use manger prefix
+////        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
+//        int minesToAdd=activePlayer.getMyBoard().getMinesAvailable();
+//        tilePaneMines.getChildren().removeAll();
+//        for(int i=0;i<minesToAdd;i++){
+//            final ImageView mineImage = new ImageView("/resources/images/Bomb.png");
+//
+//            mineImage.setOnDragDetected(event -> {
+//                Dragboard db = mineImage.startDragAndDrop(TransferMode.ANY);
+//                event.consume();
+//                //Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, "a", ButtonType.OK);
+//               // playerWonAlert.showAndWait();
+//            });
+//            mineImage.setOnMouseDragged(new EventHandler<MouseEvent>() {
+//                @Override
+//                public void handle(MouseEvent event) {
+//                    mineImage.setX(mineImage.getX()+90);
+//                }
+//            });
+////            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
+//            tilePaneMines.getChildren().add(mineImage);
+//        }
+//    }
 
     private void redrawBoards(Player activePlayer) {
         BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));

@@ -1,5 +1,5 @@
 package gameLogic.game.gameObjects.ship;
 
 public interface IShipListener {
-    void whenShipSunk();
+    void whenShipSunk(AbstractShip ship);
 }

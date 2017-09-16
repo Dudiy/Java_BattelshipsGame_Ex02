@@ -1,5 +1,7 @@
 package gameLogic.game.board;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.awt.*;
 import java.io.Serializable;
 
@@ -41,29 +43,31 @@ public class BoardCoordinates implements Serializable, Cloneable {
     // input of 0 returns null value (for cancel)
     public static BoardCoordinates Parse(String stringToParse) throws IllegalArgumentException {
         BoardCoordinates res;
+        Character column;
+        Integer row;
+        String rowAsString;
 
-        if (stringToParse.length() != 2) {
-            throw new IllegalArgumentException("Input string must be exactly 2 characters long");
+        if (Character.isAlphabetic(stringToParse.charAt(0))) {
+            column = Character.toUpperCase(stringToParse.charAt(0));
+            rowAsString = stringToParse.substring(1);
         } else {
-            char firstCharInString = stringToParse.charAt(0);
-            char secondCharInString = stringToParse.charAt(1);
-            char upperChar;
-            int digit;
-
-            if (Character.isAlphabetic(firstCharInString) && Character.isDigit(secondCharInString) && secondCharInString != '0') {
-                upperChar = Character.toUpperCase(firstCharInString);
-                digit = secondCharInString - '0';
-            } else if (Character.isDigit(firstCharInString) && firstCharInString != '0' && Character.isAlphabetic(secondCharInString)) {
-                upperChar = Character.toUpperCase(secondCharInString);
-                digit = secondCharInString - '0';
-            } else {
-                throw new IllegalArgumentException("Input string must be a digit (greater than 0) and a char (in any order), for example: \"A1\" or \"1A\"");
-            }
-
-            res = new BoardCoordinates(upperChar, digit);
+            rowAsString = stringToParse.substring(0, stringToParse.length() - 1);
+            column = Character.toUpperCase(stringToParse.charAt(stringToParse.length() - 1));
         }
 
-        return res;
+        try {
+            row = Integer.parseInt(rowAsString);
+            if (row <= 0 || row > 20) {
+                throw new IllegalArgumentException("Row value range is 1-20");
+            }
+            if (!Character.isAlphabetic(column)){
+                throw new IllegalArgumentException("Column must be a letter");
+            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Input string must be a digit (greater than 0) and a char (in any order), for example: \"A1\" or \"1A\"");
+        }
+
+        return new BoardCoordinates(column, row);
     }
 
     // converts two indices starting at 0,0 to boardCoordinates
@@ -90,7 +94,7 @@ public class BoardCoordinates implements Serializable, Cloneable {
         col += offset;
     }
 
-    public BoardCoordinates clone(){
+    public BoardCoordinates clone() {
         return new BoardCoordinates(this);
     }
 

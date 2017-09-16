@@ -173,6 +173,10 @@ public class Game implements Serializable {
         }
 
         if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+            Player otherPlayer = getOtherPlayer();
+            AbstractShip shipSunk = (AbstractShip)otherPlayer.getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+            otherPlayer.OnShipSunk(shipSunk);
+
             if (activePlayerSunkAllShips()) {
                 activePlayerWon();
             }

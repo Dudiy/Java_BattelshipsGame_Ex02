@@ -65,7 +65,7 @@ public class BoardCell implements Serializable, IShipListener {
     }
 
     @Override
-    public void whenShipSunk() {
+    public void whenShipSunk(AbstractShip ship) {
         // TODO change the image
         System.out.println(position.getCol());
         System.out.println(position.getRowIndexInMemory());

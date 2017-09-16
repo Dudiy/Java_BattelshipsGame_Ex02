@@ -174,12 +174,6 @@ public class JavaFXManager extends Application {
             }
 
             setInitialValuesForPlayer();
-            // TODO set mines
-            // give each player 2 mines
-//            player1.getMyBoard().setMinesAvailable(2);
-//            player2.getMyBoard().setMinesAvailable(2);
-//            TODO show game state
-//            showGameState();
             gameStateProperty.setValue(activeGame.getGameState());
             activePlayerProperty.setValue(activeGame.getActivePlayer());
             hidePauseMenu();

@@ -246,4 +246,8 @@ public class Board implements Cloneable, Serializable {
     public eAttackResult attack(BoardCoordinates coordinatesToAttack) throws CellNotOnBoardException {
         return getBoardCellAtCoordinates(coordinatesToAttack).attack();
     }
+
+    public void setShipListeners(IShipListener listener){
+        shipsOnBoard.forEach(abstractShip -> abstractShip.addShipListener(listener));
+    }
 }

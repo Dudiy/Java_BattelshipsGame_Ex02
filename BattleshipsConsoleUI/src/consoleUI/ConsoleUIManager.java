@@ -292,7 +292,7 @@ public class ConsoleUIManager {
                 userSelection = BoardCoordinates.Parse(scanner.nextLine());
                 isValidSelection = true;
             } catch (Exception e) {
-                System.out.println("Invalid input please try again (Format = \"A1\")");
+                System.out.println("Invalid input please try again. error: " + e.getMessage());
             }
         }
 

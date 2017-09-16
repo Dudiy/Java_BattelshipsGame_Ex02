@@ -39,9 +39,9 @@
                         <Region HBox.hgrow="ALWAYS" />
                         <ScrollPane>
                            <content>
-                              <VBox fx:id="vBoxMyBoard">
+                              <VBox fx:id="vBoxMyBoard" prefWidth="400.0">
                                  <children>
-                                    <HBox>
+                                    <HBox prefWidth="400.0">
                                        <children>
                                           <Region HBox.hgrow="ALWAYS" />
                                           <Label alignment="CENTER" text="My Board" textAlignment="CENTER">
@@ -53,7 +53,7 @@
                                        </children>
                                     </HBox>
                                     <Region prefHeight="54.0" prefWidth="281.0" />
-                                    <TilePane fx:id="tilePaneMyBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
+                                    <TilePane fx:id="tilePaneMyBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="386.0" prefHeight="400.0" prefWidth="386.0" />
                                  </children>
                               </VBox>
                            </content>
@@ -68,8 +68,8 @@
                   <children>
                      <Region HBox.hgrow="ALWAYS" />
                        <ScrollPane>
-                           <VBox fx:id="vBoxOpponentsBoard">
-                           <HBox>
+                           <VBox fx:id="vBoxOpponentsBoard" minWidth="400.0" prefWidth="400.0">
+                           <HBox minWidth="400.0" prefWidth="400.0">
                               <children>
                                  <Region HBox.hgrow="ALWAYS" />
                                      <Label alignment="TOP_CENTER" text="Opponent's Board" textAlignment="CENTER">

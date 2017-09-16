@@ -1,7 +1,10 @@
 package javaFXUI.view;
 
+import gameLogic.game.Game;
 import gameLogic.game.GameSettings;
 import gameLogic.game.eGameState;
+import gameLogic.game.gameObjects.ship.AbstractShip;
+import gameLogic.game.gameObjects.ship.IShipListener;
 import gameLogic.users.Player;
 import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
@@ -19,7 +22,7 @@ import javafx.scene.image.ImageView;
 import java.time.Duration;
 import java.util.Map;
 
-public class LayoutCurrentTurnInfoController {
+public class LayoutCurrentTurnInfoController implements IShipListener {
     @FXML
     private Label labelCurrentPlayer;
 
@@ -60,9 +63,9 @@ public class LayoutCurrentTurnInfoController {
     private final Image multipleMinesAvailable = new Image(Constants.MULTIPLE_MINES_IMAGE_URL);
 
     @FXML
-    private void initialize(){
+    private void initialize() {
         columnShipType.setCellValueFactory(
-                new PropertyValueFactory<ShipsStateDataModel,String>("shipType")
+                new PropertyValueFactory<ShipsStateDataModel, String>("shipType")
         );
         columnInitialShips.setCellValueFactory(
                 new PropertyValueFactory<ShipsStateDataModel, Integer>("initialAmount")
@@ -81,8 +84,8 @@ public class LayoutCurrentTurnInfoController {
     private void setShipTypeValues() {
         GameSettings gameSettings = javaFXManager.getActiveGameProperty().getValue().getGameSettings();
         Map<String, Integer> shipTypes = gameSettings.getShipAmountsOnBoard();
-        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()){
-            shipsState.add(new ShipsStateDataModel(entry.getKey(),entry.getValue()));
+        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
+            shipsState.add(new ShipsStateDataModel(entry.getKey(), entry.getValue()));
         }
     }
 
@@ -113,6 +116,14 @@ public class LayoutCurrentTurnInfoController {
     private void gameStarted() {
         setShipTypeValues();
         TableShipsState.setItems(shipsState);
+        listenToAllShips();
+    }
+
+    private void listenToAllShips() {
+        Game activeGame = javaFXManager.getActiveGameProperty().getValue();
+        for (Player player: activeGame.getPlayers()){
+            player.setShipListeners(this);
+        }
     }
 
     private void updateStatistics() {
@@ -129,13 +140,11 @@ public class LayoutCurrentTurnInfoController {
     }
 
     private void setMinesAvailableImageView(Integer minesAvailable) {
-        if (minesAvailable <= 0){
+        if (minesAvailable <= 0) {
             imageViewMinesAvailable.setImage(noMinesAvailableImage);
-        }
-        else if (minesAvailable == 1){
+        } else if (minesAvailable == 1) {
             imageViewMinesAvailable.setImage(oneMineAvailableImage);
-        }
-        else{
+        } else {
             imageViewMinesAvailable.setImage(multipleMinesAvailable);
         }
     }
@@ -144,5 +153,15 @@ public class LayoutCurrentTurnInfoController {
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
         updateStatistics();
+    }
+
+    @Override
+    public void whenShipSunk(AbstractShip ship) {
+        for (ShipsStateDataModel shipState : shipsState) {
+            if (shipState.getShipType() == ship.getID()) {
+                // TODO this update doesnt effect the table view on the right pane?!
+                shipState.setShipsRemaining(shipState.getShipsRemaining() - 1);
+            }
+        }
     }
 }

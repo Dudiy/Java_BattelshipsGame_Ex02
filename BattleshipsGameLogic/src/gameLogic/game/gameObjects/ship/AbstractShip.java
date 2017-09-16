@@ -8,9 +8,8 @@ import gameLogic.game.eAttackResult;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractShip extends GameObject  {
+public abstract class AbstractShip extends GameObject {
     private ShipType shipType;
-//    private int length;
     protected int hitsRemainingUntilSunk;
     eShipDirection direction;
     private List<IShipListener> shipListeners = new ArrayList<>();
@@ -39,6 +38,10 @@ public abstract class AbstractShip extends GameObject  {
         return shipType.getScore();
     }
 
+    public String getID() {
+        return shipType.getId();
+    }
+
     public abstract eShipDirection getDirection();
 
     public int getHitsRemainingUntilSunk() {
@@ -53,7 +56,7 @@ public abstract class AbstractShip extends GameObject  {
         hitsRemainingUntilSunk--;
         if (hitsRemainingUntilSunk == 0) {
             attackResult = eAttackResult.HIT_AND_SUNK_SHIP;
-            shipSunked();
+            shipSunk();
         } else if (hitsRemainingUntilSunk > 0) {
             attackResult = eAttackResult.HIT_SHIP;
         } else {
@@ -62,13 +65,14 @@ public abstract class AbstractShip extends GameObject  {
 
         return attackResult;
     }
+
     public void addShipListener(IShipListener shipListener) {
         shipListeners.add(shipListener);
     }
 
-    public void shipSunked(){
-        for(IShipListener shipListener : shipListeners){
-            shipListener.whenShipSunk();
+    public void shipSunk() {
+        for (IShipListener shipListener : shipListeners) {
+            shipListener.whenShipSunk(this);
         }
     }
 }
