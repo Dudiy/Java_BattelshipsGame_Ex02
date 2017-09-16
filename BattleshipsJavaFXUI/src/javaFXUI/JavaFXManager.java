@@ -173,6 +173,7 @@ public class JavaFXManager extends Application {
                 activeGameProperty.getValue().swapPlayers();
             }
 
+            setInitialValuesForPlayer();
             // TODO set mines
             // give each player 2 mines
             player1.getMyBoard().setMinesAvailable(2);
@@ -190,6 +191,16 @@ public class JavaFXManager extends Application {
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while starting game. ");
             errorWhileStartingGame();
+        }
+    }
+
+    private void setInitialValuesForPlayer() {
+        Game activeGame = activeGameProperty.getValue();
+        Player[] players = activeGameProperty.getValue().getPlayers();
+
+        for (Player player : players){
+            player.getMyBoard().setMinesAvailable(activeGame.getGameSettings().getMinesPerPlayer());
+            player.setActiveShipsOnBoard(activeGame.getGameSettings().getShipAmountsOnBoard());
         }
     }
 

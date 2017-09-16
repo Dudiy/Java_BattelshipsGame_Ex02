@@ -3,6 +3,7 @@ package javaFXUI.view;
 import gameLogic.game.GameSettings;
 import gameLogic.game.eGameState;
 import gameLogic.users.Player;
+import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.ShipsStateDataModel;
 import javafx.collections.FXCollections;
@@ -12,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.time.Duration;
 import java.util.Map;
@@ -19,6 +22,12 @@ import java.util.Map;
 public class LayoutCurrentTurnInfoController {
     @FXML
     private Label labelCurrentPlayer;
+
+    @FXML
+    private ImageView imageViewMinesAvailable;
+
+    @FXML
+    private Label labelMinesAvailable;
 
     @FXML
     private TableView TableShipsState;
@@ -46,6 +55,9 @@ public class LayoutCurrentTurnInfoController {
 
     private JavaFXManager javaFXManager;
     private final ObservableList<ShipsStateDataModel> shipsState = FXCollections.observableArrayList();
+    private final Image noMinesAvailableImage = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
+    private final Image oneMineAvailableImage = new Image(Constants.MINE_IMAGE_URL);
+    private final Image multipleMinesAvailable = new Image(Constants.MULTIPLE_MINES_IMAGE_URL);
 
     @FXML
     private void initialize(){
@@ -89,14 +101,18 @@ public class LayoutCurrentTurnInfoController {
             case INITIALIZED:
                 break;
             case STARTED:
-                setShipTypeValues();
-                TableShipsState.setItems(shipsState);
+                gameStarted();
                 break;
             case PLAYER_WON:
                 break;
             case PLAYER_QUIT:
                 break;
         }
+    }
+
+    private void gameStarted() {
+        setShipTypeValues();
+        TableShipsState.setItems(shipsState);
     }
 
     private void updateStatistics() {
@@ -107,6 +123,21 @@ public class LayoutCurrentTurnInfoController {
         labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
         labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
         labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
+        Integer minesAvailable = (activePlayer.getMyBoard().getMinesAvailable());
+        labelMinesAvailable.setText(minesAvailable.toString());
+        setMinesAvailableImageView(minesAvailable);
+    }
+
+    private void setMinesAvailableImageView(Integer minesAvailable) {
+        if (minesAvailable <= 0){
+            imageViewMinesAvailable.setImage(noMinesAvailableImage);
+        }
+        else if (minesAvailable == 1){
+            imageViewMinesAvailable.setImage(oneMineAvailableImage);
+        }
+        else{
+            imageViewMinesAvailable.setImage(multipleMinesAvailable);
+        }
     }
 
 

@@ -19,7 +19,7 @@ public class GameSettings implements Serializable {
     private static final int MIN_BOARD_SIZE = 5;
     private static final int MAX_BOARD_SIZE = 20;
     private int boardSize;
-    private int minesPerPlayer;
+    private int minesPerPlayer = 0;
     private eGameType gameType;
     private transient BattleShipGame gameLoadedFromXml;
     private transient HashMap<String, ShipType> shipTypesOnBoard = new HashMap<>();
