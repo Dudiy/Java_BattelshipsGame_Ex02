@@ -4,8 +4,8 @@ import gameLogic.game.board.BoardCoordinates;
 
 public class RegularShip extends AbstractShip {
 
-    public RegularShip(int length, BoardCoordinates position, eShipDirection direction, int score) {
-        super(length, position, direction, score);
+    public RegularShip(ShipType shipType, BoardCoordinates position, eShipDirection direction) {
+        super(shipType, position, direction);
     }
 
     // ======================================= setters =======================================

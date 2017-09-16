@@ -200,7 +200,7 @@ public class ConsoleUIManager {
         for (Player player : players){
             // TODO change to parameters
             player.getMyBoard().setMinesAvailable(2);
-            player.setActiveShipsOnBoard(activeGame.getGameSettings().getShipTypesOnBoard());
+            player.setActiveShipsOnBoard(activeGame.getGameSettings().getShipAmountsOnBoard());
         }
     }
 

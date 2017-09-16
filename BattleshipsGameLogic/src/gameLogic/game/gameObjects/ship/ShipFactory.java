@@ -21,12 +21,12 @@ public class ShipFactory implements Serializable {
         switch (shipCategory) {
             case "REGULAR": {
                 eShipDirection direction = eShipDirection.valueOf(ship.getDirection());
-                shipObject = new RegularShip(shipType.getLength(), coordinates, direction, shipType.getScore());
+                shipObject = new RegularShip(shipType, coordinates, direction);
                 break;
             }
             case "L_SHAPE": {
                 eShipDirection direction = eShipDirection.valueOf((ship.getDirection()));
-                shipObject = new LShapeShip(shipType.getLength(), coordinates, direction, shipType.getScore());
+                shipObject = new LShapeShip(shipType, coordinates, direction);
                 break;
             }
             default:
