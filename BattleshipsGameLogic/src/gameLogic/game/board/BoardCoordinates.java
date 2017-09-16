@@ -3,7 +3,7 @@ package gameLogic.game.board;
 import java.awt.*;
 import java.io.Serializable;
 
-public class BoardCoordinates implements Serializable {
+public class BoardCoordinates implements Serializable, Cloneable {
     private char col;
     private int row;
 
@@ -88,6 +88,10 @@ public class BoardCoordinates implements Serializable {
     // updates the value of col, does not check if the value is on the board!
     public void offsetCol(int offset) {
         col += offset;
+    }
+
+    public BoardCoordinates clone(){
+        return new BoardCoordinates(this);
     }
 
     @Override

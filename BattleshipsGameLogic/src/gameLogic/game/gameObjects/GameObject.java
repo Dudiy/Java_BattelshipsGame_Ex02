@@ -21,7 +21,7 @@ public abstract class GameObject implements Serializable {
 
     // ======================================= getters =======================================
     public BoardCoordinates getPosition() {
-        return position;
+        return position.clone();
     }
 
     public boolean isVisible() {

@@ -6,6 +6,7 @@ public class RegularShip extends AbstractShip {
 
     public RegularShip(ShipType shipType, BoardCoordinates position, eShipDirection direction) {
         super(shipType, position, direction);
+        this.hitsRemainingUntilSunk = shipType.getLength();
     }
 
     // ======================================= setters =======================================
