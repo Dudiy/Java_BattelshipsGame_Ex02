@@ -1,8 +1,10 @@
 package gameLogic.game.board;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.io.Serializable;
 import java.util.LinkedList;
+
 import gameLogic.exceptions.*;
 import gameLogic.game.gameObjects.*;
 import gameLogic.game.gameObjects.ship.*;
@@ -20,11 +22,11 @@ public class Board implements Cloneable, Serializable {
     }
 
     private void initBoard() {
-        board = new BoardCell[BOARD_SIZE][BOARD_SIZE];
+        board = new BoardCell[ BOARD_SIZE ][ BOARD_SIZE ];
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 //ctor of new BoardCell points to a new "Water" object by default
-                board[row][col] = new BoardCell((char) ('A' + col), row + 1);
+                board[ row ][ col ] = new BoardCell((char) ('A' + col), row + 1);
             }
         }
     }
@@ -92,7 +94,7 @@ public class Board implements Cloneable, Serializable {
         if (coordinatesAreOnBoard(coordinates)) {
             int col = coordinates.getColIndexInMemory();
             int row = coordinates.getRowIndexInMemory();
-            res = board[row][col];
+            res = board[ row ][ col ];
         } else {
             throw new CellNotOnBoardException();
         }
@@ -173,11 +175,11 @@ public class Board implements Cloneable, Serializable {
         }
     }
 
-    public boolean allShipsWereSunk(){
+    public boolean allShipsWereSunk() {
         boolean allShipsWereSunk = true;
 
-        for (AbstractShip ship : shipsOnBoard){
-            if (ship.getHitsRemainingUntilSunk() != 0){
+        for (AbstractShip ship : shipsOnBoard) {
+            if (ship.getHitsRemainingUntilSunk() != 0) {
                 allShipsWereSunk = false;
                 break;
             }
@@ -187,9 +189,48 @@ public class Board implements Cloneable, Serializable {
     }
 
     // add a new LShapeShip to this board
-    private void addLShapeShipToBoard(LShapeShip ship) {
-        //TODO implement on EX02
-        throw new NotImplementedException();
+    private void addLShapeShipToBoard(LShapeShip ship) throws InvalidGameObjectPlacementException {
+        BoardCoordinates currCoordinates = ship.getPosition();
+        eShipDirection shipDirection = ship.getDirection();
+        Integer offsetRow = null;
+        Integer offsetCol = null;
+
+        getLShipDirectionOffset(shipDirection, offsetRow, offsetCol);
+        // set the values of row
+        for (int i = 0; i < ship.getLength() - 1; i++) {
+            currCoordinates.OffsetRow(offsetRow);
+            setCellValue(currCoordinates, ship);
+        }
+        // return to the meeting point of the row and column
+        currCoordinates = ship.getPosition();
+        // set the values of col
+        for (int i = 0; i < ship.getLength() - 2; i++) {
+            currCoordinates.offsetCol(offsetCol);
+            setCellValue(currCoordinates, ship);
+        }
+    }
+
+    private void getLShipDirectionOffset(eShipDirection shipDirection, Integer offsetRow, Integer offsetCol) {
+        switch (shipDirection) {
+            case RIGHT_DOWN:
+                offsetRow = -1;
+                offsetCol = 1;
+                break;
+            case RIGHT_UP:
+                offsetRow = -1;
+                offsetCol = -1;
+                break;
+            case UP_RIGHT:
+                offsetRow = 1;
+                offsetCol = 1;
+                break;
+            case DOWN_RIGHT:
+                offsetRow = 1;
+                offsetCol = -1;
+                break;
+            default:
+                throw new IllegalArgumentException("The given ship has an unknown direction value");
+        }
     }
 
     // check if the given coordinates are on this board
