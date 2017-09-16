@@ -48,7 +48,7 @@ public class MainWindowController {
     @FXML
     private MenuItem buttonEndCurrentGame;
     @FXML
-    public VBox vboxMines;
+    public TilePane tilePaneMines;
     @FXML
     private MenuItem buttonExit;
 
@@ -123,7 +123,7 @@ public class MainWindowController {
         // TODO use manger prefix
 //        ImageView mineImage = new ImageView("/resources/images/Bomb.png");
         int minesToAdd=activePlayer.getMyBoard().getMinesAvailable();
-        vboxMines.getChildren().removeAll();
+        tilePaneMines.getChildren().removeAll();
         for(int i=0;i<minesToAdd;i++){
             final ImageView mineImage = new ImageView("/resources/images/Bomb.png");
 
@@ -140,7 +140,7 @@ public class MainWindowController {
                 }
             });
 //            vboxMines.getChildren().add(new ImageView("/resources/images/Bomb.png"));
-            vboxMines.getChildren().add(mineImage);
+            tilePaneMines.getChildren().add(mineImage);
         }
     }
 
@@ -188,7 +188,7 @@ public class MainWindowController {
         System.out.println("onDragDetected");
 
                 /* allow any transfer mode */
-        Dragboard db = vboxMines.startDragAndDrop(TransferMode.ANY);
+        Dragboard db = tilePaneMines.startDragAndDrop(TransferMode.ANY);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("!!");
 
