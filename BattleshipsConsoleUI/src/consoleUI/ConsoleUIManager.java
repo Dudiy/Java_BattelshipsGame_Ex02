@@ -176,6 +176,7 @@ public class ConsoleUIManager {
             if (computerPlayerIndex == 1) {
                 activeGame.swapPlayers();
             }
+            setInitialValuesForPlayer();
             // give each player 2 mines
             player1.getMyBoard().setMinesAvailable(2);
             player2.getMyBoard().setMinesAvailable(2);
@@ -190,6 +191,16 @@ public class ConsoleUIManager {
         } catch (Exception e) {
             System.out.println("Error while starting game. " + e.getMessage());
             errorWhileStartingGame();
+        }
+    }
+
+    private void setInitialValuesForPlayer() {
+        Player[] players = activeGame.getPlayers();
+
+        for (Player player : players){
+            // TODO change to parameters
+            player.getMyBoard().setMinesAvailable(2);
+            player.setActiveShipsOnBoard(activeGame.getGameSettings().getShipTypesOnBoard());
         }
     }
 

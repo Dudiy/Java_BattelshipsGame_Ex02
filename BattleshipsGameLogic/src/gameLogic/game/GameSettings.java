@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import gameLogic.game.gameObjects.ship.ShipType;
 import javafx.fxml.LoadException;
 import jaxb.generated.BattleShipGame;
 
@@ -21,8 +22,9 @@ public class GameSettings implements Serializable {
     private int minesPerPlayer;
     private eGameType gameType;
     private transient BattleShipGame gameLoadedFromXml;
-    private transient Map<String, BattleShipGame.ShipTypes.ShipType> shipTypes = new HashMap<>();
-    private transient Map<BattleShipGame.ShipTypes.ShipType, Integer> numShipsPerBoard = new HashMap<>();
+    private transient HashMap<String, ShipType> shipTypesOnBoard = new HashMap<>();
+    private transient HashMap<String, Integer> shipAmountsOnBoard = new HashMap<>();
+//    private transient Map<BattleShipGame.ShipTypes.ShipType, Integer> numShipsPerBoard = new HashMap<>();
 
     // private ctor, GameSettings can only be created by calling LoadGameFile
     private GameSettings() {
@@ -49,25 +51,41 @@ public class GameSettings implements Serializable {
         return gameLoadedFromXml;
     }
 
-    public Map<String, BattleShipGame.ShipTypes.ShipType> getShipTypes() {
-        return shipTypes;
-    }
+    public HashMap<String, ShipType> getShipTypesOnBoard() {
+        HashMap<String, ShipType> clone = new HashMap<>();
 
-    public Map<String, Integer> getShipTypesAmount() {
-        Map<String, Integer> shipTypesAmount = new HashMap<>();
-
-        for (Map.Entry<String, BattleShipGame.ShipTypes.ShipType> shipType : shipTypes.entrySet()) {
-            shipTypesAmount.put(shipType.getKey(), shipType.getValue().getAmount());
+        for (Map.Entry<String, ShipType> entry : shipTypesOnBoard.entrySet()) {
+            clone.put(entry.getKey(), entry.getValue());
         }
 
-        return shipTypesAmount;
+        return clone;
     }
+
+    public HashMap<String, Integer> getShipAmountsOnBoard() {
+        HashMap<String, Integer> clone = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : shipAmountsOnBoard.entrySet()) {
+            clone.put(entry.getKey(), entry.getValue());
+        }
+
+        return clone;
+    }
+
+    //    public Map<String, Integer> getShipTypesAmount() {
+//        Map<String, Integer> shipTypesAmount = new HashMap<>();
+//
+//        for (Map.Entry<ShipType, Integer> shipType : shipTypesOnBoard.entrySet()) {
+//            shipTypesAmount.put(shipType.getKey(), shipType.getValue().getAmount());
+//        }
+//
+//        return shipTypesAmount;
+//    }
 
     public int getMinimalShipSize() {
         //there must be at least a ship that is longer than 1
-        int minimalSize = shipTypes.values().iterator().next().getLength();
+        int minimalSize = shipTypesOnBoard.values().iterator().next().getLength();
 
-        for (BattleShipGame.ShipTypes.ShipType shipType : shipTypes.values()) {
+        for (ShipType shipType : shipTypesOnBoard.values()) {
             if (shipType.getLength() < minimalSize) {
                 minimalSize = shipType.getLength();
             }
@@ -86,6 +104,9 @@ public class GameSettings implements Serializable {
             InputStream fileInputStream = new FileInputStream(gameFilePath);
             gameSettings.gameLoadedFromXml = deserializeFrom(fileInputStream);
             validateGameSettings(gameSettings);
+            if (gameSettings.gameLoadedFromXml.getMine() != null) {
+                gameSettings.minesPerPlayer = gameSettings.gameLoadedFromXml.getMine().getAmount();
+            }
         } catch (JAXBException e) {
             throw new LoadException("Error loading xml file - JAXB error");
         } catch (Exception e) {
@@ -97,7 +118,7 @@ public class GameSettings implements Serializable {
 
     private static void validateGameSettings(GameSettings gameSettings) throws Exception {
         validateBoardSize(gameSettings);
-        setShipType(gameSettings);
+        setShipTypes(gameSettings);
     }
 
     private static void validateBoardSize(GameSettings gameSettings) throws Exception {
@@ -108,7 +129,7 @@ public class GameSettings implements Serializable {
         }
     }
 
-    private static void setShipType(GameSettings gameSettings) throws Exception {
+    private static void setShipTypes(GameSettings gameSettings) throws Exception {
         BattleShipGame objectImported = gameSettings.gameLoadedFromXml;
         List<BattleShipGame.ShipTypes.ShipType> shipTypeList = objectImported.getShipTypes().getShipType();
         if (shipTypeList.isEmpty()) {
@@ -121,11 +142,12 @@ public class GameSettings implements Serializable {
             if (shipType.getScore() <= 0) {
                 throw new Exception("ship type \"" + shipType.getId() + "\" has a negative score");
             }
-            if (gameSettings.shipTypes.containsKey(shipType.getId())) {
+            if (gameSettings.shipTypesOnBoard.containsKey(shipType.getId())) {
                 throw new Exception("ship type with the ID \"" + shipType.getId() + "\" exists more than once");
             }
-            gameSettings.shipTypes.put(shipType.getId(), shipType);
-            gameSettings.numShipsPerBoard.put(shipType, shipType.getAmount());
+            gameSettings.shipTypesOnBoard.put(shipType.getId(), new ShipType(shipType));
+            gameSettings.shipAmountsOnBoard.put(shipType.getId(), shipType.getAmount());
+//            gameSettings.numShipsPerBoard.put(shipType, shipType.getAmount());
         }
     }
 

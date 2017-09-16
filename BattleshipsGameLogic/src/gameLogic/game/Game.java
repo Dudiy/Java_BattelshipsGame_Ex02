@@ -23,6 +23,7 @@ public class Game implements Serializable {
     private Instant gameStartTime;
     private ShipFactory shipFactory;
     private eGameState gameState = eGameState.INVALID;
+
     private GameSettings gameSettings;
 
     public Game(GameSettings gameSettings) {
@@ -33,21 +34,21 @@ public class Game implements Serializable {
     }
 
     // ======================================= setters =======================================
+
     public void setGameState(eGameState gameState) {
         this.gameState = gameState;
     }
-
     public void setGameStartTime(Instant startTime) {
         this.gameStartTime = startTime;
     }
+
     // ======================================= getters =======================================
+    public GameSettings getGameSettings() {
+        return gameSettings;
+    }
 
     public int getBoardSize(){
         return gameSettings.getBoardSize();
-    }
-
-    public Set<String> getShipTypesOnBoard(){
-        return gameSettings.getShipTypes().keySet();
     }
 
     public int getID() {
@@ -117,15 +118,15 @@ public class Game implements Serializable {
 
     private Board addAllShipsToBoard(Player currentPlayer, BattleShipGame.Boards.Board board) throws Exception {
         Board currentBoard = new Board(gameSettings.getBoardSize());
-        Map<String, Integer> shipTypesAmount = gameSettings.getShipTypesAmount();
+        Map<String, Integer> shipAmountsOnBoard = gameSettings.getShipAmountsOnBoard();
         currentBoard.setMinesAvailable(gameSettings.getMinesPerPlayer());
 
         for (BattleShipGame.Boards.Board.Ship ship : board.getShip()) {
             try {
                 AbstractShip shipObject = shipFactory.createShip(ship);
                 currentBoard.addShipToBoard(shipObject);
-                int currShipTypeAmount = shipTypesAmount.get(ship.getShipTypeId()) - 1;
-                shipTypesAmount.put(ship.getShipTypeId(), currShipTypeAmount);
+                int currShipTypeAmount = shipAmountsOnBoard.get(ship.getShipTypeId()) - 1;
+                shipAmountsOnBoard.put(ship.getShipTypeId(), currShipTypeAmount);
             } catch (InvalidGameObjectPlacementException e) {
                 throw e;
             } catch (Exception e) {
@@ -134,7 +135,7 @@ public class Game implements Serializable {
             }
         }
 
-        if (!allRequiredShipsAdded(shipTypesAmount)) {
+        if (!allRequiredShipsAdded(shipAmountsOnBoard)) {
             throw new InputMismatchException("Error: amount of ships added to " + currentPlayer.getName() + "'s board is invalid.");
         }
 

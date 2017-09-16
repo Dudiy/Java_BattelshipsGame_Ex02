@@ -2,6 +2,8 @@ package gameLogic.users;
 
 import java.time.Duration;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
@@ -11,21 +13,21 @@ import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.eAttackResult;
+import gameLogic.game.gameObjects.ship.ShipType;
 
 
 public class Player implements User, Serializable {
     private final String ID;
     private String name;
     private int score = 0;
-
     private int timesHit = 0;
-
     private int timesMissed = 0;
     // duration of a turn is from the time the user selects make move until he enters the cell to attack
     private Duration totalTurnsDuration = Duration.ZERO;
     private int numTurnsPlayed = 0;
     protected Board myBoard;
     protected Board opponentBoard;
+    private HashMap<ShipType, Integer> activeShipsOnBoard = new HashMap<>();
 
     public Player(String playerID, String name) {
         this.ID = playerID;
@@ -33,6 +35,11 @@ public class Player implements User, Serializable {
     }
 
     // ======================================= setters =======================================
+    public void setActiveShipsOnBoard(HashMap<ShipType, Integer> activeShipsOnBoard) {
+        for (Map.Entry<ShipType, Integer> entry : activeShipsOnBoard.entrySet()) {
+            activeShipsOnBoard.put(entry.getKey(),entry.getValue());
+        }
+    }
 
     public void setTimesHit(int timesHit) {
         this.timesHit = timesHit;

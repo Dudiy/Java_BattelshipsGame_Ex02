@@ -6,6 +6,7 @@ import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.eAttackResult;
 
 public abstract class AbstractShip extends GameObject {
+    private ShipType shipType;
     private int length;
     private int hitsRemainingUntilSunk;
     eShipDirection direction;
