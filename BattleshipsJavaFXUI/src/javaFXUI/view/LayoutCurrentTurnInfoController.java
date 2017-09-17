@@ -27,11 +27,12 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LayoutCurrentTurnInfoController implements IShipListener {
+public class LayoutCurrentTurnInfoController {
     @FXML
     private Label labelCurrentPlayer;
     @FXML
@@ -116,15 +117,15 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
 
     private void gameStarted() {
         setShipTypeValues();
-        listenToAllShips();
+//        listenToAllShips();
     }
 
-    private void listenToAllShips() {
-        Game activeGame = javaFXManager.getActiveGame().getValue();
-        for (Player player : activeGame.getPlayers()) {
-            player.setShipListeners(this);
-        }
-    }
+//    private void listenToAllShips() {
+//        Game activeGame = javaFXManager.getActiveGame().getValue();
+//        for (Player player : activeGame.getPlayers()) {
+//            player.setShipListeners(this);
+//        }
+//    }
 
     private void updateStatistics() {
         Player activePlayer = javaFXManager.activePlayerProperty().getValue();
@@ -153,20 +154,20 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         imageViewMinesAvailable.setOnDragDetected((event) -> {
             int boardSize = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getBoardSize();
             int cellSize = BoardAdapter.getCellSize(boardSize);
-            ImageView draggedImage  = new ImageView(new Image(Constants.MINE_IMAGE_URL, cellSize, cellSize,true,true));
+            ImageView draggedImage = new ImageView(new Image(Constants.MINE_IMAGE_URL, cellSize, cellSize, true, true));
             WritableImage snapshot = draggedImage.snapshot(new SnapshotParameters(), null);
             Dragboard db = imageViewMinesAvailable.startDragAndDrop(TransferMode.ANY);
 
             ClipboardContent content = new ClipboardContent();
             content.putImage(draggedImage.getImage());
             db.setContent(content);
-            db.setDragView(snapshot,25,25);
+            db.setDragView(snapshot, 25, 25);
 
             event.consume();
         });
 
         imageViewMinesAvailable.setOnDragDone((event) -> {
-            Board myBoard =javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
+            Board myBoard = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
             Integer minesAvailable = myBoard.getMinesAvailable();
             if (event.getTransferMode() == TransferMode.MOVE) {
                 minesAvailable--;
