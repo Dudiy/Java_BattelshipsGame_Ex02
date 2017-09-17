@@ -19,7 +19,7 @@ public class BoardCell implements Serializable, IShipListener {
     }
 
     // ======================================= setters =======================================
-    public void SetCellValue(GameObject cellValue) throws InvalidGameObjectPlacementException {
+    public void setCellValue(GameObject cellValue) throws InvalidGameObjectPlacementException {
         if (this.cellValue == null || this.cellValue instanceof Water) {
             this.cellValue = cellValue;
             if(cellValue instanceof AbstractShip){
@@ -34,7 +34,7 @@ public class BoardCell implements Serializable, IShipListener {
 
     // ======================================= getters =======================================
     public BoardCoordinates getPosition() {
-        return position;
+        return position.clone();
     }
 
     public GameObject getCellValue() {

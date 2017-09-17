@@ -1,6 +1,7 @@
 package javaFXUI.view;
 
 import gameLogic.game.Game;
+import gameLogic.game.board.Board;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.game.gameObjects.ship.AbstractShip;
@@ -8,16 +9,23 @@ import gameLogic.game.gameObjects.ship.IShipListener;
 import gameLogic.users.Player;
 import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
+import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ShipsStateDataModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.TilePane;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -118,10 +126,13 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
         labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
         labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
-        Integer minesAvailable = (activePlayer.getMyBoard().getMinesAvailable());
-        labelMinesAvailable.setText(minesAvailable.toString());
-        setMinesAvailableImageView(minesAvailable);
+        initMinesImage();
+    }
 
+    private void initMinesImage() {
+        Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
+        setMinesAvailableImageView(minesAvailable);
+        setDragAndDropMine();
     }
 
     private void setMinesAvailableImageView(Integer minesAvailable) {
@@ -132,6 +143,39 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         } else {
             imageViewMinesAvailable.setImage(multipleMinesAvailable);
         }
+        labelMinesAvailable.setText(minesAvailable.toString());
+    }
+
+    private void setDragAndDropMine() {
+        imageViewMinesAvailable.setOnDragDetected((event) -> {
+            int boardSize = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getBoardSize();
+            int cellSize = BoardAdapter.getCellSize(boardSize);
+            ImageView draggedImage  = new ImageView(new Image(Constants.MINE_IMAGE_URL, cellSize, cellSize,true,true));
+            WritableImage snapshot = draggedImage.snapshot(new SnapshotParameters(), null);
+            Dragboard db = imageViewMinesAvailable.startDragAndDrop(TransferMode.ANY);
+
+            ClipboardContent content = new ClipboardContent();
+            content.putImage(draggedImage.getImage());
+            db.setContent(content);
+            db.setDragView(snapshot,25,25);
+
+            event.consume();
+        });
+
+        imageViewMinesAvailable.setOnDragDone((event) -> {
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                Board activeBoard = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
+                Integer newMinesAmount = activeBoard.getMinesAvailable() - 1;
+                if(newMinesAmount<=1){
+                    setMinesAvailableImageView(newMinesAmount);
+                    activeBoard.setMinesAvailable(newMinesAmount);
+                    labelMinesAvailable.setText(newMinesAmount.toString());
+                }else{
+                    imageViewMinesAvailable.setImage(noMinesAvailableImage);
+                }
+            }
+            event.consume();
+        });
     }
 
     private void playerChanged(Player currentPlayer) {

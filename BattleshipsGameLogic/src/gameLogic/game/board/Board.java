@@ -38,7 +38,7 @@ public class Board implements Cloneable, Serializable {
             if (value instanceof AbstractShip && !allSurroundingCellsClear(cell, value)) {
                 throw new InvalidGameObjectPlacementException(value.getClass().getSimpleName(), position, "Surrounding cells are not clear.");
             } else {
-                cell.SetCellValue(value);
+                cell.setCellValue(value);
             }
         } catch (CellNotOnBoardException cellNotOnBoardException) {
             throw new InvalidGameObjectPlacementException(value.getClass().getSimpleName(), position, "cannot place object on the cell because the cell is not on the board");
@@ -158,9 +158,6 @@ public class Board implements Cloneable, Serializable {
         BoardCoordinates currCoordinates = ship.getPosition();
         eShipDirection shipDirection = ship.getDirection();
 
-//        // set the value of the first cell
-//        setCellValue(currCoordinates, ship);
-        // set the values of the next size-1 cells
         for (int i = 0; i < ship.getLength(); i++) {
             setCellValue(currCoordinates, ship);
             if (shipDirection == eShipDirection.COLUMN) {
@@ -195,7 +192,7 @@ public class Board implements Cloneable, Serializable {
 
         switch (shipDirection) {
             case RIGHT_DOWN:
-                offsetRow=-1;
+                offsetRow = -1;
                 offsetCol = 1;
                 break;
             case RIGHT_UP:
@@ -247,7 +244,7 @@ public class Board implements Cloneable, Serializable {
         return getBoardCellAtCoordinates(coordinatesToAttack).attack();
     }
 
-    public void setShipListeners(IShipListener listener){
+    public void setShipListeners(IShipListener listener) {
         shipsOnBoard.forEach(abstractShip -> abstractShip.addShipListener(listener));
     }
 }

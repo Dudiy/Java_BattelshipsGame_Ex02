@@ -15,7 +15,6 @@ import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import gameLogic.game.gameObjects.ship.IShipListener;
-import gameLogic.game.gameObjects.ship.ShipType;
 
 
 public class Player implements User, Serializable {
@@ -151,7 +150,7 @@ public class Player implements User, Serializable {
         }
 
         if (myBoard.allSurroundingCellsClear(cellToPlantMine, null)) {
-            cellToPlantMine.SetCellValue(new Mine(position));
+            cellToPlantMine.setCellValue(new Mine(position));
             myBoard.minePlanted();
         } else {
             throw new InvalidGameObjectPlacementException(Mine.class.getSimpleName(), position, "All surrounding cells must be clear.");

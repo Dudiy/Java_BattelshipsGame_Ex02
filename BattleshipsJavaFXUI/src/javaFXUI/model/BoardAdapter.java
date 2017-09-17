@@ -6,6 +6,8 @@ import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
 
 public class BoardAdapter {
@@ -13,8 +15,7 @@ public class BoardAdapter {
     private TilePane boardAsTilePane;
     private boolean isVisible;
 
-    private final int BOARD_WIDTH = 400;
-
+    private static final int BOARD_WIDTH = 400;
     // ===================================== Init =====================================
     public BoardAdapter(Board board, boolean isVisible) {
         this.board = board;
@@ -25,7 +26,7 @@ public class BoardAdapter {
     private void generateTilePane() {
         boardAsTilePane = new TilePane();
         int boardSize = board.getBoardSize();
-        int cellSize = BOARD_WIDTH / boardSize;
+        int cellSize = getCellSize(boardSize);
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
                 BoardCoordinates coordinates = BoardCoordinates.Parse(i, j);
@@ -39,6 +40,10 @@ public class BoardAdapter {
                 }
             }
         }
+    }
+
+    public static int getCellSize(int boardSize){
+        return BOARD_WIDTH / boardSize;
     }
 
     private void addCellToTilePane(BoardCell boardCell, int cellSize) throws Exception {

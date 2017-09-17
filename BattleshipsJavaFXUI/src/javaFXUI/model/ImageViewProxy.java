@@ -1,5 +1,6 @@
 package javaFXUI.model;
 
+import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import gameLogic.game.board.BoardCell;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
@@ -9,6 +10,7 @@ import javaFXUI.Constants;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
 
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
@@ -33,8 +35,24 @@ public class ImageViewProxy extends ImageView {
         if (!isVisible) {
             setOnMouseEntered(event -> mouseEnteredCell());
             setOnMouseExited(event -> setEffect(null));
+
         } else {
-            setOnMouseDragEntered(event -> minePlaced());
+            setOnDragOver(event -> {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                event.consume();
+            });
+            setOnDragEntered(event -> {
+                mouseEnteredCell();
+                event.consume();
+            });
+            setOnDragExited(event -> {
+                setEffect(null);
+                event.consume();
+            });
+            setOnDragDropped(event -> {
+                minePlaced();
+                event.consume();
+            });
         }
     }
 
@@ -73,6 +91,11 @@ public class ImageViewProxy extends ImageView {
 
     private void minePlaced() {
         setImage(MINE_IMAGE);
+        try {
+            boardCell.setCellValue(new Mine(boardCell.getPosition()));
+        } catch (InvalidGameObjectPlacementException e) {
+            AlertHandlingUtils.showErrorMessage(e,"Error while put mine");
+        }
     }
 
     public void updateImage(){

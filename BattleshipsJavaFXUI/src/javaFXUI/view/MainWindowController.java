@@ -83,6 +83,15 @@ public class MainWindowController {
         redrawBoards(activeGame.getActivePlayer());
     }
 
+    // ===================================== Getter =====================================
+    public TilePane getTilePaneMyBoard() {
+        return tilePaneMyBoard;
+    }
+
+    public TilePane getTilePaneOpponentsBoard() {
+        return tilePaneOpponentsBoard;
+    }
+
     // ===================================== Other Methods =====================================
     private void gameStateChanged(eGameState newValue) {
         switch (newValue) {
