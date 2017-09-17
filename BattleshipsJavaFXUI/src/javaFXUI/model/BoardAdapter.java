@@ -16,6 +16,7 @@ public class BoardAdapter {
     private boolean isVisible;
 
     private static final int BOARD_WIDTH = 400;
+
     // ===================================== Init =====================================
     public BoardAdapter(Board board, boolean isVisible) {
         this.board = board;

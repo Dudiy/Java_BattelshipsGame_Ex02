@@ -7,9 +7,12 @@ import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import javaFXUI.Constants;
+import javafx.animation.RotateTransition;
+import javafx.geometry.Point3D;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
 
 public class ImageViewProxy extends ImageView {
@@ -35,7 +38,6 @@ public class ImageViewProxy extends ImageView {
         if (!isVisible) {
             setOnMouseEntered(event -> mouseEnteredCell());
             setOnMouseExited(event -> setEffect(null));
-
         } else {
             setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -102,5 +104,17 @@ public class ImageViewProxy extends ImageView {
         setImage(getImageForCell());
     }
 
+    public void updateImageWithTransition() {
+        RotateTransition rotateTransition = new RotateTransition(Duration.millis(2000), this);
+        rotateTransition.setAxis(new Point3D(0, 1, 0));
+        rotateTransition.setByAngle(360);
+        Thread rotateThread = new Thread(() -> rotateTransition.play());
+        rotateTransition.setOnFinished(event -> {
+            updateImage();
+            setMouseTransparent(false);
+        });
+        setMouseTransparent(true);
+        rotateThread.start();
+    }
 
 }

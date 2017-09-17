@@ -158,12 +158,10 @@ public class MainWindowController {
     }
 
     private void makeMove(ImageViewProxy imageView) {
-        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()),
-                ()->imageView.updateImage());
+        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()), ()->imageView.updateImageWithTransition());
     }
 
-
-    public void resetGame(){
+    public void resetGame() {
         myBoardAsTilePane.clear();
         opponentsBoardAsTilePane.clear();
     }
