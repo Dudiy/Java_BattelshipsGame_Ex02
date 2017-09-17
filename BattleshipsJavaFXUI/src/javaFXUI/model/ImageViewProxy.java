@@ -1,6 +1,5 @@
 package javaFXUI.model;
 
-import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import gameLogic.game.board.BoardCell;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
@@ -12,6 +11,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
 
@@ -26,6 +27,7 @@ public class ImageViewProxy extends ImageView {
     private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
     private static final Image MISS_IMAGE = new Image(Constants.MISS_IMAGE_URL);
     private static final Image PROBLEM_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
+    private static DataFormat boardCellAsImageDataFormat = new DataFormat("ImageViewProxy");
 
     public ImageViewProxy(BoardCell boardCell, int cellSize, boolean isVisible) {
         this.boardCell = boardCell;
@@ -52,10 +54,17 @@ public class ImageViewProxy extends ImageView {
                 event.consume();
             });
             setOnDragDropped(event -> {
-                minePlaced();
+                ClipboardContent content = new ClipboardContent();
+                content.put(boardCellAsImageDataFormat, this);
+                event.getDragboard().setContent(content);
+                event.setDropCompleted(true);
                 event.consume();
             });
         }
+    }
+
+    public BoardCell getBoardCell() {
+        return boardCell;
     }
 
     private Image getImageForCell() {
@@ -91,14 +100,14 @@ public class ImageViewProxy extends ImageView {
         setEffect(highlight);
     }
 
-    private void minePlaced() {
-        try {
-            boardCell.setCellValue(new Mine(boardCell.getPosition()));
-            setImage(MINE_IMAGE);
-        } catch (InvalidGameObjectPlacementException e) {
-            AlertHandlingUtils.showErrorMessage(e,"Error while put mine");
-        }
-    }
+//    private void minePlaced() {
+//        try {
+//            boardCell.setCellValue(new Mine(boardCell.getPosition()));
+//            setImage(MINE_IMAGE);
+//        } catch (InvalidGameObjectPlacementException e) {
+//            AlertHandlingUtils.showErrorMessage(e,"Error while put mine");
+//        }
+//    }
 
     public void updateImage(){
         setImage(getImageForCell());

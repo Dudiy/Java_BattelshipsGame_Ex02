@@ -1,6 +1,7 @@
 package javaFXUI.view;
 
 import gameLogic.game.Game;
+import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
@@ -121,6 +122,9 @@ public class MainWindowController {
         }
     }
 
+    public void plantMine(ImageViewProxy boardCellAsImage){
+        boardCellAsImage.updateImage();
+    }
 //    // TODO just a test
 //    private void addMine(Player activePlayer) {
 //        // TODO use manger prefix

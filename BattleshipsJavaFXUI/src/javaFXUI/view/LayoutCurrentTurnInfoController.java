@@ -1,5 +1,6 @@
 package javaFXUI.view;
 
+import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.Game;
 import gameLogic.game.board.Board;
@@ -11,6 +12,7 @@ import gameLogic.users.Player;
 import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.BoardAdapter;
+import javaFXUI.model.ImageViewProxy;
 import javaFXUI.model.ShipsStateDataModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
@@ -170,12 +173,26 @@ public class LayoutCurrentTurnInfoController {
             Board myBoard = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
             Integer minesAvailable = myBoard.getMinesAvailable();
             if (event.getTransferMode() == TransferMode.MOVE) {
-                minesAvailable--;
-                myBoard.setMinesAvailable(minesAvailable);
+                Dragboard dragboard = event.getDragboard();
+                ImageViewProxy selectedBoardCellAsImage =  getSelectedBoardCell(dragboard);
+                javaFXManager.plantMine(selectedBoardCellAsImage);
                 updateMinesAvailableImageView();
             }
             event.consume();
         });
+    }
+
+    private ImageViewProxy getSelectedBoardCell(Dragboard dragboard) {
+        ImageViewProxy boardCellAsImage=null;
+        for(DataFormat dataFormat : dragboard.getContentTypes()){
+            for(String className : dataFormat.getIdentifiers()){
+                if(className == "ImageViewProxy"){
+                    boardCellAsImage = (ImageViewProxy)dragboard.getContent(dataFormat);
+                    break;
+                }
+            }
+        }
+        return boardCellAsImage;
     }
 
     private void playerChanged(Player currentPlayer) {

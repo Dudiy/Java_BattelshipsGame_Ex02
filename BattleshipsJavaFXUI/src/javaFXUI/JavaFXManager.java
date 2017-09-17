@@ -4,13 +4,16 @@ import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
 import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
+import gameLogic.exceptions.NoMinesAvailableException;
 import gameLogic.game.Game;
+import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.users.ComputerPlayer;
 import gameLogic.users.Player;
 import javaFXUI.model.AlertHandlingUtils;
+import javaFXUI.model.ImageViewProxy;
 import javaFXUI.view.LayoutCurrentTurnInfoController;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
@@ -299,6 +302,16 @@ public class JavaFXManager extends Application {
             AlertHandlingUtils.showErrorMessage(e, "Error while reloading the game, Please load the file again or choose another file", e.getMessage());
             activeGame.setGameState(eGameState.INVALID);
             gameState.setValue(activeGame.getGameState());
+        }
+    }
+
+    public void plantMine(ImageViewProxy boardCellAsImage){
+        try {
+            BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
+            activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
+            mainWindowController.plantMine(boardCellAsImage);
+        } catch (Exception e) {
+            AlertHandlingUtils.showErrorMessage(e,"Error while plant mine");
         }
     }
 }
