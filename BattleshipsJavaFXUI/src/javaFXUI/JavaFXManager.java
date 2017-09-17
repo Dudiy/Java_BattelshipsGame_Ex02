@@ -37,9 +37,10 @@ import java.util.List;
 
 public class JavaFXManager extends Application {
     private IGamesLogic gamesManager = new GamesManager();
-    private Property<eGameState> gameStateProperty = new SimpleObjectProperty<>();
-    private Property<Game> activeGameProperty = new SimpleObjectProperty<>();
-    private Property<Player> activePlayerProperty = new SimpleObjectProperty<>();
+    private Property<eGameState> gameState = new SimpleObjectProperty<>();
+    private Property<Game> activeGame = new SimpleObjectProperty<>();
+    private Property<Player> activePlayer = new SimpleObjectProperty<>();
+    private Property<eAttackResult> attackResult = new SimpleObjectProperty<>();
     private IntegerProperty totalMovesCounter = new SimpleIntegerProperty();
     private int computerPlayerIndex = 0;
     private boolean exitGameSelected = false;
@@ -66,7 +67,7 @@ public class JavaFXManager extends Application {
 
     @FXML
     private void initialize() {
-        gameStateProperty.addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+        gameState.addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
     }
 
     private void initMainWindow() {
@@ -124,23 +125,23 @@ public class JavaFXManager extends Application {
     // ===================================== Setters =====================================
 
     // ===================================== Getters =====================================
-    public Property<Game> getActiveGameProperty() {
-        return activeGameProperty;
+    public Property<Game> getActiveGame() {
+        return activeGame;
     }
 
-    public Property<eGameState> getGameStateProperty() {
-        return gameStateProperty;
+    public Property<eGameState> gameStateProperty() {
+        return gameState;
     }
 
-    public Property<Player> getActivePlayerProperty() {
-        return activePlayerProperty;
+    public Property<Player> activePlayerProperty() {
+        return activePlayer;
     }
 
     public int getTotalMovesCounter() {
         return totalMovesCounter.get();
     }
 
-    public IntegerProperty getTotalMovesCounterProperty() {
+    public IntegerProperty totalMovesCounterProperty() {
         return totalMovesCounter;
     }
 
@@ -152,17 +153,25 @@ public class JavaFXManager extends Application {
         return secondaryStage;
     }
 
+    public eAttackResult getAttackResult() {
+        return attackResult.getValue();
+    }
+
+    public Property<eAttackResult> attackResultProperty() {
+        return attackResult;
+    }
+
     // ===================================== Load Game =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
-        activeGameProperty.setValue(loadedGame);
-        gameStateProperty.setValue(loadedGame.getGameState());
+        activeGame.setValue(loadedGame);
+        gameState.setValue(loadedGame.getGameState());
     }
 
     // ===================================== Start Game =====================================
     public void startGame() {
         try {
-            Game activeGame = activeGameProperty.getValue();
+            Game activeGame = this.activeGame.getValue();
             ComputerPlayer computerPlayer = computerPlayerIndex == 0 ? null :
                     new ComputerPlayer("ComputerPlayer2", "Computer Player", activeGame.getSizeOfMinimalShipOnBoard());
             Player player1 = computerPlayerIndex == 1 ? computerPlayer : new Player("P1", "Player 1");
@@ -170,12 +179,12 @@ public class JavaFXManager extends Application {
 
             gamesManager.startGame(activeGame, player1, player2);
             if (computerPlayerIndex == 1) {
-                activeGameProperty.getValue().swapPlayers();
+                this.activeGame.getValue().swapPlayers();
             }
 
             setInitialValuesForPlayer();
-            gameStateProperty.setValue(activeGame.getGameState());
-            activePlayerProperty.setValue(activeGame.getActivePlayer());
+            gameState.setValue(activeGame.getGameState());
+            activePlayer.setValue(activeGame.getActivePlayer());
             hidePauseMenu();
         } catch (InvalidGameObjectPlacementException e) {
             String message = "Cannot place a given " + e.getGameObjectType() + " at position " + e.GetCoordinates() + ".\n" +
@@ -189,8 +198,8 @@ public class JavaFXManager extends Application {
     }
 
     private void setInitialValuesForPlayer() {
-        Game activeGame = activeGameProperty.getValue();
-        Player[] players = activeGameProperty.getValue().getPlayers();
+        Game activeGame = this.activeGame.getValue();
+        Player[] players = this.activeGame.getValue().getPlayers();
 
         for (Player player : players){
             player.getMyBoard().setMinesAvailable(activeGame.getGameSettings().getMinesPerPlayer());
@@ -203,16 +212,16 @@ public class JavaFXManager extends Application {
         eAttackResult attackResult = null;
 
         try {
-            Game activeGame = activeGameProperty.getValue();
-            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
+            Game activeGame = this.activeGame.getValue();
+            this.attackResult.setValue(gamesManager.makeMove(activeGame, cellToAttack));
             updateCellDisplay.run();
-            activePlayerProperty.setValue(activeGame.getActivePlayer());
+            activePlayer.setValue(activeGame.getActivePlayer());
             totalMovesCounter.setValue(activeGame.getMovesCounter());
             if (activeGame.getGameState() == eGameState.PLAYER_WON) {
 //                onGameEnded(eGameState.STARTED,true);
                 endGame(true);
             }
-            gameStateProperty.setValue(activeGame.getGameState());
+            gameState.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while making move");
         }
@@ -222,7 +231,7 @@ public class JavaFXManager extends Application {
 
     // ===================================== End Game =====================================
     public void endGame(boolean moveFinish) {
-        onGameEnded(activeGameProperty.getValue().getGameState(), moveFinish);
+        onGameEnded(activeGame.getValue().getGameState(), moveFinish);
     }
 
     // ===================================== Exit Game =====================================
@@ -239,7 +248,7 @@ public class JavaFXManager extends Application {
     }
 
     private void errorWhileStartingGame() {
-        activeGameProperty.setValue(null);
+        activeGame.setValue(null);
         String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
         AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
     }
@@ -255,7 +264,7 @@ public class JavaFXManager extends Application {
     private void onGameEnded(eGameState stateBeforeEndingGame, boolean moveFinish) {
         if (stateBeforeEndingGame.gameHasStarted()) {
             StringBuilder message = new StringBuilder();
-            Game activeGame = activeGameProperty.getValue();
+            Game activeGame = this.activeGame.getValue();
             if (activeGame.getWinnerPlayer() != null) {
                 message.append("Congratulations!" + activeGame.getWinnerPlayer().getName() + "has won the game!");
             } else {
@@ -271,13 +280,13 @@ public class JavaFXManager extends Application {
         }
 
         // set the game to be as if it was just started
-        resetGame(activeGameProperty.getValue());
+        resetGame(activeGame.getValue());
     }
 
     private void resetGame(Game activeGame) {
         try {
             activeGame.resetGame();
-            gameStateProperty.setValue(activeGame.getGameState());
+            gameState.setValue(activeGame.getGameState());
             resetGameEvent.forEach(Runnable::run);
             if (!secondaryStage.isShowing()) {
                 showPauseMenu();
@@ -285,7 +294,7 @@ public class JavaFXManager extends Application {
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while reloading the game, Please load the file again or choose another file", e.getMessage());
             activeGame.setGameState(eGameState.INVALID);
-            gameStateProperty.setValue(activeGame.getGameState());
+            gameState.setValue(activeGame.getGameState());
         }
     }
 }

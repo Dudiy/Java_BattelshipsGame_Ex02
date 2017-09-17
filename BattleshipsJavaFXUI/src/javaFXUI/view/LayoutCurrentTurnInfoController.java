@@ -1,7 +1,7 @@
 package javaFXUI.view;
 
 import gameLogic.game.Game;
-import gameLogic.game.GameSettings;
+import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import gameLogic.game.gameObjects.ship.IShipListener;
@@ -20,44 +20,34 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 public class LayoutCurrentTurnInfoController implements IShipListener {
     @FXML
     private Label labelCurrentPlayer;
-
     @FXML
     private ImageView imageViewMinesAvailable;
-
     @FXML
     private Label labelMinesAvailable;
-
     @FXML
-    private TableView TableShipsState;
-
+    private TableView<ShipsStateDataModel> TableShipsState;
     @FXML
-    private TableColumn columnShipType;
-
+    private TableColumn<ShipsStateDataModel, String> columnShipType;
     @FXML
-    private TableColumn columnInitialShips;
-
+    private TableColumn<ShipsStateDataModel, Integer> columnInitialShips;
     @FXML
-    private TableColumn columnRemainingShips;
-
+    private TableColumn<ShipsStateDataModel, Integer> columnRemainingShips;
     @FXML
     private Label labelCurrentScore;
-
     @FXML
     private Label labelAvgTurnDuration;
-
     @FXML
     private Label labelHitsCounter;
-
     @FXML
     private Label labelMissCounter;
-
     private JavaFXManager javaFXManager;
-    private final ObservableList<ShipsStateDataModel> shipsState = FXCollections.observableArrayList();
+    private final Map<String, ShipsStateDataModel> shipsState = new HashMap<>();
     private final Image noMinesAvailableImage = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
     private final Image oneMineAvailableImage = new Image(Constants.MINE_IMAGE_URL);
     private final Image multipleMinesAvailable = new Image(Constants.MULTIPLE_MINES_IMAGE_URL);
@@ -65,34 +55,29 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
     @FXML
     private void initialize() {
         columnShipType.setCellValueFactory(
-                new PropertyValueFactory<ShipsStateDataModel, String>("shipType")
+                new PropertyValueFactory<>("shipType")
         );
         columnInitialShips.setCellValueFactory(
-                new PropertyValueFactory<ShipsStateDataModel, Integer>("initialAmount")
+                new PropertyValueFactory<>("initialAmount")
         );
         columnRemainingShips.setCellValueFactory(
-                new PropertyValueFactory<ShipsStateDataModel, Integer>("initialAmount")
+                new PropertyValueFactory<>("initialAmount")
         );
     }
 
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
         addListeners();
-
-    }
-
-    private void setShipTypeValues() {
-        GameSettings gameSettings = javaFXManager.getActiveGameProperty().getValue().getGameSettings();
-        Map<String, Integer> shipTypes = gameSettings.getShipAmountsOnBoard();
-        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
-            shipsState.add(new ShipsStateDataModel(entry.getKey(), entry.getValue()));
-        }
     }
 
     private void addListeners() {
-        javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
-        javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
-        javaFXManager.getTotalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
+        javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+        javaFXManager.activePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
+        javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
+        javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
+    }
+
+    private void attackResultUpdated(eAttackResult newValue) {
     }
 
     private void gameStateChanged(eGameState newValue) {
@@ -115,19 +100,18 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
 
     private void gameStarted() {
         setShipTypeValues();
-        TableShipsState.setItems(shipsState);
         listenToAllShips();
     }
 
     private void listenToAllShips() {
-        Game activeGame = javaFXManager.getActiveGameProperty().getValue();
-        for (Player player: activeGame.getPlayers()){
+        Game activeGame = javaFXManager.getActiveGame().getValue();
+        for (Player player : activeGame.getPlayers()) {
             player.setShipListeners(this);
         }
     }
 
     private void updateStatistics() {
-        Player activePlayer = javaFXManager.getActivePlayerProperty().getValue();
+        Player activePlayer = javaFXManager.activePlayerProperty().getValue();
 
         labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
         Duration avgDuration = activePlayer.getAvgTurnDuration();
@@ -137,6 +121,7 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         Integer minesAvailable = (activePlayer.getMyBoard().getMinesAvailable());
         labelMinesAvailable.setText(minesAvailable.toString());
         setMinesAvailableImageView(minesAvailable);
+
     }
 
     private void setMinesAvailableImageView(Integer minesAvailable) {
@@ -149,19 +134,44 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         }
     }
 
-
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
         updateStatistics();
+        updateShipsRemainingTable();
+    }
+
+    private void updateShipsRemainingTable() {
+        ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
+
+        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet().forEach(
+                entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
+
+        TableShipsState.setItems(shipsRemaining);
+    }
+
+    private void setShipTypeValues() {
+        Map<String, Integer> shipTypes = javaFXManager.getActiveGame().getValue().getActivePlayer().getActiveShipsOnBoard();
+        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
+            shipsState.put(entry.getKey(), new ShipsStateDataModel(entry.getKey(), entry.getValue()));
+        }
     }
 
     @Override
     public void whenShipSunk(AbstractShip ship) {
-        for (ShipsStateDataModel shipState : shipsState) {
-            if (shipState.getShipType() == ship.getID()) {
-                // TODO this update doesnt effect the table view on the right pane?!
+/*        shipsState.forEach(shipState -> {
+            if (shipState.getShipType().equals(ship.getID())) {
                 shipState.setShipsRemaining(shipState.getShipsRemaining() - 1);
             }
-        }
+        });*/
+
+//        for (ShipsStateDataModel shipState : TableShipsState.getItems())
+//            if (shipState.getShipType().equals(ship.getID())) {
+//                // TODO this update doesnt effect the table view on the right pane?!
+////                shipState.setShipsRemaining(shipState.getShipsRemaining() - 1);
+//                shipState.setShipsRemaining(0);
+//            }
+        //TableShipsState.getItems().clear();
+        updateShipsRemainingTable();
+        TableShipsState.refresh();
     }
 }

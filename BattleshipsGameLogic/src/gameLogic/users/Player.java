@@ -92,6 +92,14 @@ public class Player implements User, Serializable {
         return numTurnsPlayed == 0 ? Duration.ZERO : totalTurnsDuration.dividedBy(numTurnsPlayed);
     }
 
+    public HashMap<String, Integer> getActiveShipsOnBoard() {
+        HashMap<String,Integer> clone = new HashMap<>();
+
+        activeShipsOnBoard.entrySet().forEach(entry -> clone.put(entry.getKey(),entry.getValue()));
+
+        return clone;
+    }
+
     // ======================================= Methods =======================================
     public eAttackResult attack(BoardCoordinates position) throws CellNotOnBoardException {
         eAttackResult attackResult = opponentBoard.attack(position);

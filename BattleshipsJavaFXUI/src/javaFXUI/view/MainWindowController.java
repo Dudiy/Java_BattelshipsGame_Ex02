@@ -10,17 +10,12 @@ import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
@@ -55,13 +50,13 @@ public class MainWindowController {
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
-        javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
-        javaFXManager.getActivePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
-        javaFXManager.getTotalMovesCounterProperty().addListener((observable, oldValue, newValue) -> movePlayed());
+        javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+        javaFXManager.activePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
+        javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> movePlayed());
     }
 
     private void initBoards() {
-        Game activeGame = javaFXManager.getActiveGameProperty().getValue();
+        Game activeGame = javaFXManager.getActiveGame().getValue();
         for (Player currentPlayer : activeGame.getPlayers()) {
             try {
                 if (!myBoardAsTilePane.containsKey(currentPlayer)) {

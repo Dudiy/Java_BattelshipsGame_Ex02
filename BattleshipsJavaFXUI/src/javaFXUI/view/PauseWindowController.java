@@ -1,6 +1,5 @@
 package javaFXUI.view;
 
-import gameLogic.game.Game;
 import gameLogic.game.eGameState;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.FileChooserProxy;
@@ -10,7 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.LoadException;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 
 import java.io.File;
 
@@ -34,11 +32,11 @@ public class PauseWindowController {
 
     @FXML
     private void initialize(){
-        if (javaFXManager == null || javaFXManager.getGameStateProperty().getValue() == null){
+        if (javaFXManager == null || javaFXManager.gameStateProperty().getValue() == null){
             updateButtonState(eGameState.INVALID);
         }
         else{
-            updateButtonState(javaFXManager.getGameStateProperty().getValue());
+            updateButtonState(javaFXManager.gameStateProperty().getValue());
         }
     }
 
@@ -77,7 +75,7 @@ public class PauseWindowController {
 
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
-        javaFXManager.getGameStateProperty().addListener((observable, oldValue, newValue) -> updateButtonState(newValue));
+        javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> updateButtonState(newValue));
     }
 
     public void updateButtonState(eGameState gameState) {
