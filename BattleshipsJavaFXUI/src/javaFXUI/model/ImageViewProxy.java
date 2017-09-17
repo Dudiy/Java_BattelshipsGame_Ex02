@@ -35,7 +35,6 @@ public class ImageViewProxy extends ImageView {
         if (!isVisible) {
             setOnMouseEntered(event -> mouseEnteredCell());
             setOnMouseExited(event -> setEffect(null));
-
         } else {
             setOnDragOver(event -> {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -90,9 +89,9 @@ public class ImageViewProxy extends ImageView {
     }
 
     private void minePlaced() {
-        setImage(MINE_IMAGE);
         try {
             boardCell.setCellValue(new Mine(boardCell.getPosition()));
+            setImage(MINE_IMAGE);
         } catch (InvalidGameObjectPlacementException e) {
             AlertHandlingUtils.showErrorMessage(e,"Error while put mine");
         }

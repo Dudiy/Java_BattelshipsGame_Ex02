@@ -25,7 +25,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.TilePane;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -62,15 +61,10 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
 
     @FXML
     private void initialize() {
-        columnShipType.setCellValueFactory(
-                new PropertyValueFactory<>("shipType")
-        );
-        columnInitialShips.setCellValueFactory(
-                new PropertyValueFactory<>("initialAmount")
-        );
-        columnRemainingShips.setCellValueFactory(
-                new PropertyValueFactory<>("initialAmount")
-        );
+        columnShipType.setCellValueFactory(new PropertyValueFactory<>("shipType"));
+        columnInitialShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
+        columnRemainingShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
+        setDragAndDropMine();
     }
 
     public void setJavaFXManager(JavaFXManager javaFXManager) {
@@ -126,16 +120,11 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
         labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
         labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
-        initMinesImage();
+        updateMinesAvailableImageView();
     }
 
-    private void initMinesImage() {
+    private void updateMinesAvailableImageView() {
         Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
-        setMinesAvailableImageView(minesAvailable);
-        setDragAndDropMine();
-    }
-
-    private void setMinesAvailableImageView(Integer minesAvailable) {
         if (minesAvailable <= 0) {
             imageViewMinesAvailable.setImage(noMinesAvailableImage);
         } else if (minesAvailable == 1) {
@@ -163,16 +152,12 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         });
 
         imageViewMinesAvailable.setOnDragDone((event) -> {
+            Board myBoard =javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
+            Integer minesAvailable = myBoard.getMinesAvailable();
             if (event.getTransferMode() == TransferMode.MOVE) {
-                Board activeBoard = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
-                Integer newMinesAmount = activeBoard.getMinesAvailable() - 1;
-                if(newMinesAmount<=1){
-                    setMinesAvailableImageView(newMinesAmount);
-                    activeBoard.setMinesAvailable(newMinesAmount);
-                    labelMinesAvailable.setText(newMinesAmount.toString());
-                }else{
-                    imageViewMinesAvailable.setImage(noMinesAvailableImage);
-                }
+                minesAvailable--;
+                myBoard.setMinesAvailable(minesAvailable);
+                updateMinesAvailableImageView();
             }
             event.consume();
         });

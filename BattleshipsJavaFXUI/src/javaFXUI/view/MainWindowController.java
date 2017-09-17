@@ -71,7 +71,6 @@ public class MainWindowController {
                             imageView.setOnMouseClicked(event -> makeMove((ImageViewProxy) imageView));
                         }
                     }
-
                     opponentsBoardAsTilePane.put(currentPlayer, boardAdapter.getBoardAsTilePane());
                 }
             } catch (Exception e) {
