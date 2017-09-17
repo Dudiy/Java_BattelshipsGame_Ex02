@@ -16,6 +16,9 @@
             <score>5</score>
         </shipType>
     </shipTypes>
+    <mine>
+        <amount>3</amount>
+    </mine>
     <boards>
         <board>
             <ship>
@@ -25,7 +28,7 @@
             </ship>
             <ship>
                 <shipTypeId>shipTypeB</shipTypeId>
-                <position x="3" y="3" />
+                <position x="4" y="1" />
                 <direction>COLUMN</direction>
             </ship>
         </board>
