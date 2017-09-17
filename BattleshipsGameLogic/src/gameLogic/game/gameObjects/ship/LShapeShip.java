@@ -1,6 +1,8 @@
 package gameLogic.game.gameObjects.ship;
 
+import gameLogic.game.board.Board;
 import gameLogic.game.board.BoardCoordinates;
+import java.util.LinkedList;
 
 public class LShapeShip extends AbstractShip {
     // position is the meeting point of the row and column
@@ -8,6 +10,24 @@ public class LShapeShip extends AbstractShip {
         super(shipType, position, direction);
         this.hitsRemainingUntilSunk = 2 * shipType.getLength() - 1;
     }
+	
+	@Override
+    protected LinkedList<BoardCoordinates> getShipCoordinatesList() {
+        LinkedList<BoardCoordinates> shipCoordinatesListToReturn = new LinkedList<>();
+        BoardCoordinates tempRowCoordinates = getPosition();
+        BoardCoordinates tempColCoordinates = getPosition();
+
+        shipCoordinatesListToReturn.add(getPosition());
+        for (int i = 0 ; i < getLength() ; i++){
+            tempRowCoordinates.OffsetRow(getDirection().getxDirection());
+            tempColCoordinates.offsetCol(getDirection().getyDirection());
+            shipCoordinatesListToReturn.add(tempRowCoordinates);
+            shipCoordinatesListToReturn.add(tempColCoordinates);
+        }
+
+        return shipCoordinatesListToReturn;
+    }
+	
     // ======================================= setters =======================================
     @Override
     public void setDirection(String direction) throws Exception {

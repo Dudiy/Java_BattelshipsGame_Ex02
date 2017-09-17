@@ -15,6 +15,7 @@ import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import gameLogic.game.gameObjects.ship.IShipListener;
+import gameLogic.game.gameObjects.ship.ShipType;
 
 
 public class Player implements User, Serializable {
@@ -128,10 +129,6 @@ public class Player implements User, Serializable {
         }
 
         return attackResult;
-    }
-
-    public void setShipListeners(IShipListener listener){
-        myBoard.setShipListeners(listener);
     }
 
     public void incrementScore() {

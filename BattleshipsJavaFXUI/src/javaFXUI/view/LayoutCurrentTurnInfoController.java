@@ -1,5 +1,6 @@
 package javaFXUI.view;
 
+import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.Game;
 import gameLogic.game.board.Board;
 import gameLogic.game.eAttackResult;
@@ -25,7 +26,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-
+import javafx.scene.layout.TilePane;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +80,20 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
     }
 
-    private void attackResultUpdated(eAttackResult newValue) {
+    public void attackResultUpdated(eAttackResult newValue) {
+        switch (newValue) {
+            case HIT_SHIP:
+                break;
+            case HIT_AND_SUNK_SHIP:
+                onShipSunk();
+                break;
+            case CELL_ALREADY_ATTACKED:
+                break;
+            case HIT_MINE:
+                break;
+            case HIT_WATER:
+                break;
+        }
     }
 
     private void gameStateChanged(eGameState newValue) {
@@ -185,21 +199,7 @@ public class LayoutCurrentTurnInfoController implements IShipListener {
         }
     }
 
-    @Override
-    public void whenShipSunk(AbstractShip ship) {
-/*        shipsState.forEach(shipState -> {
-            if (shipState.getShipType().equals(ship.getID())) {
-                shipState.setShipsRemaining(shipState.getShipsRemaining() - 1);
-            }
-        });*/
-
-//        for (ShipsStateDataModel shipState : TableShipsState.getItems())
-//            if (shipState.getShipType().equals(ship.getID())) {
-//                // TODO this update doesnt effect the table view on the right pane?!
-////                shipState.setShipsRemaining(shipState.getShipsRemaining() - 1);
-//                shipState.setShipsRemaining(0);
-//            }
-        //TableShipsState.getItems().clear();
+    private void onShipSunk() {
         updateShipsRemainingTable();
         TableShipsState.refresh();
     }

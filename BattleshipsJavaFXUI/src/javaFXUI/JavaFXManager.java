@@ -49,9 +49,10 @@ public class JavaFXManager extends Application {
     private BorderPane mainWindowLayout;
     private VBox pauseWindowLayout;
     private List<Runnable> resetGameEvent = new ArrayList<>();
+	private MainWindowController mainWindowController;
+    private LayoutCurrentTurnInfoController currentTurnInfoController;    
 
-
-    // ===================================== Init =====================================
+	// ===================================== Init =====================================
     public static void Run(String[] args) {
         launch(args);
     }
@@ -76,7 +77,7 @@ public class JavaFXManager extends Application {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
             mainWindowLayout = fxmlLoader.load();
-            MainWindowController mainWindowController = fxmlLoader.getController();
+            mainWindowController = fxmlLoader.getController();
             mainWindowController.setJavaFXManager(this);
             resetGameEvent.add(mainWindowController::resetGame);
 
@@ -84,7 +85,7 @@ public class JavaFXManager extends Application {
             fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/LayoutCurrentTurnInfo.fxml"));
             ScrollPane rightPane = fxmlLoader.load();
-            LayoutCurrentTurnInfoController currentTurnInfoController = fxmlLoader.getController();
+            currentTurnInfoController = fxmlLoader.getController();
             currentTurnInfoController.setJavaFXManager(this);
             mainWindowLayout.setRight(rightPane);
 
@@ -213,10 +214,13 @@ public class JavaFXManager extends Application {
 
         try {
             Game activeGame = this.activeGame.getValue();
-            this.attackResult.setValue(gamesManager.makeMove(activeGame, cellToAttack));
+            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
             updateCellDisplay.run();
+            Alert moveResult = new Alert(Alert.AlertType.INFORMATION, "Test");
+            moveResult.showAndWait();
             activePlayer.setValue(activeGame.getActivePlayer());
             totalMovesCounter.setValue(activeGame.getMovesCounter());
+            currentTurnInfoController.attackResultUpdated(attackResult);
             if (activeGame.getGameState() == eGameState.PLAYER_WON) {
 //                onGameEnded(eGameState.STARTED,true);
                 endGame(true);

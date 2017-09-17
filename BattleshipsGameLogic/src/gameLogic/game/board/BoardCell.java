@@ -22,9 +22,6 @@ public class BoardCell implements Serializable, IShipListener {
     public void setCellValue(GameObject cellValue) throws InvalidGameObjectPlacementException {
         if (this.cellValue == null || this.cellValue instanceof Water) {
             this.cellValue = cellValue;
-            if(cellValue instanceof AbstractShip){
-                ((AbstractShip)cellValue).addShipListener(this);
-            }
         } else {
             String objectTypeInCell = this.cellValue.getClass().getSimpleName();
             throw new InvalidGameObjectPlacementException(cellValue.getClass().getSimpleName(), position,

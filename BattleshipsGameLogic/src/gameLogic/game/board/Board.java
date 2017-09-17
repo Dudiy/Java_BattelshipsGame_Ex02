@@ -20,11 +20,11 @@ public class Board implements Cloneable, Serializable {
     }
 
     private void initBoard() {
-        board = new BoardCell[ BOARD_SIZE ][ BOARD_SIZE ];
+        board = new BoardCell[BOARD_SIZE][BOARD_SIZE];
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 //ctor of new BoardCell points to a new "Water" object by default
-                board[ row ][ col ] = new BoardCell((char) ('A' + col), row + 1);
+                board[row][col] = new BoardCell((char) ('A' + col), row + 1);
             }
         }
     }
@@ -92,7 +92,7 @@ public class Board implements Cloneable, Serializable {
         if (coordinatesAreOnBoard(coordinates)) {
             int col = coordinates.getColIndexInMemory();
             int row = coordinates.getRowIndexInMemory();
-            res = board[ row ][ col ];
+            res = board[row][col];
         } else {
             throw new CellNotOnBoardException();
         }
@@ -185,47 +185,17 @@ public class Board implements Cloneable, Serializable {
 
     // add a new LShapeShip to this board
     private void addLShapeShipToBoard(LShapeShip ship) throws InvalidGameObjectPlacementException {
-        BoardCoordinates currCoordinates = ship.getPosition();
+        BoardCoordinates rowCoordinates = ship.getPosition();
+        BoardCoordinates colCoordinates = ship.getPosition();
         eShipDirection shipDirection = ship.getDirection();
-        int offsetRow;
-        int offsetCol;
-
-        switch (shipDirection) {
-            case RIGHT_DOWN:
-                offsetRow = -1;
-                offsetCol = 1;
-                break;
-            case RIGHT_UP:
-                offsetRow = -1;
-                offsetCol = -1;
-                break;
-            case UP_RIGHT:
-                offsetRow = 1;
-                offsetCol = 1;
-                break;
-            case DOWN_RIGHT:
-                offsetRow = 1;
-                offsetCol = -1;
-                break;
-            default:
-                throw new IllegalArgumentException("The given ship has an unknown direction value");
-        }
-        setLShipByOffset(ship, currCoordinates, offsetRow, offsetCol);
-    }
-
-    private void setLShipByOffset(LShapeShip ship, BoardCoordinates currCoordinates, int offsetRow, int offsetCol) throws InvalidGameObjectPlacementException {
+		//set the values of the corner
+        setCellValue(rowCoordinates, ship);
         // set the values of row
-        for (int i = 0; i < ship.getLength(); i++) {
-            setCellValue(currCoordinates, ship);
-            currCoordinates.OffsetRow(offsetRow);
-        }
-        // return to the meeting point of the row and column
-        currCoordinates = ship.getPosition();
-        currCoordinates.offsetCol(offsetCol);
-        // set the values of col
-        for (int i = 0; i < ship.getLength() - 1; i++) {
-            setCellValue(currCoordinates, ship);
-            currCoordinates.offsetCol(offsetCol);
+        for (int i = 1; i < ship.getLength(); i++) {
+            rowCoordinates.OffsetRow(shipDirection.getxDirection());
+            colCoordinates.offsetCol(shipDirection.getyDirection());
+            setCellValue(rowCoordinates, ship);
+            setCellValue(colCoordinates, ship);
         }
     }
 
@@ -242,9 +212,5 @@ public class Board implements Cloneable, Serializable {
 
     public eAttackResult attack(BoardCoordinates coordinatesToAttack) throws CellNotOnBoardException {
         return getBoardCellAtCoordinates(coordinatesToAttack).attack();
-    }
-
-    public void setShipListeners(IShipListener listener) {
-        shipsOnBoard.forEach(abstractShip -> abstractShip.addShipListener(listener));
     }
 }
