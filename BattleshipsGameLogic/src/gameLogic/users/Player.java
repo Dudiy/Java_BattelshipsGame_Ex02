@@ -14,8 +14,6 @@ import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.ship.AbstractShip;
-import gameLogic.game.gameObjects.ship.IShipListener;
-import gameLogic.game.gameObjects.ship.ShipType;
 
 
 public class Player implements User, Serializable {
@@ -108,10 +106,6 @@ public class Player implements User, Serializable {
             timesMissed++;
         }
 
-        if (attackResult.isScoreIncrementer()) {
-            incrementScore();
-        }
-
         if (attackResult == eAttackResult.HIT_MINE) {
             // if I hit a mine, attack my own board
 //            Mine mineThatWasHit = (Mine)opponentBoard.getBoardCellAtCoordinates(position).getCellValue();
@@ -131,8 +125,8 @@ public class Player implements User, Serializable {
         return attackResult;
     }
 
-    public void incrementScore() {
-        score++;
+    public void addToScoreScore(int amountToAdd) {
+        score += amountToAdd;
     }
 
     public void plantMine(BoardCoordinates position) throws CellNotOnBoardException, InvalidGameObjectPlacementException, NoMinesAvailableException {

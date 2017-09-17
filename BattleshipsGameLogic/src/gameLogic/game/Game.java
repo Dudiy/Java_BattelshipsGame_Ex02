@@ -161,7 +161,6 @@ public class Game implements Serializable {
         //if a mine was attacked which hit my own ship or mine, increment the other player's score
         if (attackResult == eAttackResult.HIT_MINE &&
                 !(getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue() instanceof Water)) {
-            getOtherPlayer().incrementScore();
 
             BoardCell myCell = getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position);
             if (myCell.getCellValue() instanceof Mine) {
@@ -176,6 +175,7 @@ public class Game implements Serializable {
             Player otherPlayer = getOtherPlayer();
             AbstractShip shipSunk = (AbstractShip)otherPlayer.getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
             otherPlayer.OnShipSunk(shipSunk);
+            getActivePlayer().addToScoreScore(shipSunk.getScore());
 
             if (activePlayerSunkAllShips()) {
                 activePlayerWon();
