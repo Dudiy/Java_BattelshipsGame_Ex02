@@ -104,9 +104,10 @@ public class Player implements User, Serializable {
 
         if (attackResult == eAttackResult.HIT_WATER) {
             timesMissed++;
-        }
-
-        if (attackResult == eAttackResult.HIT_MINE) {
+        }else if (attackResult == eAttackResult.HIT_SHIP || attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+            timesHit++;
+        }else if (attackResult == eAttackResult.HIT_MINE) {
+            timesHit++;
             // if I hit a mine, attack my own board
 //            Mine mineThatWasHit = (Mine)opponentBoard.getBoardCellAtCoordinates(position).getCellValue();
 //            mineThatWasHit.setExplosionResult(myBoard.attack(position));

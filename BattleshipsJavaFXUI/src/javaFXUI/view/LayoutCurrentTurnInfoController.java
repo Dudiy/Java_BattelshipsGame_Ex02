@@ -64,93 +64,13 @@ public class LayoutCurrentTurnInfoController {
     private final Image oneMineAvailableImage = new Image(Constants.MINE_IMAGE_URL);
     private final Image multipleMinesAvailable = new Image(Constants.MULTIPLE_MINES_IMAGE_URL);
 
+    // ===================================== Init =====================================
     @FXML
     private void initialize() {
         columnShipType.setCellValueFactory(new PropertyValueFactory<>("shipType"));
         columnInitialShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
         columnRemainingShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
         setDragAndDropMine();
-    }
-
-    public void setJavaFXManager(JavaFXManager javaFXManager) {
-        this.javaFXManager = javaFXManager;
-        addListeners();
-    }
-
-    private void addListeners() {
-        javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
-        javaFXManager.activePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
-        javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
-        javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
-    }
-
-    public void attackResultUpdated(eAttackResult newValue) {
-        switch (newValue) {
-            case HIT_SHIP:
-                break;
-            case HIT_AND_SUNK_SHIP:
-                onShipSunk();
-                break;
-            case CELL_ALREADY_ATTACKED:
-                break;
-            case HIT_MINE:
-                break;
-            case HIT_WATER:
-                break;
-        }
-    }
-
-    private void gameStateChanged(eGameState newValue) {
-        switch (newValue) {
-            case INVALID:
-                break;
-            case LOADED:
-                break;
-            case INITIALIZED:
-                break;
-            case STARTED:
-                gameStarted();
-                break;
-            case PLAYER_WON:
-                break;
-            case PLAYER_QUIT:
-                break;
-        }
-    }
-
-    private void gameStarted() {
-        setShipTypeValues();
-//        listenToAllShips();
-    }
-
-//    private void listenToAllShips() {
-//        Game activeGame = javaFXManager.getActiveGame().getValue();
-//        for (Player player : activeGame.getPlayers()) {
-//            player.setShipListeners(this);
-//        }
-//    }
-
-    private void updateStatistics() {
-        Player activePlayer = javaFXManager.activePlayerProperty().getValue();
-
-        labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
-        Duration avgDuration = activePlayer.getAvgTurnDuration();
-        labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
-        labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
-        labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
-        updateMinesAvailableImageView();
-    }
-
-    private void updateMinesAvailableImageView() {
-        Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
-        if (minesAvailable <= 0) {
-            imageViewMinesAvailable.setImage(noMinesAvailableImage);
-        } else if (minesAvailable == 1) {
-            imageViewMinesAvailable.setImage(oneMineAvailableImage);
-        } else {
-            imageViewMinesAvailable.setImage(multipleMinesAvailable);
-        }
-        labelMinesAvailable.setText(minesAvailable.toString());
     }
 
     private void setDragAndDropMine() {
@@ -195,6 +115,49 @@ public class LayoutCurrentTurnInfoController {
         return boardCellAsImage;
     }
 
+    public void setJavaFXManager(JavaFXManager javaFXManager) {
+        this.javaFXManager = javaFXManager;
+        addListeners();
+    }
+
+    private void addListeners() {
+        javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
+        javaFXManager.activePlayerProperty().addListener((observable, oldValue, newValue) -> playerChanged(newValue));
+        javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> updateStatistics());
+        javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
+    }
+
+    // ===================================== Game State Property =====================================
+    private void gameStateChanged(eGameState newValue) {
+        switch (newValue) {
+            case INVALID:
+                break;
+            case LOADED:
+                break;
+            case INITIALIZED:
+                break;
+            case STARTED:
+                gameStarted();
+                break;
+            case PLAYER_WON:
+                break;
+            case PLAYER_QUIT:
+                break;
+        }
+    }
+
+    private void gameStarted() {
+        setShipTypeValues();
+    }
+
+    private void setShipTypeValues() {
+        Map<String, Integer> shipTypes = javaFXManager.getActiveGame().getValue().getActivePlayer().getActiveShipsOnBoard();
+        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
+            shipsState.put(entry.getKey(), new ShipsStateDataModel(entry.getKey(), entry.getValue()));
+        }
+    }
+
+    // ===================================== Active Player Property =====================================
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
         updateStatistics();
@@ -203,17 +166,47 @@ public class LayoutCurrentTurnInfoController {
 
     private void updateShipsRemainingTable() {
         ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
-
-        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet().forEach(
-                entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
-
+        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet()
+                .forEach(entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
         TableShipsState.setItems(shipsRemaining);
     }
 
-    private void setShipTypeValues() {
-        Map<String, Integer> shipTypes = javaFXManager.getActiveGame().getValue().getActivePlayer().getActiveShipsOnBoard();
-        for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
-            shipsState.put(entry.getKey(), new ShipsStateDataModel(entry.getKey(), entry.getValue()));
+    private void updateStatistics() {
+        Player activePlayer = javaFXManager.activePlayerProperty().getValue();
+        labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
+        Duration avgDuration = activePlayer.getAvgTurnDuration();
+        labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
+        labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
+        labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
+        updateMinesAvailableImageView();
+    }
+
+    private void updateMinesAvailableImageView() {
+        Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
+        if (minesAvailable <= 0) {
+            imageViewMinesAvailable.setImage(noMinesAvailableImage);
+        } else if (minesAvailable == 1) {
+            imageViewMinesAvailable.setImage(oneMineAvailableImage);
+        } else {
+            imageViewMinesAvailable.setImage(multipleMinesAvailable);
+        }
+        labelMinesAvailable.setText(minesAvailable.toString());
+    }
+
+    // ===================================== Attack Result Property =====================================
+    public void attackResultUpdated(eAttackResult newValue) {
+        switch (newValue) {
+            case HIT_SHIP:
+                break;
+            case HIT_AND_SUNK_SHIP:
+                onShipSunk();
+                break;
+            case CELL_ALREADY_ATTACKED:
+                break;
+            case HIT_MINE:
+                break;
+            case HIT_WATER:
+                break;
         }
     }
 

@@ -4,9 +4,7 @@ import gameLogic.GamesManager;
 import gameLogic.IGamesLogic;
 import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
-import gameLogic.exceptions.NoMinesAvailableException;
 import gameLogic.game.Game;
-import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
@@ -35,6 +33,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +53,8 @@ public class JavaFXManager extends Application {
     private VBox pauseWindowLayout;
     private List<Runnable> resetGameEvent = new ArrayList<>();
 	private MainWindowController mainWindowController;
-    private LayoutCurrentTurnInfoController currentTurnInfoController;    
+    private LayoutCurrentTurnInfoController currentTurnInfoController;
+    private Instant turnPlayerTimer;
 
 	// ===================================== Init =====================================
     public static void Run(String[] args) {
@@ -188,7 +189,8 @@ public class JavaFXManager extends Application {
 
             setInitialValuesForPlayer();
             gameState.setValue(activeGame.getGameState());
-            activePlayer.setValue(activeGame.getActivePlayer());
+//            activePlayer.setValue(activeGame.getActivePlayer());
+            updateActivePlayer();
             hidePauseMenu();
         } catch (InvalidGameObjectPlacementException e) {
             String message = "Cannot place a given " + e.getGameObjectType() + " at position " + e.GetCoordinates() + ".\n" +
@@ -198,6 +200,14 @@ public class JavaFXManager extends Application {
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while starting game. ");
             errorWhileStartingGame();
+        }
+    }
+
+    private void updateActivePlayer(){
+        Player updateActivePlayer = activeGame.getValue().getActivePlayer();
+        if(activePlayer.getValue() != updateActivePlayer){
+            activePlayer.setValue(updateActivePlayer);
+            turnPlayerTimer = Instant.now();
         }
     }
 
@@ -214,26 +224,35 @@ public class JavaFXManager extends Application {
     // ===================================== Make Move =====================================
     public eAttackResult makeMove(BoardCoordinates cellToAttack, Runnable updateCellDisplay) {
         eAttackResult attackResult = null;
-
         try {
             Game activeGame = this.activeGame.getValue();
             attackResult = gamesManager.makeMove(activeGame, cellToAttack);
-            updateCellDisplay.run();
-            Alert moveResult = new Alert(Alert.AlertType.INFORMATION, "Test");
-            moveResult.showAndWait();
-            activePlayer.setValue(activeGame.getActivePlayer());
-            totalMovesCounter.setValue(activeGame.getMovesCounter());
-            currentTurnInfoController.attackResultUpdated(attackResult);
-            if (activeGame.getGameState() == eGameState.PLAYER_WON) {
-//                onGameEnded(eGameState.STARTED,true);
-                endGame(true);
-            }
+            updateActivePlayerAttackResult(attackResult, updateCellDisplay);
+
+            updateActivePlayer();
+//            activePlayer.setValue(activeGame.getActivePlayer());
             gameState.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while making move");
         }
 
         return attackResult;
+    }
+
+    private void updateActivePlayerAttackResult(eAttackResult attackResult, Runnable updateCellDisplay) {
+        Game activeGame = this.activeGame.getValue();
+        updateCellDisplay.run();
+        currentTurnInfoController.attackResultUpdated(attackResult);
+        if(attackResult.moveEnded() || activeGame.getGameState() == eGameState.PLAYER_WON){
+            Duration turnTime = Duration.between(turnPlayerTimer, Instant.now());
+            activePlayer.getValue().addTurnDurationToTotal(turnTime);
+        }
+        totalMovesCounter.setValue(activeGame.getMovesCounter());
+        Alert moveResult = new Alert(Alert.AlertType.INFORMATION, attackResult.toString());
+        moveResult.showAndWait();
+        if (activeGame.getGameState() == eGameState.PLAYER_WON) {
+            endGame(true);
+        }
     }
 
     // ===================================== End Game =====================================
@@ -285,7 +304,6 @@ public class JavaFXManager extends Application {
             Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message.toString(), ButtonType.OK);
             playerWonAlert.showAndWait();
         }
-
         // set the game to be as if it was just started
         resetGame(activeGame.getValue());
     }
