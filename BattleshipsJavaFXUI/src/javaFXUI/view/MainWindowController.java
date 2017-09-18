@@ -10,6 +10,7 @@ import javaFXUI.JavaFXManager;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
+import javaFXUI.model.PlayerAdapter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -173,10 +174,5 @@ public class MainWindowController {
         alert.setTitle("!!");
 
         mouseDragEvent.consume();
-    }
-
-    @FXML
-    public void OnMouseDragExited(MouseDragEvent mouseDragEvent) {
-
     }
 }

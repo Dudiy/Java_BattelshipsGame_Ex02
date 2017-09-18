@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public class FileChooserProxy {
     public FileChooser FileChooser = new FileChooser();
 
-    public File showOpenDialog(final Window ownerWindow){
+    public FileChooserProxy() {
         // set extension filter
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter(
                 "XML files (*.xml)", "*.xml");
@@ -18,6 +18,9 @@ public class FileChooserProxy {
         // TODO ?
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         FileChooser.setInitialDirectory(new File(currentPath));
+    }
+
+    public File showOpenDialog(final Window ownerWindow){
         // Show open file dialog
         return FileChooser.showOpenDialog(ownerWindow);
     }

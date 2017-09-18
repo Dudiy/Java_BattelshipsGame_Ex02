@@ -13,6 +13,7 @@ import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
+import javaFXUI.model.PlayerAdapter;
 import javaFXUI.model.ShipsStateDataModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -176,6 +177,7 @@ public class LayoutCurrentTurnInfoController {
     // ===================================== Active Player Property =====================================
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
+        imageViewMinesAvailable.setImage(((PlayerAdapter)currentPlayer).getPlayerImage());
         updateStatistics();
         updateShipsRemainingTable();
     }

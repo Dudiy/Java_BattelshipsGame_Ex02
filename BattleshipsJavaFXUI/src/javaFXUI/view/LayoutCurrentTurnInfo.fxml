@@ -21,24 +21,39 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.LayoutCurrentTurnInfoController">
+<ScrollPane prefHeight="518.0" prefWidth="220.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.LayoutCurrentTurnInfoController">
    <content>
       <AnchorPane prefHeight="513.0" prefWidth="219.0">
          <children>
             <VBox prefHeight="511.0" prefWidth="219.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
                <children>
                   <Label text="Current Player: " />
-                  <Label fx:id="labelCurrentPlayer" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="300.0" text="Label" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="25.0" />
-                     </font>
-                     <padding>
-                        <Insets bottom="10.0" />
-                     </padding>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fx:id="imageViewPlayerProfile" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../resources/images/defaultPlayerImage.png" />
+                           </image>
+                        </ImageView>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="labelCurrentPlayer" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="25.0" />
+                           </font>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </Label>
+                        <Region layoutX="70.0" layoutY="10.0" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Region>
+                     </children>
                      <VBox.margin>
                         <Insets top="10.0" />
                      </VBox.margin>
-                  </Label>
+                  </HBox>
                   <Region prefHeight="31.0" prefWidth="219.0" />
                   <Separator prefWidth="200.0">
                      <VBox.margin>

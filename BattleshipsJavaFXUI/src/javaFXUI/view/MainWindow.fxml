@@ -19,7 +19,7 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="Option">
+          <Menu mnemonicParsing="false" text="Game">
             <items>
               <MenuItem fx:id="buttonPauseGame" mnemonicParsing="false" onAction="#OnClickPauseMenu" text="Pause Game" />
                   <MenuItem fx:id="buttonEndCurrentGame" mnemonicParsing="false" onAction="#OnClickEndCurrentGame" text="End Current Game" />
