@@ -155,31 +155,65 @@ public class Game implements Serializable {
     }
 
     public eAttackResult attack(BoardCoordinates position) throws CellNotOnBoardException {
+        // TODO del
+//        eAttackResult attackResult = getActivePlayer().attack(position);
+//
+//        //if a mine was attacked which hit my own ship or mine, increment the other player's score
+//        if (attackResult == eAttackResult.HIT_MINE &&
+//                !(getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue() instanceof Water)) {
+//            BoardCell myCell = getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position);
+//            if (myCell.getCellValue() instanceof Mine) {
+//                myCell.removeGameObjectFromCell();
+//        }
+//
+//        if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
+//            movesCounter++;
+//        }
+//
+//        if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+//            Player otherPlayer = getOtherPlayer();
+//            AbstractShip shipSunk = (AbstractShip)otherPlayer.getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+//            otherPlayer.OnShipSunk(shipSunk);
+//            getActivePlayer().addToScore(shipSunk.getScore());
+//
+//            if (playerSunkAllShips()) {
+//                activePlayerWon();
+//            }
+//        } else if (attackResult.moveEnded()) {
+//            swapPlayers();
+//        }
+
+
         eAttackResult attackResult = getActivePlayer().attack(position);
-
-        //if a mine was attacked which hit my own ship or mine, increment the other player's score
-        if (attackResult == eAttackResult.HIT_MINE &&
-                !(getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue() instanceof Water)) {
-
+        Player wonPlayer = null;
+        if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+            AbstractShip shipSunk = (AbstractShip)getOtherPlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+            getOtherPlayer().OnShipSunk(shipSunk);
+            getActivePlayer().addToScore(shipSunk.getScore());
+            if (playerSunkAllShips(getActivePlayer())) {
+                activePlayerWon();
+            }
+        } else if(attackResult == eAttackResult.HIT_MINE) {
             BoardCell myCell = getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position);
-            if (myCell.getCellValue() instanceof Mine) {
+            GameObject gameObjectAtPosition = myCell.getCellValue();
+            if (gameObjectAtPosition instanceof Mine) {
                 myCell.removeGameObjectFromCell();
+            }else if(gameObjectAtPosition instanceof AbstractShip){
+                if(((AbstractShip)gameObjectAtPosition).getHitsRemainingUntilSunk()==0){
+                    AbstractShip shipSunk = (AbstractShip)getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+                    getActivePlayer().OnShipSunk(shipSunk);
+                    getOtherPlayer().addToScore(shipSunk.getScore());
+                    if (playerSunkAllShips(getOtherPlayer())) {
+                        otherPlayerWon();
+                    }
+                }
             }
         }
+
         if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
             movesCounter++;
         }
-
-        if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
-            Player otherPlayer = getOtherPlayer();
-            AbstractShip shipSunk = (AbstractShip)otherPlayer.getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
-            otherPlayer.OnShipSunk(shipSunk);
-            getActivePlayer().addToScoreScore(shipSunk.getScore());
-
-            if (activePlayerSunkAllShips()) {
-                activePlayerWon();
-            }
-        } else if (attackResult.moveEnded()) {
+        if (attackResult.moveEnded()) {
             swapPlayers();
         }
 
@@ -195,8 +229,8 @@ public class Game implements Serializable {
         swapPlayers();
     }
 
-    private boolean activePlayerSunkAllShips() {
-        return getActivePlayer().getOpponentBoard().allShipsWereSunk();
+    private boolean playerSunkAllShips(Player player) {
+        return player.getOpponentBoard().allShipsWereSunk();
     }
 
     public void activePlayerForfeit() {
@@ -205,6 +239,11 @@ public class Game implements Serializable {
     }
 
     private void activePlayerWon() {
+        winner = getActivePlayer();
+        gameState = eGameState.PLAYER_WON;
+    }
+
+    private void otherPlayerWon() {
         winner = getActivePlayer();
         gameState = eGameState.PLAYER_WON;
     }

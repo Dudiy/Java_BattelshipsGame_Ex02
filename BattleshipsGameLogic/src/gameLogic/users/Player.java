@@ -116,6 +116,8 @@ public class Player implements User, Serializable {
             if (mineExplosionResult == eAttackResult.HIT_MINE) {
                 BoardCell cellHit = opponentBoard.getBoardCellAtCoordinates(position);
                 cellHit.removeGameObjectFromCell();
+            }else if(mineExplosionResult == eAttackResult.HIT_AND_SUNK_SHIP){
+
             }
         }
 
@@ -126,7 +128,7 @@ public class Player implements User, Serializable {
         return attackResult;
     }
 
-    public void addToScoreScore(int amountToAdd) {
+    public void addToScore(int amountToAdd) {
         score += amountToAdd;
     }
 
