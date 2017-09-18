@@ -328,6 +328,7 @@ public class JavaFXManager extends Application {
             BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
             activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
             mainWindowController.plantMine(boardCellAsImage);
+            updateActivePlayer();
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e,"Error while plant mine");
         }

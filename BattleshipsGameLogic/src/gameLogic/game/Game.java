@@ -83,8 +83,7 @@ public class Game implements Serializable {
         return Duration.between(gameStartTime, Instant.now());
     }
 
-    // ======================================= methods =======================================
-
+    // ======================================= Methods =======================================
     public void initGame(Player player1, Player player2) throws Exception {
         if (player1 == null || player2 == null) {
             throw new Exception("Players cannot be null");

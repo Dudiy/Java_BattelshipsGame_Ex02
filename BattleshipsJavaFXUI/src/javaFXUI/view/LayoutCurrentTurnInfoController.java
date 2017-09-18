@@ -96,7 +96,10 @@ public class LayoutCurrentTurnInfoController {
                 Dragboard dragboard = event.getDragboard();
                 ImageViewProxy selectedBoardCellAsImage =  getSelectedBoardCell(dragboard);
                 javaFXManager.plantMine(selectedBoardCellAsImage);
+                // player already swap, so we need to go back to the previous player
+//                javaFXManager.getActiveGame().getValue().swapPlayers();
                 updateMinesAvailableImageView();
+//                javaFXManager.getActiveGame().getValue().swapPlayers();
             }
             event.consume();
         });
@@ -113,6 +116,19 @@ public class LayoutCurrentTurnInfoController {
             }
         }
         return boardCellAsImage;
+    }
+
+    private void updateMinesAvailableImageView() {
+        Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
+        if (minesAvailable <= 0) {
+            imageViewMinesAvailable.setImage(noMinesAvailableImage);
+            imageViewMinesAvailable.setDisable(true);
+        } else if (minesAvailable == 1) {
+            imageViewMinesAvailable.setImage(oneMineAvailableImage);
+        } else {
+            imageViewMinesAvailable.setImage(multipleMinesAvailable);
+        }
+        labelMinesAvailable.setText(minesAvailable.toString());
     }
 
     public void setJavaFXManager(JavaFXManager javaFXManager) {
@@ -179,18 +195,6 @@ public class LayoutCurrentTurnInfoController {
         labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());
         labelMissCounter.setText(((Integer) activePlayer.getTimesMissed()).toString());
         updateMinesAvailableImageView();
-    }
-
-    private void updateMinesAvailableImageView() {
-        Integer minesAvailable = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard().getMinesAvailable();
-        if (minesAvailable <= 0) {
-            imageViewMinesAvailable.setImage(noMinesAvailableImage);
-        } else if (minesAvailable == 1) {
-            imageViewMinesAvailable.setImage(oneMineAvailableImage);
-        } else {
-            imageViewMinesAvailable.setImage(multipleMinesAvailable);
-        }
-        labelMinesAvailable.setText(minesAvailable.toString());
     }
 
     // ===================================== Attack Result Property =====================================
