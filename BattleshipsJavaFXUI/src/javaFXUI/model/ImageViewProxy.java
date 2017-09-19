@@ -19,6 +19,8 @@ import javafx.scene.input.TransferMode;
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
     private int cellSize;
+    // it is stronger then the rules of getImageForCell()
+    private Image irregularImageCase = null;
     private boolean isVisible;
     //TODO put in manager
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
@@ -63,6 +65,10 @@ public class ImageViewProxy extends ImageView {
         }
     }
 
+    public void setIrregularImageCase(Image irregularImageCase) {
+        this.irregularImageCase = irregularImageCase;
+    }
+
     public BoardCell getBoardCell() {
         return boardCell;
     }
@@ -71,24 +77,28 @@ public class ImageViewProxy extends ImageView {
         Image imageToReturn;
         GameObject cellValue = boardCell.getCellValue();
 
-        if (boardCell.wasAttacked()) {
-            if (cellValue instanceof Water) {
-                imageToReturn = MISS_IMAGE;
-            } else if (cellValue instanceof Mine || cellValue instanceof AbstractShip) {
-                imageToReturn = HIT_IMAGE;
+        if(irregularImageCase == null){
+            if (boardCell.wasAttacked()) {
+                if (cellValue instanceof Water) {
+                    imageToReturn = MISS_IMAGE;
+                } else if (cellValue instanceof Mine || cellValue instanceof AbstractShip) {
+                    imageToReturn = HIT_IMAGE;
+                } else {
+                    imageToReturn = PROBLEM_IMAGE;
+                }
             } else {
-                imageToReturn = PROBLEM_IMAGE;
+                if (cellValue instanceof AbstractShip) {
+                    imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
+                } else if (cellValue instanceof Water) {
+                    imageToReturn = WATER_IMAGE;
+                } else if (cellValue instanceof Mine) {
+                    imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
+                } else {
+                    imageToReturn = PROBLEM_IMAGE;
+                }
             }
-        } else {
-            if (cellValue instanceof AbstractShip) {
-                imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
-            } else if (cellValue instanceof Water) {
-                imageToReturn = WATER_IMAGE;
-            } else if (cellValue instanceof Mine) {
-                imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
-            } else {
-                imageToReturn = PROBLEM_IMAGE;
-            }
+        }else{
+            imageToReturn= irregularImageCase;
         }
 
         return imageToReturn;

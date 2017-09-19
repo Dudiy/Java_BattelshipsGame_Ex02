@@ -75,11 +75,12 @@ public class PlayerInitializerController {
         labelPlayerNumber.setText("Player " + playerNumber);
         textFieldPlayerName.setText(player.getName());
 
-        if (player.getPlayerImage() != null) {
-            imageViewProfilePic.setImage(player.getPlayerImage());
-        }
-        else{
-            imageViewProfilePic.setImage(new Image(DEFAULT_PLAYER_PROFILE_URL));
-        }
+        // TODO uncomment
+//        if (player.getPlayerImage() != null) {
+//            imageViewProfilePic.setImage(player.getPlayerImage());
+//        }
+//        else{
+//            imageViewProfilePic.setImage(new Image(DEFAULT_PLAYER_PROFILE_URL));
+//        }
     }
 }

@@ -3,7 +3,12 @@ package javaFXUI;
 import gameLogic.*;
 import gameLogic.exceptions.*;
 import gameLogic.game.*;
+import gameLogic.game.board.Board;
+import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
+import gameLogic.game.gameObjects.GameObject;
+import gameLogic.game.gameObjects.Mine;
+import gameLogic.game.gameObjects.Water;
 import gameLogic.users.*;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.ImageViewProxy;
@@ -14,7 +19,10 @@ import javaFXUI.view.PauseWindowController;
 import javaFXUI.view.PlayerInitializerController;
 import javafx.application.Application;
 import javafx.beans.property.*;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Scene;
@@ -22,12 +30,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -42,6 +52,8 @@ public class JavaFXManager extends Application {
     private final Stage playerInitializerStage = new Stage();
     private AnchorPane welcomeScreen;
     private BorderPane mainWindowLayout;
+    private Scene mainWindowScene;
+//    private Scene welcomeScreenScene;
     // ============== controllers ==============
     private MainWindowController mainWindowController;
     private LayoutCurrentTurnInfoController currentTurnInfoController;
@@ -78,8 +90,9 @@ public class JavaFXManager extends Application {
         try {
             loadMainWindow();
             loadRightPane();
-            loadWelcomeScreen();
+            mainWindowScene = new Scene(mainWindowLayout);
 
+            loadWelcomeScreen();
             Scene scene = new Scene(welcomeScreen);
             primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream(Constants.GAME_ICON_IMAGE_URL)));
@@ -89,6 +102,15 @@ public class JavaFXManager extends Application {
         }
     }
 
+    private void loadMainWindow() throws IOException {
+        fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
+        mainWindowLayout = fxmlLoader.load();
+        mainWindowController = fxmlLoader.getController();
+        mainWindowController.setJavaFXManager(this);
+        resetGameEvent.add(mainWindowController::resetGame);
+    }
+
     private void loadRightPane() throws IOException {
         fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/LayoutCurrentTurnInfo.fxml"));
@@ -96,6 +118,12 @@ public class JavaFXManager extends Application {
         currentTurnInfoController = fxmlLoader.getController();
         currentTurnInfoController.setJavaFXManager(this);
         mainWindowLayout.setRight(rightPane);
+    }
+
+    private void loadWelcomeScreen() throws IOException {
+        fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/WelcomeScene.fxml"));
+        welcomeScreen = fxmlLoader.load();
     }
 
     private void initPlayerInitializerWindow() throws IOException {
@@ -112,21 +140,6 @@ public class JavaFXManager extends Application {
         // TODO set the correct style
         playerInitializerStage.initStyle(StageStyle.UTILITY);
         playerInitializerStage.initModality(Modality.WINDOW_MODAL);
-    }
-
-    private void loadWelcomeScreen() throws IOException {
-        fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/WelcomeScene.fxml"));
-        welcomeScreen = fxmlLoader.load();
-    }
-
-    private void loadMainWindow() throws IOException {
-        fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/MainWindow.fxml"));
-        mainWindowLayout = fxmlLoader.load();
-        mainWindowController = fxmlLoader.getController();
-        mainWindowController.setJavaFXManager(this);
-        resetGameEvent.add(mainWindowController::resetGame);
     }
 
     private void initPauseWindow() {
@@ -146,11 +159,11 @@ public class JavaFXManager extends Application {
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
             secondaryStage.setOnCloseRequest(Event::consume);
+            secondaryStage.setOnCloseRequest(event -> exitGame());
             showPauseMenu();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
         }
-
     }
 
     // ===================================== Getters =====================================
@@ -190,15 +203,18 @@ public class JavaFXManager extends Application {
         activeGame.setValue(loadedGame);
         gameState.setValue(loadedGame.getGameState());
     }
+
     // ===================================== Start Game =====================================
 
     public void startGame() {
         try {
             // TODO use task to show "Loading game"
-            primaryStage.setScene(new Scene(mainWindowLayout));
+            // TODO del
+//            primaryStage.setScene(new Scene(mainWindowLayout));
+            primaryStage.setScene(mainWindowScene);
             // TODO select player names....and pictures?!
             Game activeGame = this.activeGame.getValue();
-            // TODO add computer player?!
+            // TODO add computer player?! NO !!
             Player player1 = initializePlayer(1);
             Player player2 = initializePlayer(2);
             gamesManager.startGame(activeGame, player1, player2);
@@ -250,13 +266,29 @@ public class JavaFXManager extends Application {
 
     // ===================================== Make Move =====================================
 
-    public eAttackResult makeMove(BoardCoordinates cellToAttack, Runnable updateCellDisplay) {
-        eAttackResult attackResult = null;
+//    public eAttackResult makeMove(BoardCoordinates cellToAttack, Runnable updateCellDisplay) {
+//        eAttackResult attackResult = null;
+//
+//        try {
+//            Game activeGame = this.activeGame.getValue();
+//            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
+//            updateActivePlayerAttackResult(cellToAttack, attackResult, updateCellDisplay);
+//            updateActivePlayer();
+//            gameState.setValue(activeGame.getGameState());
+//        } catch (CellNotOnBoardException e) {
+//            AlertHandlingUtils.showErrorMessage(e, "Error while making move");
+//        }
+//
+//        return attackResult;
+//    }
 
+    public eAttackResult makeMove(ImageViewProxy cellAsImageView) {
+        eAttackResult attackResult = null;
         try {
             Game activeGame = this.activeGame.getValue();
-            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
-            updateActivePlayerAttackResult(attackResult, updateCellDisplay);
+            BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
+            attackResult = gamesManager.makeMove(activeGame, coordinatesOfTheCell);
+            updateActivePlayerAttackResult(cellAsImageView, attackResult);
             updateActivePlayer();
             gameState.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
@@ -266,21 +298,43 @@ public class JavaFXManager extends Application {
         return attackResult;
     }
 
-    private void updateActivePlayerAttackResult(eAttackResult attackResult, Runnable updateCellDisplay) {
+    private void updateActivePlayerAttackResult(ImageViewProxy cellAsImageView, eAttackResult attackResult) throws CellNotOnBoardException {
         Game activeGame = this.activeGame.getValue();
-        updateCellDisplay.run();
+        // cell update
+        cellAsImageView.updateImageWithTransition();
+        // statistic update
         currentTurnInfoController.attackResultUpdated(attackResult);
         if (attackResult.moveEnded() || activeGame.getGameState() == eGameState.PLAYER_WON) {
             Duration turnTime = Duration.between(turnPlayerTimer, Instant.now());
             activePlayer.getValue().addTurnDurationToTotal(turnTime);
         }
         totalMovesCounter.setValue(activeGame.getMovesCounter());
+
         Alert moveResult = new Alert(Alert.AlertType.INFORMATION, attackResult.toString());
         moveResult.showAndWait();
         if (activeGame.getGameState() == eGameState.PLAYER_WON) {
             endGame(true);
         }
     }
+//
+//    private void updateCellDisplay(ImageViewProxy cellAsImageView) {
+////        updateWhenHitMine(cellAsImageView);
+//    }
+
+//    private void updateWhenHitMine(ImageView cellAsImageView) throws CellNotOnBoardException {
+//        Board myBoard = activePlayer.getValue().getMyBoard();
+//        Board opponentBoard = activePlayer.getValue().getOpponentBoard();
+//        BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
+//        GameObject attackedGameObject = opponentBoard.getBoardCellAtCoordinates(coordinatesOfTheCell).getCellValue();
+//        GameObject gameObjectAttackedByMine = myBoard.getBoardCellAtCoordinates(coordinatesOfTheCell).getCellValue();
+//        if(gameObjectAttackedByMine instanceof Mine){
+//            GameObject mine = attackedGameObject;
+//            if(gameObjectAttackedByMine instanceof Water){
+//                mine.
+//            }
+//            System.out.println("Yes");
+//        }
+//    }
 
     public void plantMine(ImageViewProxy boardCellAsImage) {
         try {
