@@ -135,6 +135,7 @@ public class MainWindowController {
     }
 
     private void movePlayed() {
+        redrawBoards(javaFXManager.activePlayerProperty().getValue());
     }
 
     private void makeMove(ImageViewProxy cellAsImageView) {

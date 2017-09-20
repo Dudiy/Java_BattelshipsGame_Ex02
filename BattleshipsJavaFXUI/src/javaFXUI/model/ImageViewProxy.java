@@ -24,6 +24,8 @@ public class ImageViewProxy extends ImageView {
     //TODO put in manager
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
+    // TODO change image
+    private static final Image SUNK_SHIP_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
     private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
     // TODO change image
     private static final Image MINE_EXPLODED_IMAGE = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
@@ -80,8 +82,11 @@ public class ImageViewProxy extends ImageView {
             } else if (cellValue instanceof Mine) {
                 imageToReturn = MINE_EXPLODED_IMAGE;
             } else if (cellValue instanceof AbstractShip) {
-                // TODO hit when sunk
-                imageToReturn = HIT_IMAGE;
+                if(((AbstractShip) cellValue).isSunk()){
+                    imageToReturn = SUNK_SHIP_IMAGE;
+                }else{
+                    imageToReturn = HIT_IMAGE;
+                }
             } else {
                 imageToReturn = PROBLEM_IMAGE;
             }

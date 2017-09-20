@@ -113,7 +113,6 @@ public class Player implements User, Serializable {
             timesHit++;
         } else if (attackResult == eAttackResult.HIT_MINE) {
             timesHit++;
-            mineAttacked(position);
         }
 
         if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
@@ -121,24 +120,6 @@ public class Player implements User, Serializable {
         }
 
         return attackResult;
-    }
-
-    private void mineAttacked(BoardCoordinates position) throws CellNotOnBoardException {
-//        // TODO implement in EX02
-        eAttackResult mineExplosionResult = myBoard.attack(position);
-        Mine mineThatWasHit = (Mine)opponentBoard.getBoardCellAtCoordinates(position).getCellValue();
-        mineThatWasHit.setExplosionResult(mineExplosionResult);
-        switch (mineExplosionResult){
-            case HIT_MINE:
-        }
-//        if (true) {
-//
-//        } else if (mineExplosionResult == eAttackResult.HIT_MINE) {
-//            BoardCell cellHit = opponentBoard.getBoardCellAtCoordinates(position);
-//            cellHit.removeGameObjectFromCell();
-//        } else if (mineExplosionResult == eAttackResult.HIT_AND_SUNK_SHIP) {
-//
-//        }
     }
 
     public void addToScore(int amountToAdd) {
