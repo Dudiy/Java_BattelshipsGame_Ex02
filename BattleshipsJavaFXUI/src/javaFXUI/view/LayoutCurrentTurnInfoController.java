@@ -1,13 +1,7 @@
 package javaFXUI.view;
 
-import gameLogic.game.board.BoardCell;
-import gameLogic.game.board.BoardCoordinates;
-import gameLogic.game.Game;
-import gameLogic.game.board.Board;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
-import gameLogic.game.gameObjects.ship.AbstractShip;
-import gameLogic.game.gameObjects.ship.IShipListener;
 import gameLogic.users.Player;
 import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
@@ -19,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,11 +21,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.TilePane;
+import javafx.scene.input.*;
+import javafx.scene.layout.Pane;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -39,6 +31,16 @@ import java.util.Map;
 public class LayoutCurrentTurnInfoController {
     @FXML
     private Label labelCurrentPlayer;
+    @FXML
+    public Pane paneReplay;
+    @FXML
+    public Button buttonPrevious;
+    @FXML
+    public Button buttonNext;
+    @FXML
+    public Label labelMoveAtack;
+    @FXML
+    public Label labelAttackResult;
     @FXML
     private ImageView imageViewMinesAvailable;
     @FXML
@@ -139,6 +141,14 @@ public class LayoutCurrentTurnInfoController {
         javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
     }
 
+    public void setReplayMode(boolean enable){
+        paneReplay.setVisible(enable);
+        buttonPrevious.setDisable(false);
+        buttonNext.setDisable(false);
+        labelMoveAtack.setText("");
+        labelAttackResult.setText("");
+    }
+
     // ===================================== Game State Property =====================================
     private void gameStateChanged(eGameState newValue) {
         switch (newValue) {
@@ -214,5 +224,24 @@ public class LayoutCurrentTurnInfoController {
     private void onShipSunk() {
         updateShipsRemainingTable();
         TableShipsState.refresh();
+    }
+
+    // ===================================== Replay Methods =====================================
+    @FXML
+    public void buttonPreviousOnMouseClicked(MouseEvent mouseEvent) {
+        javaFXManager.replayLastMove();
+    }
+
+    @FXML
+    public void buttonNextOnMouseClicked(MouseEvent mouseEvent) {
+        javaFXManager.replayNextMove();
+    }
+
+    public void setEnablePreviousReplay(boolean enable){
+        buttonPrevious.setDisable(!enable);
+    }
+
+    public void setEnableNextReplay(boolean enable){
+        buttonNext.setDisable(!enable);
     }
 }

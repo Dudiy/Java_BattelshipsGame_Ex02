@@ -4,7 +4,7 @@ import java.io.Serializable;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 
-public abstract class GameObject implements Serializable {
+public abstract class GameObject implements Serializable, Cloneable {
     protected static final boolean VISIBLE = true;
     private BoardCoordinates position;
     private boolean isVisible;

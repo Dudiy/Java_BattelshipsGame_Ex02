@@ -19,6 +19,7 @@
       <Button fx:id="buttonStartGame" mnemonicParsing="false" onAction="#buttonStartGame_Clicked" prefHeight="25.0" prefWidth="269.0" text="Start New Game" />
       <Button fx:id="buttonEndGame" layoutX="15.0" layoutY="97.0" mnemonicParsing="false" onAction="#buttonEndGame_Clicked" prefHeight="25.0" prefWidth="269.0" text="End Current Game" />
       <Button fx:id="buttonContinueGame" layoutX="10.0" layoutY="68.0" mnemonicParsing="false" onAction="#buttonContinueGame_Clicked" prefHeight="25.0" prefWidth="269.0" text="Continue Game" />
+      <Button fx:id="buttonReplay" mnemonicParsing="false" onMouseClicked="#buttonReplayOnMouseClicked" prefHeight="25.0" prefWidth="168.0" text="Replay Mode" />
       <Button fx:id="buttonExitApplication" mnemonicParsing="false" onAction="#buttonExitApplication_Clicked" prefHeight="25.0" prefWidth="224.0" text="Exit Application" />
    </children>
    <padding>

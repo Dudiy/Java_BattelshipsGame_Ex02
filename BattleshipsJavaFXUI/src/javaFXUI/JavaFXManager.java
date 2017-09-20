@@ -9,10 +9,12 @@ import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
+import gameLogic.game.gameObjects.ship.AbstractShip;
 import gameLogic.users.*;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.ImageViewProxy;
 import javaFXUI.model.PlayerAdapter;
+import javaFXUI.model.ReplayGame;
 import javaFXUI.view.LayoutCurrentTurnInfoController;
 import javaFXUI.view.MainWindowController;
 import javaFXUI.view.PauseWindowController;
@@ -43,6 +45,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JavaFXManager extends Application {
@@ -53,7 +56,7 @@ public class JavaFXManager extends Application {
     private AnchorPane welcomeScreen;
     private BorderPane mainWindowLayout;
     private Scene mainWindowScene;
-//    private Scene welcomeScreenScene;
+    //    private Scene welcomeScreenScene;
     // ============== controllers ==============
     private MainWindowController mainWindowController;
     private LayoutCurrentTurnInfoController currentTurnInfoController;
@@ -69,9 +72,10 @@ public class JavaFXManager extends Application {
     private FXMLLoader fxmlLoader;
     private final List<Runnable> resetGameEvent = new ArrayList<>();
     private Instant turnPlayerTimer;
+    private LinkedList<ReplayGame> previousMoves;
+    private LinkedList<ReplayGame> nextMoves;
 
     // ===================================== Init =====================================
-
     static void Run(String[] args) {
         launch(args);
     }
@@ -84,6 +88,8 @@ public class JavaFXManager extends Application {
         initMainWindow();
         initPlayerInitializerWindow();
         initPauseWindow();
+        previousMoves = new LinkedList<>();
+        nextMoves = new LinkedList<>();
     }
 
     private void initMainWindow() {
@@ -109,6 +115,12 @@ public class JavaFXManager extends Application {
         mainWindowController = fxmlLoader.getController();
         mainWindowController.setJavaFXManager(this);
         resetGameEvent.add(mainWindowController::resetGame);
+        resetGameEvent.add(() -> {
+            previousMoves.clear();
+            nextMoves.clear();
+            mainWindowController.setReplayMode(false);
+            currentTurnInfoController.setReplayMode(false);
+        });
     }
 
     private void loadRightPane() throws IOException {
@@ -167,7 +179,6 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Getters =====================================
-
     public Property<Game> getActiveGame() {
         return activeGame;
     }
@@ -197,7 +208,6 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Load Game =====================================
-
     public void loadGame(String xmlFilePath) throws LoadException {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
         activeGame.setValue(loadedGame);
@@ -205,13 +215,17 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Start Game =====================================
-
     public void startGame() {
         try {
+            if (gameState.getValue() != eGameState.LOADED) {
+                // set the game to be as if it was just started
+                resetGame(activeGame.getValue());
+            }
             // TODO use task to show "Loading game"
             // TODO del
 //            primaryStage.setScene(new Scene(mainWindowLayout));
             primaryStage.setScene(mainWindowScene);
+            currentTurnInfoController.setReplayMode(false);
             // TODO select player names....and pictures?!
             Game activeGame = this.activeGame.getValue();
             // TODO add computer player?! NO !!
@@ -265,13 +279,15 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== Make Move =====================================
-
     public eAttackResult makeMove(ImageViewProxy cellAsImageView) {
         eAttackResult attackResult = null;
         try {
             Game activeGame = this.activeGame.getValue();
             BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
+            ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
+            previousMoves.add(replayMove);
             attackResult = gamesManager.makeMove(activeGame, coordinatesOfTheCell);
+            replayMove.setAttackResult(attackResult);
             updateActivePlayerAttackResult(cellAsImageView, attackResult);
             updateActivePlayer();
             gameState.setValue(activeGame.getGameState());
@@ -312,8 +328,99 @@ public class JavaFXManager extends Application {
         }
     }
 
-    // ===================================== End Game =====================================
+    // ===================================== Replay Mode =====================================
+    public void startReplay() {
+        mainWindowController.setReplayMode(true);
+        currentTurnInfoController.setReplayMode(true);
+        hidePauseMenu();
+        // because move stop within move
+        if (activeGame.getValue().getGameState() == eGameState.PLAYER_QUIT) {
+            swapPlayer();
+        }
+        if (previousMoves.isEmpty()) {
+            currentTurnInfoController.setEnablePreviousReplay(false);
+        }
+        if (nextMoves.isEmpty()) {
+            currentTurnInfoController.setEnableNextReplay(false);
+        }
+    }
 
+    public void replayLastMove() {
+        ReplayGame replayMoveBack = previousMoves.removeLast();
+        nextMoves.addFirst(replayMoveBack);
+        currentTurnInfoController.setEnableNextReplay(true);
+        updateLastMoveChanges(replayMoveBack);
+        if (previousMoves.isEmpty()) {
+            currentTurnInfoController.setEnablePreviousReplay(false);
+        }
+    }
+
+    private void updateLastMoveChanges(ReplayGame replayMoveBack) {
+        boardsReplayChanges(replayMoveBack);
+        statisticReplayChanges(replayMoveBack);
+
+        ReplayGame twoMoveBack = previousMoves.peekLast();
+        boolean needSwapPlayer = false;
+        if (twoMoveBack == null || replayMoveBack.getActivePlayer() != twoMoveBack.getActivePlayer()) {
+            needSwapPlayer = true;
+        }
+        if (needSwapPlayer) {
+            swapPlayer();
+        }
+    }
+
+    public void replayNextMove() {
+        ReplayGame replayMoveForward = nextMoves.removeFirst();
+        previousMoves.addLast(replayMoveForward);
+        currentTurnInfoController.setEnablePreviousReplay(true);
+        updateNextMoveChanges(replayMoveForward);
+        if (nextMoves.isEmpty()) {
+            currentTurnInfoController.setEnableNextReplay(false);
+        }
+    }
+
+    private void updateNextMoveChanges(ReplayGame replayMoveForward) {
+        boardsReplayChanges(replayMoveForward);
+        statisticReplayChanges(replayMoveForward);
+
+        ReplayGame twoMoveForward = nextMoves.peekFirst();
+        boolean needSwapPlayer = false;
+        if (twoMoveForward == null || replayMoveForward.getActivePlayer() != twoMoveForward.getActivePlayer()) {
+            needSwapPlayer = true;
+        }
+        if (needSwapPlayer) {
+            swapPlayer();
+        }
+    }
+
+    private void boardsReplayChanges(ReplayGame replayMove) {
+        try {
+            BoardCoordinates positionThatAttacked = replayMove.getPositionWasAttacked();
+            BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionThatAttacked);
+            myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
+            BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
+            opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
+            if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
+                ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+            } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
+                ((AbstractShip) myBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+            }
+            mainWindowController.redrawBoards(activePlayer.getValue());
+        } catch (CellNotOnBoardException e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while try to get previous move");
+        }
+    }
+
+    private void statisticReplayChanges(ReplayGame replayMove) {
+        activePlayer.getValue().getMyBoard().setMinesAvailable(replayMove.getMinesAmount());
+    }
+
+    private void swapPlayer() {
+        activeGame.getValue().swapPlayers();
+        updateActivePlayer();
+    }
+
+    // ===================================== End Game =====================================
     public void endGame(boolean moveFinish) {
         onGameEnded(activeGame.getValue().getGameState(), moveFinish);
     }
@@ -323,8 +430,12 @@ public class JavaFXManager extends Application {
             StringBuilder message = new StringBuilder();
             Game activeGame = this.activeGame.getValue();
             if (activeGame.getWinnerPlayer() != null) {
+                activeGame.setGameState(eGameState.PLAYER_WON);
+                gameState.setValue(eGameState.PLAYER_WON);
                 message.append("Congratulations!" + activeGame.getWinnerPlayer().getName() + "has won the game!");
             } else {
+                activeGame.setGameState(eGameState.PLAYER_QUIT);
+                gameState.setValue(eGameState.PLAYER_QUIT);
                 if (moveFinish) {
                     activeGame.swapPlayers();
                 }
@@ -335,19 +446,18 @@ public class JavaFXManager extends Application {
             Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message.toString(), ButtonType.OK);
             playerWonAlert.showAndWait();
         }
-        // set the game to be as if it was just started
-        resetGame(activeGame.getValue());
+        showPauseMenu();
+//        // set the game to be as if it was just started
+//        resetGame(activeGame.getValue());
     }
 
     // ===================================== Exit Game =====================================
-
     public void exitGame() {
         // TODO say goodbye before closing :)
         primaryStage.close();
     }
 
     // ===================================== Other Methods =====================================
-
     private void errorWhileStartingGame() {
         activeGame.setValue(null);
         String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
@@ -367,9 +477,9 @@ public class JavaFXManager extends Application {
             activeGame.resetGame();
             gameState.setValue(activeGame.getGameState());
             resetGameEvent.forEach(Runnable::run);
-            if (!secondaryStage.isShowing()) {
-                showPauseMenu();
-            }
+//            if (!secondaryStage.isShowing()) {
+//                showPauseMenu();
+//            }
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while reloading the game, Please load the file again or choose another file", e.getMessage());
             activeGame.setGameState(eGameState.INVALID);

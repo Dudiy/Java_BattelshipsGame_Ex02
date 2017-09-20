@@ -29,7 +29,10 @@ public abstract class AbstractShip extends GameObject {
 
     protected abstract void setDirection(String direction) throws Exception;
 
-    // ======================================= getters =======================================
+    public void increaseHitsRemainingUntilSunk() {
+        this.hitsRemainingUntilSunk++;
+    }
+// ======================================= getters =======================================
 
     public int getLength() {
         return shipType.getLength();

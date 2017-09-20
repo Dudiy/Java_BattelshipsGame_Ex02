@@ -2,6 +2,8 @@ package gameLogic.game.gameObjects.ship;
 
 import gameLogic.game.board.Board;
 import gameLogic.game.board.BoardCoordinates;
+import gameLogic.game.gameObjects.GameObject;
+
 import java.util.LinkedList;
 
 public class LShapeShip extends AbstractShip {
@@ -44,4 +46,7 @@ public class LShapeShip extends AbstractShip {
     public eShipDirection getDirection() {
         return direction;
     }
+//
+//    public GameObject clone(){
+//    }
 }

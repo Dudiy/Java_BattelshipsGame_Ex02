@@ -1,17 +1,20 @@
 package gameLogic.game.board;
 
 import java.io.Serializable;
+
 import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Water;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.ship.AbstractShip;
-import gameLogic.game.gameObjects.ship.IShipListener;
 
-public class BoardCell implements Serializable, IShipListener {
+public class BoardCell implements Serializable, Cloneable {
     private BoardCoordinates position;
     private GameObject cellValue;
     private boolean wasAttacked = false;
+
+    public BoardCell() {
+    }
 
     public BoardCell(char col, int row) {
         position = new BoardCoordinates(col, row);
@@ -19,6 +22,11 @@ public class BoardCell implements Serializable, IShipListener {
     }
 
     // ======================================= setters =======================================
+
+    public void setPosition(BoardCoordinates position) {
+        this.position = position;
+    }
+
     public void setCellValue(GameObject cellValue) throws InvalidGameObjectPlacementException {
         if (this.cellValue == null || this.cellValue instanceof Water) {
             this.cellValue = cellValue;
@@ -27,6 +35,10 @@ public class BoardCell implements Serializable, IShipListener {
             throw new InvalidGameObjectPlacementException(cellValue.getClass().getSimpleName(), position,
                     "Cannot place a game object, cell is already occupied by a " + objectTypeInCell + " object");
         }
+    }
+
+    public void setWasAttacked(boolean wasAttacked) {
+        this.wasAttacked = wasAttacked;
     }
 
     // ======================================= getters =======================================
@@ -59,12 +71,5 @@ public class BoardCell implements Serializable, IShipListener {
             attackResult = eAttackResult.CELL_ALREADY_ATTACKED;
         }
         return attackResult;
-    }
-
-    @Override
-    public void whenShipSunk(AbstractShip ship) {
-        // TODO change the image
-        System.out.println(position.getCol());
-        System.out.println(position.getRowIndexInMemory());
     }
 }

@@ -84,6 +84,12 @@ public class MainWindowController {
         redrawBoards(activeGame.getActivePlayer());
     }
 
+    // ===================================== Setter =====================================
+    public void setReplayMode(boolean enable){
+        vBoxMyBoard.setDisable(enable);
+        vBoxOpponentsBoard.setDisable(enable);
+    }
+
     // ===================================== Getter =====================================
     public TilePane getTilePaneMyBoard() {
         return tilePaneMyBoard;
@@ -126,7 +132,7 @@ public class MainWindowController {
         boardCellAsImage.updateImage();
     }
 
-    private void redrawBoards(Player activePlayer) {
+    public void redrawBoards(Player activePlayer) {
         BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));
         //TODO test
         BoardAdapter.updateImages(opponentsBoardAsTilePane.get(activePlayer));

@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.LoadException;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -23,6 +24,8 @@ public class PauseWindowController {
     private Button buttonEndGame;
     @FXML
     private Button buttonContinueGame;
+    @FXML
+    public Button buttonReplay;
     @FXML
     private Button buttonExitApplication;
 
@@ -67,6 +70,11 @@ public class PauseWindowController {
     }
 
     @FXML
+    public void buttonReplayOnMouseClicked(MouseEvent mouseEvent) {
+        javaFXManager.startReplay();
+    }
+
+    @FXML
     public void buttonExitApplication_Clicked(ActionEvent actionEvent) {
         javaFXManager.exitGame();
     }
@@ -81,6 +89,7 @@ public class PauseWindowController {
         buttonStartGame.setDisable(!eButtonOption.START_GAME.isVisibleAtGameState(gameState));
         buttonEndGame.setDisable(!eButtonOption.END_GAME.isVisibleAtGameState(gameState));
         buttonContinueGame.setDisable(!eButtonOption.CONTINUE_GAME.isVisibleAtGameState(gameState));
+        buttonReplay.setDisable(!eButtonOption.SHOW_REPLAY_AND_STATISTIC.isVisibleAtGameState(gameState));
         buttonExitApplication.setDisable(!eButtonOption.EXIT.isVisibleAtGameState(gameState));
     }
 }
