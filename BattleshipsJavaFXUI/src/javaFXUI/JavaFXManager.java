@@ -266,22 +266,6 @@ public class JavaFXManager extends Application {
 
     // ===================================== Make Move =====================================
 
-//    public eAttackResult makeMove(BoardCoordinates cellToAttack, Runnable updateCellDisplay) {
-//        eAttackResult attackResult = null;
-//
-//        try {
-//            Game activeGame = this.activeGame.getValue();
-//            attackResult = gamesManager.makeMove(activeGame, cellToAttack);
-//            updateActivePlayerAttackResult(cellToAttack, attackResult, updateCellDisplay);
-//            updateActivePlayer();
-//            gameState.setValue(activeGame.getGameState());
-//        } catch (CellNotOnBoardException e) {
-//            AlertHandlingUtils.showErrorMessage(e, "Error while making move");
-//        }
-//
-//        return attackResult;
-//    }
-
     public eAttackResult makeMove(ImageViewProxy cellAsImageView) {
         eAttackResult attackResult = null;
         try {
@@ -316,25 +300,6 @@ public class JavaFXManager extends Application {
             endGame(true);
         }
     }
-//
-//    private void updateCellDisplay(ImageViewProxy cellAsImageView) {
-////        updateWhenHitMine(cellAsImageView);
-//    }
-
-//    private void updateWhenHitMine(ImageView cellAsImageView) throws CellNotOnBoardException {
-//        Board myBoard = activePlayer.getValue().getMyBoard();
-//        Board opponentBoard = activePlayer.getValue().getOpponentBoard();
-//        BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
-//        GameObject attackedGameObject = opponentBoard.getBoardCellAtCoordinates(coordinatesOfTheCell).getCellValue();
-//        GameObject gameObjectAttackedByMine = myBoard.getBoardCellAtCoordinates(coordinatesOfTheCell).getCellValue();
-//        if(gameObjectAttackedByMine instanceof Mine){
-//            GameObject mine = attackedGameObject;
-//            if(gameObjectAttackedByMine instanceof Water){
-//                mine.
-//            }
-//            System.out.println("Yes");
-//        }
-//    }
 
     public void plantMine(ImageViewProxy boardCellAsImage) {
         try {

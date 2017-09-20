@@ -96,9 +96,9 @@ public class Player implements User, Serializable {
     }
 
     public HashMap<String, Integer> getActiveShipsOnBoard() {
-        HashMap<String,Integer> clone = new HashMap<>();
+        HashMap<String, Integer> clone = new HashMap<>();
 
-        activeShipsOnBoard.entrySet().forEach(entry -> clone.put(entry.getKey(),entry.getValue()));
+        activeShipsOnBoard.entrySet().forEach(entry -> clone.put(entry.getKey(), entry.getValue()));
 
         return clone;
     }
@@ -109,21 +109,11 @@ public class Player implements User, Serializable {
 
         if (attackResult == eAttackResult.HIT_WATER) {
             timesMissed++;
-        }else if (attackResult == eAttackResult.HIT_SHIP || attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+        } else if (attackResult == eAttackResult.HIT_SHIP || attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
             timesHit++;
-        }else if (attackResult == eAttackResult.HIT_MINE) {
+        } else if (attackResult == eAttackResult.HIT_MINE) {
             timesHit++;
-            // if I hit a mine, attack my own board
-//            Mine mineThatWasHit = (Mine)opponentBoard.getBoardCellAtCoordinates(position).getCellValue();
-//            mineThatWasHit.setExplosionResult(myBoard.attack(position));
-            eAttackResult mineExplosionResult = myBoard.attack(position);
-//        // TODO implement in EX02
-            if (mineExplosionResult == eAttackResult.HIT_MINE) {
-                BoardCell cellHit = opponentBoard.getBoardCellAtCoordinates(position);
-                cellHit.removeGameObjectFromCell();
-            }else if(mineExplosionResult == eAttackResult.HIT_AND_SUNK_SHIP){
-
-            }
+            mineAttacked(position);
         }
 
         if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
@@ -131,6 +121,24 @@ public class Player implements User, Serializable {
         }
 
         return attackResult;
+    }
+
+    private void mineAttacked(BoardCoordinates position) throws CellNotOnBoardException {
+//        // TODO implement in EX02
+        eAttackResult mineExplosionResult = myBoard.attack(position);
+        Mine mineThatWasHit = (Mine)opponentBoard.getBoardCellAtCoordinates(position).getCellValue();
+        mineThatWasHit.setExplosionResult(mineExplosionResult);
+        switch (mineExplosionResult){
+            case HIT_MINE:
+        }
+//        if (true) {
+//
+//        } else if (mineExplosionResult == eAttackResult.HIT_MINE) {
+//            BoardCell cellHit = opponentBoard.getBoardCellAtCoordinates(position);
+//            cellHit.removeGameObjectFromCell();
+//        } else if (mineExplosionResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+//
+//        }
     }
 
     public void addToScore(int amountToAdd) {

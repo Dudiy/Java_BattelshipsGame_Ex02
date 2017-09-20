@@ -1,6 +1,7 @@
 package javaFXUI.model;
 
 import gameLogic.game.board.BoardCell;
+import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
@@ -19,13 +20,13 @@ import javafx.scene.input.TransferMode;
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
     private int cellSize;
-    // it is stronger then the rules of getImageForCell()
-    private Image irregularImageCase = null;
     private boolean isVisible;
     //TODO put in manager
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
     private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
+    // TODO change image
+    private static final Image MINE_EXPLODED_IMAGE = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
     private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
     private static final Image MISS_IMAGE = new Image(Constants.MISS_IMAGE_URL);
     private static final Image PROBLEM_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
@@ -65,10 +66,6 @@ public class ImageViewProxy extends ImageView {
         }
     }
 
-    public void setIrregularImageCase(Image irregularImageCase) {
-        this.irregularImageCase = irregularImageCase;
-    }
-
     public BoardCell getBoardCell() {
         return boardCell;
     }
@@ -77,28 +74,27 @@ public class ImageViewProxy extends ImageView {
         Image imageToReturn;
         GameObject cellValue = boardCell.getCellValue();
 
-        if(irregularImageCase == null){
-            if (boardCell.wasAttacked()) {
-                if (cellValue instanceof Water) {
-                    imageToReturn = MISS_IMAGE;
-                } else if (cellValue instanceof Mine || cellValue instanceof AbstractShip) {
-                    imageToReturn = HIT_IMAGE;
-                } else {
-                    imageToReturn = PROBLEM_IMAGE;
-                }
+        if (boardCell.wasAttacked()) {
+            if (cellValue instanceof Water) {
+                imageToReturn = MISS_IMAGE;
+            } else if (cellValue instanceof Mine) {
+                imageToReturn = MINE_EXPLODED_IMAGE;
+            } else if (cellValue instanceof AbstractShip) {
+                // TODO hit when sunk
+                imageToReturn = HIT_IMAGE;
             } else {
-                if (cellValue instanceof AbstractShip) {
-                    imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
-                } else if (cellValue instanceof Water) {
-                    imageToReturn = WATER_IMAGE;
-                } else if (cellValue instanceof Mine) {
-                    imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
-                } else {
-                    imageToReturn = PROBLEM_IMAGE;
-                }
+                imageToReturn = PROBLEM_IMAGE;
             }
-        }else{
-            imageToReturn= irregularImageCase;
+        } else {
+            if (cellValue instanceof AbstractShip) {
+                imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
+            } else if (cellValue instanceof Water) {
+                imageToReturn = WATER_IMAGE;
+            } else if (cellValue instanceof Mine) {
+                imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
+            } else {
+                imageToReturn = PROBLEM_IMAGE;
+            }
         }
 
         return imageToReturn;
@@ -110,16 +106,7 @@ public class ImageViewProxy extends ImageView {
         setEffect(highlight);
     }
 
-//    private void minePlaced() {
-//        try {
-//            boardCell.setCellValue(new Mine(boardCell.getPosition()));
-//            setImage(MINE_IMAGE);
-//        } catch (InvalidGameObjectPlacementException e) {
-//            AlertHandlingUtils.showErrorMessage(e,"Error while put mine");
-//        }
-//    }
-
-    public void updateImage(){
+    public void updateImage() {
         setImage(getImageForCell());
     }
 

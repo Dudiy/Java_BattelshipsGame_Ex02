@@ -91,16 +91,11 @@ public class LayoutCurrentTurnInfoController {
         });
 
         imageViewMinesAvailable.setOnDragDone((event) -> {
-            Board myBoard = javaFXManager.getActiveGame().getValue().getActivePlayer().getMyBoard();
-            Integer minesAvailable = myBoard.getMinesAvailable();
             if (event.getTransferMode() == TransferMode.MOVE) {
                 Dragboard dragboard = event.getDragboard();
                 ImageViewProxy selectedBoardCellAsImage =  getSelectedBoardCell(dragboard);
                 javaFXManager.plantMine(selectedBoardCellAsImage);
-                // player already swap, so we need to go back to the previous player
-//                javaFXManager.getActiveGame().getValue().swapPlayers();
                 updateMinesAvailableImageView();
-//                javaFXManager.getActiveGame().getValue().swapPlayers();
             }
             event.consume();
         });

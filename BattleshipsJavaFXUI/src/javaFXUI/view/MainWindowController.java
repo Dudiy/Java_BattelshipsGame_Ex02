@@ -116,7 +116,6 @@ public class MainWindowController {
         try {
             if (boardsInitialized) {
                 redrawBoards(activePlayer);
-//                addMine(activePlayer);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +128,8 @@ public class MainWindowController {
 
     private void redrawBoards(Player activePlayer) {
         BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));
+        //TODO test
+        BoardAdapter.updateImages(opponentsBoardAsTilePane.get(activePlayer));
         vBoxMyBoard.getChildren().set(2, myBoardAsTilePane.get(activePlayer));
         vBoxOpponentsBoard.getChildren().set(2, opponentsBoardAsTilePane.get(activePlayer));
     }
@@ -137,7 +138,6 @@ public class MainWindowController {
     }
 
     private void makeMove(ImageViewProxy cellAsImageView) {
-//        eAttackResult attackResult = javaFXManager.makeMove(BoardCoordinates.Parse(imageView.getId()), ()->imageView.updateImageWithTransition());
         javaFXManager.makeMove(cellAsImageView);
     }
 
