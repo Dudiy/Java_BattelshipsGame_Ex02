@@ -74,6 +74,10 @@ public class JavaFXManager extends Application {
     private Instant turnPlayerTimer;
     private LinkedList<ReplayGame> previousMoves;
     private LinkedList<ReplayGame> nextMoves;
+    private enum eReplayStatus{
+        PREV,
+        NEXT;
+    }
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -285,21 +289,25 @@ public class JavaFXManager extends Application {
             Game activeGame = this.activeGame.getValue();
             BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
             ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
-            if(!previousMoves.isEmpty()){
-                previousMoves.removeLast();
-            }
-            previousMoves.addLast(replayMove);
             attackResult = gamesManager.makeMove(activeGame, coordinatesOfTheCell);
-            replayMove.setAttackResult(attackResult);
+            if(attackResult!=eAttackResult.CELL_ALREADY_ATTACKED){
+                if(!previousMoves.isEmpty()){
+                    previousMoves.removeLast();
+                }
+                previousMoves.addLast(replayMove);
+                replayMove.setAttackResult(attackResult);
+            }
             updateActivePlayerAttackResult(cellAsImageView, attackResult);
             // we save a backup to the last move
             // in order to get in the replay to previous node and get back to the the newest move
             // because every node save the state BEFORE the move
             // when we make a new move we delete that node and put two newer node
             updateActivePlayer();
-            replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
-            previousMoves.addLast(replayMove);
-            replayMove.setAttackResult(attackResult);
+            if(attackResult!=eAttackResult.CELL_ALREADY_ATTACKED){
+                replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
+                previousMoves.addLast(replayMove);
+                replayMove.setAttackResult(attackResult);
+            }
             gameState.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while making move");
@@ -346,7 +354,7 @@ public class JavaFXManager extends Application {
         mainWindowController.setReplayMode(true);
         currentTurnInfoController.setReplayMode(true);
         hidePauseMenu();
-        // because move stop within move
+        // because move stop within move attack
         if (activeGame.getValue().getGameState() == eGameState.PLAYER_QUIT) {
             swapPlayer();
         }
@@ -355,77 +363,75 @@ public class JavaFXManager extends Application {
         }else{
             nextMoves.addFirst(previousMoves.removeLast());
         }
-        if (nextMoves.isEmpty()) {
-            currentTurnInfoController.setEnableNextReplay(false);
-        }
+        currentTurnInfoController.setEnableNextReplay(false);
     }
 
     public void replayLastMove() {
-        ReplayGame replayMoveBack = previousMoves.removeLast();
-        nextMoves.addFirst(replayMoveBack);
-        currentTurnInfoController.setEnableNextReplay(true);
-        updateLastMoveChanges(replayMoveBack);
-
-        if (previousMoves.isEmpty()) {
+        ReplayGame replayMoveBack = previousMoves.peekLast();
+        if(activePlayer.getValue() != replayMoveBack.getActivePlayer()){
+            swapPlayer();
+        }
+        // previousMoves should include at least 1 node
+        if(previousMoves.size() != 1){
+            nextMoves.addFirst(replayMoveBack);
+            previousMoves.removeLast();
+        }else{
+            updateLastMoveChanges(replayMoveBack);
+            mainWindowController.redrawBoards(activePlayer.getValue());
             currentTurnInfoController.setEnablePreviousReplay(false);
         }
+        currentTurnInfoController.setEnableNextReplay(true);
     }
 
     private void updateLastMoveChanges(ReplayGame replayMoveBack) {
-        boardsReplayChanges(replayMoveBack);
+        boardsReplayChanges(replayMoveBack,eReplayStatus.NEXT);
         statisticReplayChanges(replayMoveBack);
-
-        boolean needSwapPlayer = false;
-        Player player = nextMoves.get(1).getActivePlayer();
-        if(nextMoves.isEmpty() || replayMoveBack.getActivePlayer() != nextMoves.get(1).getActivePlayer()){
-            needSwapPlayer=true;
-        }
-        if (needSwapPlayer) {
-            swapPlayer();
-        }
     }
 
     public void replayNextMove() {
-        ReplayGame replayMoveForward = nextMoves.removeFirst();
-        previousMoves.addLast(replayMoveForward);
-        currentTurnInfoController.setEnablePreviousReplay(true);
-        updateNextMoveChanges(replayMoveForward);
-        if (nextMoves.isEmpty()) {
-            currentTurnInfoController.setEnableNextReplay(false);
+        ReplayGame replayMoveForward = nextMoves.peekFirst();
+        if(activePlayer.getValue() != replayMoveForward.getActivePlayer()){
+            swapPlayer();
         }
+        // nextMoves should include at least 1 node
+        if(nextMoves.size() != 1){
+            previousMoves.addLast(replayMoveForward);
+            nextMoves.removeFirst();
+        }else{
+            updateNextMoveChanges(replayMoveForward);
+            mainWindowController.redrawBoards(activePlayer.getValue());
+            currentTurnInfoController.setEnableNextReplay(false);
+
+        }
+        currentTurnInfoController.setEnablePreviousReplay(true);
     }
 
     private void updateNextMoveChanges(ReplayGame replayMoveForward) {
-        boardsReplayChanges(replayMoveForward);
+        boardsReplayChanges(replayMoveForward,eReplayStatus.NEXT);
         statisticReplayChanges(replayMoveForward);
-
-        ReplayGame twoMoveForward = nextMoves.peekFirst();
-        boolean needSwapPlayer = false;
-        if (twoMoveForward == null || replayMoveForward.getActivePlayer() != twoMoveForward.getActivePlayer()) {
-            needSwapPlayer = true;
-        }
-        if (needSwapPlayer) {
-            swapPlayer();
-
-            // not the property
-//            activeGame.getValue().swapPlayers();
-        }
     }
 
-    private void boardsReplayChanges(ReplayGame replayMove) {
+    private void boardsReplayChanges(ReplayGame replayMove,eReplayStatus replayStatus) {
         try {
             BoardCoordinates positionThatAttacked = replayMove.getPositionWasAttacked();
             BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionThatAttacked);
             myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
             BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
             opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
-            // TODO saperate, not good for next
+            // TODO check that case
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
-                ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+                if(replayStatus == eReplayStatus.PREV){
+                    ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+                }else if(replayStatus == eReplayStatus.NEXT){
+                    ((AbstractShip) opponentBoardCell.getCellValue()).decreaseHitsRemainingUntilSunk();
+                }
             } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
-                ((AbstractShip) myBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+                if(replayStatus == eReplayStatus.PREV){
+                    ((AbstractShip) myBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+                }else if(replayStatus == eReplayStatus.NEXT){
+                    ((AbstractShip) myBoardCell.getCellValue()).decreaseHitsRemainingUntilSunk();
+                }
             }
-            mainWindowController.redrawBoards(activePlayer.getValue());
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while try to get previous move");
         }

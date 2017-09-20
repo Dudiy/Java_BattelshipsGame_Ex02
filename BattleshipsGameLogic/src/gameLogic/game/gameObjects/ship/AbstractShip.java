@@ -32,6 +32,10 @@ public abstract class AbstractShip extends GameObject {
     public void increaseHitsRemainingUntilSunk() {
         this.hitsRemainingUntilSunk++;
     }
+
+    public void decreaseHitsRemainingUntilSunk() {
+        this.hitsRemainingUntilSunk--;
+    }
 // ======================================= getters =======================================
 
     public int getLength() {
