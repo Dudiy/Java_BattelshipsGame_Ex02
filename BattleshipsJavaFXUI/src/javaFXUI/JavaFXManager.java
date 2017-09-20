@@ -285,11 +285,21 @@ public class JavaFXManager extends Application {
             Game activeGame = this.activeGame.getValue();
             BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
             ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
-            previousMoves.add(replayMove);
+            if(!previousMoves.isEmpty()){
+                previousMoves.removeLast();
+            }
+            previousMoves.addLast(replayMove);
             attackResult = gamesManager.makeMove(activeGame, coordinatesOfTheCell);
             replayMove.setAttackResult(attackResult);
             updateActivePlayerAttackResult(cellAsImageView, attackResult);
+            // we save a backup to the last move
+            // in order to get in the replay to previous node and get back to the the newest move
+            // because every node save the state BEFORE the move
+            // when we make a new move we delete that node and put two newer node
             updateActivePlayer();
+            replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
+            previousMoves.addLast(replayMove);
+            replayMove.setAttackResult(attackResult);
             gameState.setValue(activeGame.getGameState());
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while making move");
@@ -314,6 +324,9 @@ public class JavaFXManager extends Application {
         moveResult.showAndWait();
         if (activeGame.getGameState() == eGameState.PLAYER_WON) {
             endGame(true);
+            ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), cellAsImageView.getBoardCell().getPosition());
+            previousMoves.addLast(replayMove);
+            replayMove.setAttackResult(attackResult);
         }
     }
 
@@ -339,6 +352,8 @@ public class JavaFXManager extends Application {
         }
         if (previousMoves.isEmpty()) {
             currentTurnInfoController.setEnablePreviousReplay(false);
+        }else{
+            nextMoves.addFirst(previousMoves.removeLast());
         }
         if (nextMoves.isEmpty()) {
             currentTurnInfoController.setEnableNextReplay(false);
@@ -350,6 +365,7 @@ public class JavaFXManager extends Application {
         nextMoves.addFirst(replayMoveBack);
         currentTurnInfoController.setEnableNextReplay(true);
         updateLastMoveChanges(replayMoveBack);
+
         if (previousMoves.isEmpty()) {
             currentTurnInfoController.setEnablePreviousReplay(false);
         }
@@ -359,10 +375,10 @@ public class JavaFXManager extends Application {
         boardsReplayChanges(replayMoveBack);
         statisticReplayChanges(replayMoveBack);
 
-        ReplayGame twoMoveBack = previousMoves.peekLast();
         boolean needSwapPlayer = false;
-        if (twoMoveBack == null || replayMoveBack.getActivePlayer() != twoMoveBack.getActivePlayer()) {
-            needSwapPlayer = true;
+        Player player = nextMoves.get(1).getActivePlayer();
+        if(nextMoves.isEmpty() || replayMoveBack.getActivePlayer() != nextMoves.get(1).getActivePlayer()){
+            needSwapPlayer=true;
         }
         if (needSwapPlayer) {
             swapPlayer();
@@ -390,6 +406,9 @@ public class JavaFXManager extends Application {
         }
         if (needSwapPlayer) {
             swapPlayer();
+
+            // not the property
+//            activeGame.getValue().swapPlayers();
         }
     }
 
@@ -400,6 +419,7 @@ public class JavaFXManager extends Application {
             myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
             BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
             opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
+            // TODO saperate, not good for next
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
                 ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
             } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
