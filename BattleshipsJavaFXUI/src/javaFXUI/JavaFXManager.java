@@ -350,7 +350,7 @@ public class JavaFXManager extends Application {
 
     // ===================================== Replay Mode =====================================
     public void startReplay() {
-        currReplayIndex =previousMoves.size()-1;
+        currReplayIndex = previousMoves.size() - 1;
         mainWindowController.setReplayMode(true);
         currentTurnInfoController.setReplayMode(true);
         hidePauseMenu();
@@ -366,9 +366,9 @@ public class JavaFXManager extends Application {
 
     public void replayLastMove() {
         ReplayGame replayMoveBack = previousMoves.get(currReplayIndex);
-        if(currReplayIndex <=0){
+        if (currReplayIndex <= 0) {
             currentTurnInfoController.setEnablePreviousReplay(false);
-        }else{
+        } else {
             currReplayIndex--;
         }
 
@@ -393,11 +393,21 @@ public class JavaFXManager extends Application {
             BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
             opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
+                AbstractShip ship = (AbstractShip) opponentBoardCell.getCellValue();
+                Player opponentPlayer = activeGame.getValue().getOtherPlayer();
+                // TODO sometime to problem with picture of sunk ship
                 if (replayStatus == eReplayStatus.PREV) {
-                    ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
+                    if (ship.getHitsRemainingUntilSunk()==0){
+                        opponentPlayer.OnShipComeBackToLife(ship);
+                    }
+                    ship.increaseHitsRemainingUntilSunk();
                 } else if (replayStatus == eReplayStatus.NEXT) {
-                    ((AbstractShip) opponentBoardCell.getCellValue()).decreaseHitsRemainingUntilSunk();
+                    ship.decreaseHitsRemainingUntilSunk();
+                    if(ship.getHitsRemainingUntilSunk()==0){
+                        opponentPlayer.OnShipSunk(ship);
+                    }
                 }
+                currentTurnInfoController.updateShipsRemainingTable();
             } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
                 if (replayStatus == eReplayStatus.PREV) {
                     ((AbstractShip) myBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
@@ -427,9 +437,9 @@ public class JavaFXManager extends Application {
 
     public void replayNextMove() {
         ReplayGame replayMoveForward = nextMoves.get(currReplayIndex);
-        if(currReplayIndex>=nextMoves.size()-1){
+        if (currReplayIndex >= nextMoves.size() - 1) {
             currentTurnInfoController.setEnableNextReplay(false);
-        }else{
+        } else {
             currReplayIndex++;
         }
 

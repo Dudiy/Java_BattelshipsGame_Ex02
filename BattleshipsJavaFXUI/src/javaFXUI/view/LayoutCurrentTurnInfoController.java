@@ -184,7 +184,7 @@ public class LayoutCurrentTurnInfoController {
         updateShipsRemainingTable();
     }
 
-    private void updateShipsRemainingTable() {
+    public void updateShipsRemainingTable() {
         ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
         javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet()
                 .forEach(entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));

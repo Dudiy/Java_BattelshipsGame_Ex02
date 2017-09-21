@@ -173,4 +173,9 @@ public class Player implements User, Serializable {
         int shipsRemaining = activeShipsOnBoard.get(shipSunk.getID());
         activeShipsOnBoard.put(shipSunk.getID(), shipsRemaining - 1);
     }
+
+    public void OnShipComeBackToLife(AbstractShip shipWhoComeBackToLife) {
+        int shipsRemaining = activeShipsOnBoard.get(shipWhoComeBackToLife.getID());
+        activeShipsOnBoard.put(shipWhoComeBackToLife.getID(), shipsRemaining + 1);
+    }
 }
