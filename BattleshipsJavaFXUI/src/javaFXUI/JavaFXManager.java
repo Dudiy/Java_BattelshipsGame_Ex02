@@ -3,12 +3,9 @@ package javaFXUI;
 import gameLogic.*;
 import gameLogic.exceptions.*;
 import gameLogic.game.*;
-import gameLogic.game.board.Board;
 import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
-import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
-import gameLogic.game.gameObjects.Water;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import gameLogic.users.*;
 import javaFXUI.model.AlertHandlingUtils;
@@ -21,10 +18,7 @@ import javaFXUI.view.PauseWindowController;
 import javaFXUI.view.PlayerInitializerController;
 import javafx.application.Application;
 import javafx.beans.property.*;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Scene;
@@ -32,14 +26,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -75,14 +67,8 @@ public class JavaFXManager extends Application {
     private LinkedList<ReplayGame> previousMoves;
     private LinkedList<ReplayGame> nextMoves;
     private int currReplayIndex;
-    private eReplayStatus lastReplayCommand;
+    private ReplayGame.eReplayStatus lastReplayCommand;
 
-    private enum eReplayStatus {
-        START_LIST,
-        END_LIST,
-        PREV,
-        NEXT;
-    }
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -330,7 +316,8 @@ public class JavaFXManager extends Application {
         }
         totalMovesCounter.setValue(activeGame.getMovesCounter());
 
-        Alert moveResult = new Alert(Alert.AlertType.INFORMATION, attackResult.toString());
+        Alert moveResult = new Alert(Alert.AlertType.INFORMATION, attackResult.toString()
+                + "\nPress enter OR space to continue");
         moveResult.showAndWait();
         if (activeGame.getGameState() == eGameState.PLAYER_WON) {
             endGame(true);
@@ -354,7 +341,7 @@ public class JavaFXManager extends Application {
     // ===================================== Replay Mode =====================================
     public void startReplay() {
         // it is more than the max index
-        currReplayIndex = previousMoves.size()-1;
+        currReplayIndex = previousMoves.size() - 1;
         mainWindowController.setReplayMode(true);
         currentTurnInfoController.setReplayMode(true);
         hidePauseMenu();
@@ -366,19 +353,20 @@ public class JavaFXManager extends Application {
             currentTurnInfoController.setEnablePreviousReplay(false);
         }
         currentTurnInfoController.setEnableNextReplay(false);
+        currentTurnInfoController.updateReplayMove(nextMoves.peekLast());
     }
 
     public void replayLastMove() {
-        if(lastReplayCommand == eReplayStatus.NEXT){
+        if (lastReplayCommand == ReplayGame.eReplayStatus.NEXT) {
             currReplayIndex--;
         }
         ReplayGame replayMoveBack = previousMoves.get(currReplayIndex);
         if (currReplayIndex <= 0) {
             currentTurnInfoController.setEnablePreviousReplay(false);
-            lastReplayCommand= eReplayStatus.START_LIST;
+            lastReplayCommand = ReplayGame.eReplayStatus.START_LIST;
         } else {
             currReplayIndex--;
-            lastReplayCommand= eReplayStatus.PREV;
+            lastReplayCommand = ReplayGame.eReplayStatus.PREV;
         }
 
         if (activePlayer.getValue() != replayMoveBack.getActivePlayer()) {
@@ -390,11 +378,11 @@ public class JavaFXManager extends Application {
     }
 
     private void updateLastMoveChanges(ReplayGame replayMoveBack) {
-        boardsReplayChanges(replayMoveBack, eReplayStatus.PREV);
+        boardsReplayChanges(replayMoveBack, ReplayGame.eReplayStatus.PREV);
         statisticReplayChanges(replayMoveBack);
     }
 
-    private void boardsReplayChanges(ReplayGame replayMove, eReplayStatus replayStatus) {
+    private void boardsReplayChanges(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus) {
         try {
             BoardCoordinates positionThatAttacked = replayMove.getPositionWasAttacked();
             BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionThatAttacked);
@@ -404,23 +392,22 @@ public class JavaFXManager extends Application {
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
                 AbstractShip ship = (AbstractShip) opponentBoardCell.getCellValue();
                 Player opponentPlayer = activeGame.getValue().getOtherPlayer();
-                // TODO sometime to problem with picture of sunk ship
-                if (replayStatus == eReplayStatus.PREV) {
-                    if (ship.getHitsRemainingUntilSunk()==0){
+                if (replayStatus == ReplayGame.eReplayStatus.PREV) {
+                    if (ship.getHitsRemainingUntilSunk() == 0) {
                         opponentPlayer.OnShipComeBackToLife(ship);
                     }
                     ship.increaseHitsRemainingUntilSunk();
-                } else if (replayStatus == eReplayStatus.NEXT) {
+                } else if (replayStatus == ReplayGame.eReplayStatus.NEXT) {
                     ship.decreaseHitsRemainingUntilSunk();
-                    if(ship.getHitsRemainingUntilSunk()==0){
+                    if (ship.getHitsRemainingUntilSunk() == 0) {
                         opponentPlayer.OnShipSunk(ship);
                     }
                 }
                 currentTurnInfoController.updateShipsRemainingTable();
             } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
-                if (replayStatus == eReplayStatus.PREV) {
+                if (replayStatus == ReplayGame.eReplayStatus.PREV) {
                     ((AbstractShip) myBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
-                } else if (replayStatus == eReplayStatus.NEXT) {
+                } else if (replayStatus == ReplayGame.eReplayStatus.NEXT) {
                     ((AbstractShip) myBoardCell.getCellValue()).decreaseHitsRemainingUntilSunk();
                 }
             }
@@ -430,13 +417,14 @@ public class JavaFXManager extends Application {
     }
 
     private void statisticReplayChanges(ReplayGame replayMove) {
+
         activePlayer.getValue().getMyBoard().setMinesAvailable(replayMove.getMinesAmount());
         activePlayer.getValue().setScore(replayMove.getCurrentScore());
         activePlayer.getValue().setTotalTurnsDuration(replayMove.getTotalPlayerTurnsDuration());
         activePlayer.getValue().setNumTurnsPlayed(replayMove.getNumPlayerTurnsPlayed());
         activePlayer.getValue().setTimesHit(replayMove.getHitNum());
         activePlayer.getValue().setTimesMissed(replayMove.getMissNum());
-        currentTurnInfoController.updateStatistics();
+        currentTurnInfoController.updateReplayMove(replayMove);
     }
 
     private void swapPlayer() {
@@ -445,16 +433,16 @@ public class JavaFXManager extends Application {
     }
 
     public void replayNextMove() {
-        if(lastReplayCommand == eReplayStatus.PREV){
+        if (lastReplayCommand == ReplayGame.eReplayStatus.PREV) {
             currReplayIndex++;
         }
         ReplayGame replayMoveForward = nextMoves.get(currReplayIndex);
-        if (currReplayIndex >= nextMoves.size()-1) {
+        if (currReplayIndex >= nextMoves.size() - 1) {
             currentTurnInfoController.setEnableNextReplay(false);
-            lastReplayCommand= eReplayStatus.END_LIST;
+            lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
         } else {
             currReplayIndex++;
-            lastReplayCommand= eReplayStatus.NEXT;
+            lastReplayCommand = ReplayGame.eReplayStatus.NEXT;
         }
 
         if (activePlayer.getValue() != replayMoveForward.getActivePlayer()) {
@@ -466,7 +454,7 @@ public class JavaFXManager extends Application {
     }
 
     private void updateNextMoveChanges(ReplayGame replayMoveForward) {
-        boardsReplayChanges(replayMoveForward, eReplayStatus.NEXT);
+        boardsReplayChanges(replayMoveForward, ReplayGame.eReplayStatus.NEXT);
         statisticReplayChanges(replayMoveForward);
     }
 

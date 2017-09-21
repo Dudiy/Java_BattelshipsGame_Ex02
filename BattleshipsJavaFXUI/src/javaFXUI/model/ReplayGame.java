@@ -1,14 +1,10 @@
 package javaFXUI.model;
 
 import gameLogic.exceptions.CellNotOnBoardException;
-import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.users.Player;
-
-import java.awt.*;
 import java.time.Duration;
-import java.time.Instant;
 
 public class ReplayGame {
     private Player activePlayer;
@@ -25,6 +21,12 @@ public class ReplayGame {
     private Integer hitNum;
     private Integer missNum;
     private eAttackResult attackResult = null;
+    public enum eReplayStatus {
+        START_LIST,
+        END_LIST,
+        PREV,
+        NEXT;
+    }
 
     public ReplayGame(Player activePlayer, BoardCoordinates positionWasAttacked) throws CellNotOnBoardException {
         this.positionWasAttacked = positionWasAttacked;

@@ -35,7 +35,7 @@ public class LayoutCurrentTurnInfoController {
     @FXML
     public Button buttonNext;
     @FXML
-    public Label labelMoveAtack;
+    public Label labelHitOrMiss;
     @FXML
     public Label labelAttackResult;
     @FXML
@@ -142,7 +142,7 @@ public class LayoutCurrentTurnInfoController {
         paneReplay.setVisible(enable);
         buttonPrevious.setDisable(false);
         buttonNext.setDisable(false);
-        labelMoveAtack.setText("");
+        labelHitOrMiss.setText("");
         labelAttackResult.setText("");
     }
 
@@ -240,5 +240,19 @@ public class LayoutCurrentTurnInfoController {
 
     public void setEnableNextReplay(boolean enable){
         buttonNext.setDisable(!enable);
+    }
+
+    public void setReplayStatus(eAttackResult attackResult){
+        labelAttackResult.setText(attackResult.toString());
+        labelHitOrMiss.setText(attackResult.isHit() ? "Hit !! :)" : "Miss :(");
+    }
+
+    public void updateReplayMove(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus) {
+        updateStatistics();
+        if(replayStatus == ReplayGame.eReplayStatus.START_LIST){
+                        
+        }else{
+            setReplayStatus(replayMove.getAttackResult());
+        }
     }
 }
