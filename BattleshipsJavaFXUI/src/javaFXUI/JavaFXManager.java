@@ -75,8 +75,11 @@ public class JavaFXManager extends Application {
     private LinkedList<ReplayGame> previousMoves;
     private LinkedList<ReplayGame> nextMoves;
     private int currReplayIndex;
+    private eReplayStatus lastReplayCommand;
 
     private enum eReplayStatus {
+        START_LIST,
+        END_LIST,
         PREV,
         NEXT;
     }
@@ -350,7 +353,8 @@ public class JavaFXManager extends Application {
 
     // ===================================== Replay Mode =====================================
     public void startReplay() {
-        currReplayIndex = previousMoves.size() - 1;
+        // it is more than the max index
+        currReplayIndex = previousMoves.size()-1;
         mainWindowController.setReplayMode(true);
         currentTurnInfoController.setReplayMode(true);
         hidePauseMenu();
@@ -365,11 +369,16 @@ public class JavaFXManager extends Application {
     }
 
     public void replayLastMove() {
+        if(lastReplayCommand == eReplayStatus.NEXT){
+            currReplayIndex--;
+        }
         ReplayGame replayMoveBack = previousMoves.get(currReplayIndex);
         if (currReplayIndex <= 0) {
             currentTurnInfoController.setEnablePreviousReplay(false);
+            lastReplayCommand= eReplayStatus.START_LIST;
         } else {
             currReplayIndex--;
+            lastReplayCommand= eReplayStatus.PREV;
         }
 
         if (activePlayer.getValue() != replayMoveBack.getActivePlayer()) {
@@ -436,11 +445,16 @@ public class JavaFXManager extends Application {
     }
 
     public void replayNextMove() {
+        if(lastReplayCommand == eReplayStatus.PREV){
+            currReplayIndex++;
+        }
         ReplayGame replayMoveForward = nextMoves.get(currReplayIndex);
-        if (currReplayIndex >= nextMoves.size() - 1) {
+        if (currReplayIndex >= nextMoves.size()-1) {
             currentTurnInfoController.setEnableNextReplay(false);
+            lastReplayCommand= eReplayStatus.END_LIST;
         } else {
             currReplayIndex++;
+            lastReplayCommand= eReplayStatus.NEXT;
         }
 
         if (activePlayer.getValue() != replayMoveForward.getActivePlayer()) {
