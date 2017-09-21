@@ -46,8 +46,24 @@ public class Player implements User, Serializable {
         this.name = name;
     }
 
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setTotalTurnsDuration(Duration totalTurnsDuration) {
+        this.totalTurnsDuration = totalTurnsDuration;
+    }
+
+    public void setNumTurnsPlayed(int numTurnsPlayed) {
+        this.numTurnsPlayed = numTurnsPlayed;
+    }
+
     public void setTimesHit(int timesHit) {
         this.timesHit = timesHit;
+    }
+
+    public void setTimesMissed(int timesMissed) {
+        this.timesMissed = timesMissed;
     }
 
     public void setMyBoard(Board board) {
@@ -73,6 +89,14 @@ public class Player implements User, Serializable {
 
     public Board getMyBoard() {
         return myBoard;
+    }
+
+    public Duration getTotalTurnsDuration() {
+        return totalTurnsDuration;
+    }
+
+    public int getNumTurnsPlayed() {
+        return numTurnsPlayed;
     }
 
     public Board getOpponentBoard() {

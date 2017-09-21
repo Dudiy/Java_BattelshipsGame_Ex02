@@ -392,7 +392,6 @@ public class JavaFXManager extends Application {
             myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
             BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
             opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
-            // TODO check that case
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
                 if (replayStatus == eReplayStatus.PREV) {
                     ((AbstractShip) opponentBoardCell.getCellValue()).increaseHitsRemainingUntilSunk();
@@ -413,6 +412,12 @@ public class JavaFXManager extends Application {
 
     private void statisticReplayChanges(ReplayGame replayMove) {
         activePlayer.getValue().getMyBoard().setMinesAvailable(replayMove.getMinesAmount());
+        activePlayer.getValue().setScore(replayMove.getCurrentScore());
+        activePlayer.getValue().setTotalTurnsDuration(replayMove.getTotalPlayerTurnsDuration());
+        activePlayer.getValue().setNumTurnsPlayed(replayMove.getNumPlayerTurnsPlayed());
+        activePlayer.getValue().setTimesHit(replayMove.getHitNum());
+        activePlayer.getValue().setTimesMissed(replayMove.getMissNum());
+        currentTurnInfoController.updateStatistics();
     }
 
     private void swapPlayer() {

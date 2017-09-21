@@ -5,10 +5,7 @@ import gameLogic.game.eGameState;
 import gameLogic.users.Player;
 import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
-import javaFXUI.model.BoardAdapter;
-import javaFXUI.model.ImageViewProxy;
-import javaFXUI.model.PlayerAdapter;
-import javaFXUI.model.ShipsStateDataModel;
+import javaFXUI.model.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -194,7 +191,7 @@ public class LayoutCurrentTurnInfoController {
         TableShipsState.setItems(shipsRemaining);
     }
 
-    private void updateStatistics() {
+    public void updateStatistics() {
         Player activePlayer = javaFXManager.activePlayerProperty().getValue();
         labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
         Duration avgDuration = activePlayer.getAvgTurnDuration();

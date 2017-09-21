@@ -23,7 +23,6 @@ public class Game implements Serializable {
     private Instant gameStartTime;
     private ShipFactory shipFactory;
     private eGameState gameState = eGameState.INVALID;
-
     private GameSettings gameSettings;
 
     public Game(GameSettings gameSettings) {
@@ -38,6 +37,7 @@ public class Game implements Serializable {
     public void setGameState(eGameState gameState) {
         this.gameState = gameState;
     }
+
     public void setGameStartTime(Instant startTime) {
         this.gameStartTime = startTime;
     }
