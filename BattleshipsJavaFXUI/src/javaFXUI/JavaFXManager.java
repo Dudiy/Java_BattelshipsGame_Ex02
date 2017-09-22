@@ -346,7 +346,9 @@ public class JavaFXManager extends Application {
             currentTurnInfoController.setEnablePreviousReplay(false);
         }
         currentTurnInfoController.setEnableNextReplay(false);
-        currentTurnInfoController.updateReplayMove(nextMoves.peekLast(), lastReplayCommand);
+        if(currReplayIndex>=0){
+            currentTurnInfoController.updateReplayMove(nextMoves.peekLast(), lastReplayCommand);
+        }
         lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
     }
 
@@ -509,7 +511,9 @@ public class JavaFXManager extends Application {
     }
 
     public void showPauseMenu() {
-        secondaryStage.showAndWait();
+        if(!secondaryStage.isShowing()){
+            secondaryStage.showAndWait();
+        }
     }
 
     public void hidePauseMenu() {
