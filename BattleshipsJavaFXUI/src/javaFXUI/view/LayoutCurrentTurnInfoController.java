@@ -250,7 +250,7 @@ public class LayoutCurrentTurnInfoController {
     public void updateReplayMove(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus) {
         updateStatistics();
         if(replayStatus == ReplayGame.eReplayStatus.START_LIST){
-                        
+
         }else{
             setReplayStatus(replayMove.getAttackResult());
         }
