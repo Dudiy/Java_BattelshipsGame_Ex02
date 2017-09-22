@@ -15,7 +15,6 @@ public class FileChooserProxy {
                 "XML files (*.xml)", "*.xml");
         FileChooser.getExtensionFilters().add(extensionFilter);
         // set initial directory
-        // TODO ?
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         FileChooser.setInitialDirectory(new File(currentPath));
     }

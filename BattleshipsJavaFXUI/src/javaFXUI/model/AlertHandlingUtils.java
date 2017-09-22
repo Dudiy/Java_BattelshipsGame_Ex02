@@ -1,12 +1,11 @@
 package javaFXUI.model;
 
-import gameLogic.exceptions.InvalidGameObjectPlacementException;
 import javafx.scene.control.Alert;
 
 public class AlertHandlingUtils {
     public static void showErrorMessage(Exception exception, String headerText) {
         String contentText = "Error Message: \n" + exception.getMessage();
-        showErrorMessage(exception,headerText,contentText);
+        showErrorMessage(exception, headerText, contentText);
     }
 
     public static void showErrorMessage(Exception exception, String headerText, String contentText) {

@@ -1,17 +1,6 @@
 
-19.9
-1. commit the missing photo(player and background)
-2. event of sunk a ship
-3. replay
-4. bonus
-
-
-
-
-
-
-
-
 
 //TODO delete this file before submission
-// TODO delete BattleshipsConsoleUI before submission
+// TODO delete BattleshipsConsoleUI before submission ? Why ?
+
+// TODO bug when start a new game

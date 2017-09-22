@@ -3,7 +3,6 @@ package javaFXUI.view;
 import gameLogic.game.eGameState;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.FileChooserProxy;
-import javaFXUI.model.PlayerAdapter;
 import javaFXUI.model.eButtonOption;
 import javaFXUI.model.AlertHandlingUtils;
 import javafx.event.ActionEvent;
@@ -11,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.LoadException;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 import java.io.File;
 
@@ -32,11 +30,10 @@ public class PauseWindowController {
     private JavaFXManager javaFXManager;
 
     @FXML
-    private void initialize(){
-        if (javaFXManager == null || javaFXManager.gameStateProperty().getValue() == null){
+    private void initialize() {
+        if (javaFXManager == null || javaFXManager.gameStateProperty().getValue() == null) {
             updateButtonState(eGameState.INVALID);
-        }
-        else{
+        } else {
             updateButtonState(javaFXManager.gameStateProperty().getValue());
         }
     }

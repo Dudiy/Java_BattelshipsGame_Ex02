@@ -5,9 +5,6 @@ import gameLogic.game.board.Board;
 import gameLogic.game.board.BoardCell;
 import gameLogic.game.board.BoardCoordinates;
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.TilePane;
 
 public class BoardAdapter {
@@ -43,7 +40,7 @@ public class BoardAdapter {
         }
     }
 
-    public static int getCellSize(int boardSize){
+    public static int getCellSize(int boardSize) {
         return BOARD_WIDTH / boardSize;
     }
 
@@ -61,10 +58,10 @@ public class BoardAdapter {
         return boardAsTilePane;
     }
 
-    public static void updateImages(TilePane tilePane){
-        for (Node image : tilePane.getChildren()){
-            if (image instanceof ImageViewProxy){
-                ((ImageViewProxy)image).updateImage();
+    public static void updateImages(TilePane tilePane) {
+        for (Node image : tilePane.getChildren()) {
+            if (image instanceof ImageViewProxy) {
+                ((ImageViewProxy) image).updateImage();
             }
         }
     }

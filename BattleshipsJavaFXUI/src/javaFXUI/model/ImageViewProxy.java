@@ -1,7 +1,6 @@
 package javaFXUI.model;
 
 import gameLogic.game.board.BoardCell;
-import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
@@ -22,7 +21,6 @@ public class ImageViewProxy extends ImageView {
     private int cellSize;
     private boolean isVisible;
     // stronger than getImageForCell rules
-    private Image replayImage = null;
     //TODO put in manager
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
@@ -78,34 +76,30 @@ public class ImageViewProxy extends ImageView {
         Image imageToReturn;
         GameObject cellValue = boardCell.getCellValue();
 
-        if (replayImage == null) {
-            if (boardCell.wasAttacked()) {
-                if (cellValue instanceof Water) {
-                    imageToReturn = MISS_IMAGE;
-                } else if (cellValue instanceof Mine) {
-                    imageToReturn = MINE_EXPLODED_IMAGE;
-                } else if (cellValue instanceof AbstractShip) {
-                    if (((AbstractShip) cellValue).isSunk()) {
-                        imageToReturn = SUNK_SHIP_IMAGE;
-                    } else {
-                        imageToReturn = HIT_IMAGE;
-                    }
+        if (boardCell.wasAttacked()) {
+            if (cellValue instanceof Water) {
+                imageToReturn = MISS_IMAGE;
+            } else if (cellValue instanceof Mine) {
+                imageToReturn = MINE_EXPLODED_IMAGE;
+            } else if (cellValue instanceof AbstractShip) {
+                if (((AbstractShip) cellValue).isSunk()) {
+                    imageToReturn = SUNK_SHIP_IMAGE;
                 } else {
-                    imageToReturn = PROBLEM_IMAGE;
+                    imageToReturn = HIT_IMAGE;
                 }
             } else {
-                if (cellValue instanceof AbstractShip) {
-                    imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
-                } else if (cellValue instanceof Water) {
-                    imageToReturn = WATER_IMAGE;
-                } else if (cellValue instanceof Mine) {
-                    imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
-                } else {
-                    imageToReturn = PROBLEM_IMAGE;
-                }
+                imageToReturn = PROBLEM_IMAGE;
             }
         } else {
-            imageToReturn = replayImage;
+            if (cellValue instanceof AbstractShip) {
+                imageToReturn = isVisible ? SHIP_IMAGE : WATER_IMAGE;
+            } else if (cellValue instanceof Water) {
+                imageToReturn = WATER_IMAGE;
+            } else if (cellValue instanceof Mine) {
+                imageToReturn = isVisible ? MINE_IMAGE : WATER_IMAGE;
+            } else {
+                imageToReturn = PROBLEM_IMAGE;
+            }
         }
 
         return imageToReturn;
@@ -133,5 +127,4 @@ public class ImageViewProxy extends ImageView {
         setMouseTransparent(true);
         rotateThread.start();
     }
-
 }

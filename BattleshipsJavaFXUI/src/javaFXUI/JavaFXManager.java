@@ -32,6 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -285,14 +286,14 @@ public class JavaFXManager extends Application {
             updateActivePlayer();
             // AFTER move save to next replay
             gameState.setValue(activeGame.getGameState());
-            if(gameState.getValue() != eGameState.PLAYER_QUIT){
+            if (gameState.getValue() != eGameState.PLAYER_QUIT) {
                 if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
                     replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
                     nextMoves.addLast(replayMove);
                     replayMove.setAttackResult(attackResult);
                 }
             }
-            if(gameState.getValue()== eGameState.PLAYER_WON){
+            if (gameState.getValue() == eGameState.PLAYER_WON) {
                 endGame(true);
             }
         } catch (CellNotOnBoardException e) {
@@ -346,7 +347,7 @@ public class JavaFXManager extends Application {
         }
         currentTurnInfoController.setEnableNextReplay(false);
         currentTurnInfoController.updateReplayMove(nextMoves.peekLast(), lastReplayCommand);
-        lastReplayCommand=ReplayGame.eReplayStatus.END_LIST;
+        lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
     }
 
     public void replayLastMove() {
@@ -360,10 +361,10 @@ public class JavaFXManager extends Application {
             previousMoveAfterAttack = nextMoves.get(currReplayIndex);
             setReplayActivePlayer(previousMoveAfterAttack);
             updateLastMoveChanges(previousMoveAfterAttack);
-            lastReplayCommand=ReplayGame.eReplayStatus.PREV;
+            lastReplayCommand = ReplayGame.eReplayStatus.PREV;
         } else {
             currentTurnInfoController.setEnablePreviousReplay(false);
-            lastReplayCommand=ReplayGame.eReplayStatus.START_LIST;
+            lastReplayCommand = ReplayGame.eReplayStatus.START_LIST;
         }
         currentTurnInfoController.setEnableNextReplay(true);
         mainWindowController.redrawBoards(activePlayer.getValue());
@@ -410,16 +411,16 @@ public class JavaFXManager extends Application {
         AbstractShip ship = (AbstractShip) opponentBoardCell.getCellValue();
         Player opponentPlayer = activeGame.getValue().getOtherPlayer();
         boolean prev = replayStatus == ReplayGame.eReplayStatus.PREV || replayStatus == ReplayGame.eReplayStatus.START_LIST;
-        boolean next = replayStatus == ReplayGame.eReplayStatus.NEXT|| replayStatus == ReplayGame.eReplayStatus.END_LIST;
+        boolean next = replayStatus == ReplayGame.eReplayStatus.NEXT || replayStatus == ReplayGame.eReplayStatus.END_LIST;
         // when update BEFORE state
-        if(replayMove.getAttackResult()==null){
+        if (replayMove.getAttackResult() == null) {
             if (prev) {
                 if (ship.getHitsRemainingUntilSunk() == 0) {
                     opponentPlayer.OnShipComeBackToLife(ship);
                 }
                 ship.increaseHitsRemainingUntilSunk();
             }
-        }else{
+        } else {
             if (next) {
                 ship.decreaseHitsRemainingUntilSunk();
                 if (ship.getHitsRemainingUntilSunk() == 0) {
@@ -442,17 +443,17 @@ public class JavaFXManager extends Application {
 
     public void replayNextMove() {
         ReplayGame nextMoveAfterAttack;
-        if (lastReplayCommand!= ReplayGame.eReplayStatus.START_LIST) {
+        if (lastReplayCommand != ReplayGame.eReplayStatus.START_LIST) {
             currReplayIndex++;
             nextMoveAfterAttack = nextMoves.get(currReplayIndex);
-        }else{
+        } else {
             nextMoveAfterAttack = nextMoves.get(currReplayIndex);
         }
         if (currReplayIndex < nextMoves.size() - 1) {
-            lastReplayCommand=ReplayGame.eReplayStatus.NEXT;
-        }else{
+            lastReplayCommand = ReplayGame.eReplayStatus.NEXT;
+        } else {
             currentTurnInfoController.setEnableNextReplay(false);
-            lastReplayCommand=ReplayGame.eReplayStatus.END_LIST;
+            lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
         }
         setReplayActivePlayer(nextMoveAfterAttack);
         updateNextMoveChanges(nextMoveAfterAttack);

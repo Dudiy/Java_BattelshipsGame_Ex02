@@ -1,6 +1,5 @@
 package javaFXUI.view;
 
-import gameLogic.users.Player;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.PlayerAdapter;
 import javafx.embed.swing.SwingFXUtils;
@@ -38,6 +37,7 @@ public class PlayerInitializerController {
     private JavaFXManager javaFXManager;
     private PlayerAdapter player;
     private Image playerImage;
+
     @FXML
     void buttonChangePicture_Clicked(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();

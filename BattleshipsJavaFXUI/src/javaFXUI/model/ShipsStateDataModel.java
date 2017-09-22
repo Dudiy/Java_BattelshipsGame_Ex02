@@ -6,13 +6,22 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class ShipsStateDataModel {
     private final SimpleStringProperty shipType = new SimpleStringProperty();
-    private final SimpleIntegerProperty initialAmount =  new SimpleIntegerProperty();;
+    private final SimpleIntegerProperty initialAmount = new SimpleIntegerProperty();
+    ;
     private final IntegerProperty shipsRemaining = new SimpleIntegerProperty();
 
     public ShipsStateDataModel(String shipType, int initialAmount) {
         this.shipType.setValue(shipType);
         this.initialAmount.setValue(initialAmount);
         this.shipsRemaining.setValue(initialAmount);
+    }
+
+    public IntegerProperty shipsRemainingProperty() {
+        return shipsRemaining;
+    }
+
+    public void setShipsRemaining(int shipsRemaining) {
+        this.shipsRemaining.set(shipsRemaining);
     }
 
     public String getShipType() {
@@ -33,13 +42,5 @@ public class ShipsStateDataModel {
 
     public int getShipsRemaining() {
         return shipsRemaining.get();
-    }
-
-    public IntegerProperty shipsRemainingProperty() {
-        return shipsRemaining;
-    }
-
-    public void setShipsRemaining(int shipsRemaining) {
-        this.shipsRemaining.set(shipsRemaining);
     }
 }

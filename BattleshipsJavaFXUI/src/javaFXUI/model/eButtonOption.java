@@ -1,7 +1,6 @@
 package javaFXUI.model;
 
 import gameLogic.game.eGameState;
-
 import java.util.EnumSet;
 
 public enum eButtonOption {

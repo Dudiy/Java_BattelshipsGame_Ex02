@@ -1,16 +1,12 @@
 package javaFXUI.view;
 
 import gameLogic.game.Game;
-import gameLogic.game.board.BoardCell;
-import gameLogic.game.board.BoardCoordinates;
-import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.users.Player;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
 import javaFXUI.model.ImageViewProxy;
-import javaFXUI.model.PlayerAdapter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -85,7 +81,7 @@ public class MainWindowController {
     }
 
     // ===================================== Setter =====================================
-    public void setReplayMode(boolean enable){
+    public void setReplayMode(boolean enable) {
         vBoxMyBoard.setDisable(enable);
         vBoxOpponentsBoard.setDisable(enable);
     }
@@ -128,7 +124,7 @@ public class MainWindowController {
         }
     }
 
-    public void plantMine(ImageViewProxy boardCellAsImage){
+    public void plantMine(ImageViewProxy boardCellAsImage) {
         boardCellAsImage.updateImage();
     }
 
@@ -175,12 +171,10 @@ public class MainWindowController {
     public void OnMouseDragEntered(MouseDragEvent mouseDragEvent) {
         /* drag was detected, start drag-and-drop gesture*/
         System.out.println("onDragDetected");
-
-                /* allow any transfer mode */
+        /* allow any transfer mode */
         Dragboard db = tilePaneMines.startDragAndDrop(TransferMode.ANY);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("!!");
-
         mouseDragEvent.consume();
     }
 }

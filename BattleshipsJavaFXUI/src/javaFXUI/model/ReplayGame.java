@@ -4,6 +4,7 @@ import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.users.Player;
+
 import java.time.Duration;
 
 public class ReplayGame {
@@ -21,6 +22,7 @@ public class ReplayGame {
     private Integer hitNum;
     private Integer missNum;
     private eAttackResult attackResult = null;
+
     public enum eReplayStatus {
         START_LIST,
         END_LIST,
@@ -47,7 +49,6 @@ public class ReplayGame {
     }
 
     // ===================================== Getter =====================================
-
     public BoardCoordinates getPositionWasAttacked() {
         return positionWasAttacked;
     }
