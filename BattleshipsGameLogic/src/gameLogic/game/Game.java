@@ -19,7 +19,7 @@ public class Game implements Serializable {
     private int activePlayerIndex;
     private int movesCounter;
     private Player winner;
-    private Player[] players = new Player[2];
+    private Player[] players = new Player[ 2 ];
     private Instant gameStartTime;
     private ShipFactory shipFactory;
     private eGameState gameState = eGameState.INVALID;
@@ -47,7 +47,7 @@ public class Game implements Serializable {
         return gameSettings;
     }
 
-    public int getBoardSize(){
+    public int getBoardSize() {
         return gameSettings.getBoardSize();
     }
 
@@ -60,7 +60,7 @@ public class Game implements Serializable {
     }
 
     public Player getActivePlayer() {
-        return players[activePlayerIndex];
+        return players[ activePlayerIndex ];
     }
 
     public int getMovesCounter() {
@@ -68,7 +68,7 @@ public class Game implements Serializable {
     }
 
     public Player getOtherPlayer() {
-        return players[(activePlayerIndex + 1) % 2];
+        return players[ (activePlayerIndex + 1) % 2 ];
     }
 
     public Player getWinnerPlayer() {
@@ -91,8 +91,8 @@ public class Game implements Serializable {
 
         activePlayerIndex = 0;
         movesCounter = 0;
-        players[0] = player1;
-        players[1] = player2;
+        players[ 0 ] = player1;
+        players[ 1 ] = player2;
         initBoards();
         gameState = eGameState.INITIALIZED;
         gameStartTime = Instant.now();
@@ -108,8 +108,8 @@ public class Game implements Serializable {
         } else {
             for (BattleShipGame.Boards.Board board : gameLoadedFromXml.getBoards().getBoard()) {
                 Board currentBoard = addAllShipsToBoard(getActivePlayer(), board);
-                players[currentBoardIndex].setMyBoard(currentBoard);
-                players[(currentBoardIndex + 1) % 2].setOpponentBoard(currentBoard);
+                players[ currentBoardIndex ].setMyBoard(currentBoard);
+                players[ (currentBoardIndex + 1) % 2 ].setOpponentBoard(currentBoard);
                 currentBoardIndex++;
             }
         }
@@ -157,13 +157,13 @@ public class Game implements Serializable {
     public eAttackResult attack(BoardCoordinates position) throws CellNotOnBoardException {
         eAttackResult attackResult = getActivePlayer().attack(position);
         if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
-            AbstractShip shipSunk = (AbstractShip)getOtherPlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+            AbstractShip shipSunk = (AbstractShip) getOtherPlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
             getOtherPlayer().OnShipSunk(shipSunk);
             getActivePlayer().addToScore(shipSunk.getScore());
             if (playerSunkAllShips(getActivePlayer())) {
                 activePlayerWon();
             }
-        } else if(attackResult == eAttackResult.HIT_MINE) {
+        } else if (attackResult == eAttackResult.HIT_MINE) {
             BoardCell myCell = getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position);
             GameObject gameObjectMineHit = myCell.getCellValue();
             // TODO del
@@ -171,9 +171,9 @@ public class Game implements Serializable {
 ////                myCell.removeGameObjectFromCell();
 //                ((Mine)gameObjectMineHit).setExplosionResult(eAttackResult.HIT_MINE);
 //            }else
-            if(gameObjectMineHit instanceof AbstractShip){
-                if(((AbstractShip)gameObjectMineHit).getHitsRemainingUntilSunk()==0){
-                    AbstractShip shipSunk = (AbstractShip)getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
+            if (gameObjectMineHit instanceof AbstractShip) {
+                if (((AbstractShip) gameObjectMineHit).getHitsRemainingUntilSunk() == 0) {
+                    AbstractShip shipSunk = (AbstractShip) getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();
                     getActivePlayer().OnShipSunk(shipSunk);
                     getOtherPlayer().addToScore(shipSunk.getScore());
                     if (playerSunkAllShips(getOtherPlayer())) {
@@ -228,6 +228,7 @@ public class Game implements Serializable {
         } catch (Exception e) {
             throw new Exception("Error while resetting game. internal error: " + e.getMessage());
         }
+        winner = null;
         gameState = eGameState.INITIALIZED;
         gameStartTime = Instant.now();
     }

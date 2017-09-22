@@ -92,7 +92,7 @@ public class LayoutCurrentTurnInfoController {
         imageViewMinesAvailable.setOnDragDone((event) -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 Dragboard dragboard = event.getDragboard();
-                ImageViewProxy selectedBoardCellAsImage =  getSelectedBoardCell(dragboard);
+                ImageViewProxy selectedBoardCellAsImage = getSelectedBoardCell(dragboard);
                 javaFXManager.plantMine(selectedBoardCellAsImage);
                 updateMinesAvailableImageView();
             }
@@ -101,11 +101,11 @@ public class LayoutCurrentTurnInfoController {
     }
 
     private ImageViewProxy getSelectedBoardCell(Dragboard dragboard) {
-        ImageViewProxy boardCellAsImage=null;
-        for(DataFormat dataFormat : dragboard.getContentTypes()){
-            for(String className : dataFormat.getIdentifiers()){
-                if(className == "ImageViewProxy"){
-                    boardCellAsImage = (ImageViewProxy)dragboard.getContent(dataFormat);
+        ImageViewProxy boardCellAsImage = null;
+        for (DataFormat dataFormat : dragboard.getContentTypes()) {
+            for (String className : dataFormat.getIdentifiers()) {
+                if (className == "ImageViewProxy") {
+                    boardCellAsImage = (ImageViewProxy) dragboard.getContent(dataFormat);
                     break;
                 }
             }
@@ -138,7 +138,7 @@ public class LayoutCurrentTurnInfoController {
         javaFXManager.attackResultProperty().addListener((observable, oldValue, newValue) -> attackResultUpdated(newValue));
     }
 
-    public void setReplayMode(boolean enable){
+    public void setReplayMode(boolean enable) {
         paneReplay.setVisible(enable);
         buttonPrevious.setDisable(false);
         buttonNext.setDisable(false);
@@ -179,7 +179,7 @@ public class LayoutCurrentTurnInfoController {
     // ===================================== Active Player Property =====================================
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
-        imageViewMinesAvailable.setImage(((PlayerAdapter)currentPlayer).getPlayerImage());
+        imageViewMinesAvailable.setImage(((PlayerAdapter) currentPlayer).getPlayerImage());
         updateStatistics();
         updateShipsRemainingTable();
     }
@@ -234,25 +234,24 @@ public class LayoutCurrentTurnInfoController {
         javaFXManager.replayNextMove();
     }
 
-    public void setEnablePreviousReplay(boolean enable){
+    public void setEnablePreviousReplay(boolean enable) {
         buttonPrevious.setDisable(!enable);
     }
 
-    public void setEnableNextReplay(boolean enable){
+    public void setEnableNextReplay(boolean enable) {
         buttonNext.setDisable(!enable);
-    }
-
-    public void setReplayStatus(eAttackResult attackResult){
-        labelAttackResult.setText(attackResult.toString());
-        labelHitOrMiss.setText(attackResult.isHit() ? "Hit !! :)" : "Miss :(");
     }
 
     public void updateReplayMove(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus) {
         updateStatistics();
-        if(replayStatus == ReplayGame.eReplayStatus.START_LIST){
+        setReplayStatus(replayMove);
+    }
 
-        }else{
-            setReplayStatus(replayMove.getAttackResult());
-        }
+    public void setReplayStatus(ReplayGame replayGame) {
+        String attackResult = replayGame.getAttackResult() != null ?
+                "You Attacked " + replayGame.getPositionWasAttacked().toString() : "";
+        String hitOrMiss = replayGame.getAttackResult() != null ? replayGame.getAttackResult().toString() : "";
+        labelAttackResult.setText(attackResult);
+        labelHitOrMiss.setText(hitOrMiss);
     }
 }

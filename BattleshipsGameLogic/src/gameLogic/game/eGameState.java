@@ -22,6 +22,10 @@ public enum eGameState implements Serializable {
                 this != INITIALIZED;
     }
 
+    public boolean isGameEnded() {
+        return this == PLAYER_WON || this == PLAYER_QUIT;
+    }
+
     @Override
     public String toString() {
         return name;
