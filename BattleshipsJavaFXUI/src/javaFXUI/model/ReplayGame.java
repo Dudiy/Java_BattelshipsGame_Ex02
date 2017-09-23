@@ -27,7 +27,7 @@ public class ReplayGame {
         START_LIST,
         END_LIST,
         PREV,
-        NEXT;
+        NEXT
     }
 
     public ReplayGame(Player activePlayer, BoardCoordinates positionWasAttacked) throws CellNotOnBoardException {
