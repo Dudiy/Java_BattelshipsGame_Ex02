@@ -28,6 +28,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -143,8 +144,8 @@ public class JavaFXManager extends Application {
         playerInitializerStage.setScene(scene);
         playerInitializerStage.setOnCloseRequest(event -> playerInitializerController.updatePlayerInfo());
         playerInitializerStage.initOwner(primaryStage);
-        // TODO set the correct style
         playerInitializerStage.initStyle(StageStyle.UTILITY);
+        playerInitializerStage.setResizable(false);
         playerInitializerStage.initModality(Modality.WINDOW_MODAL);
     }
 
@@ -152,7 +153,7 @@ public class JavaFXManager extends Application {
         try {
             fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/PauseWindow.fxml"));
-            VBox pauseWindowLayout = fxmlLoader.load();
+            StackPane pauseWindowLayout = fxmlLoader.load();
             PauseWindowController pauseWindowController = fxmlLoader.getController();
             pauseWindowController.setJavaFXManager(this);
 
@@ -161,11 +162,12 @@ public class JavaFXManager extends Application {
             secondaryStage.initOwner(primaryStage);
             secondaryStage.initModality(Modality.WINDOW_MODAL);
             secondaryStage.setResizable(false);
-            secondaryStage.initStyle(StageStyle.UTILITY);
+            secondaryStage.initStyle(StageStyle.UNDECORATED);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
-            secondaryStage.setOnCloseRequest(Event::consume);
-            secondaryStage.setOnCloseRequest(event -> exitGame());
+            // TODO delete?
+//            secondaryStage.setOnCloseRequest(Event::consume);
+            //secondaryStage.setOnCloseRequest(event -> exitGame());
             showPauseMenu();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
@@ -207,24 +209,20 @@ public class JavaFXManager extends Application {
     // ===================================== Start Game =====================================
     public void startGame() {
         try {
-            gameState.setValue(activeGame.getValue().getGameState());
+            updateGameStateProperty();
             if (gameState.getValue() != eGameState.LOADED) {
                 // set the game to be as if it was just started
                 resetGame(activeGame.getValue());
             }
             // TODO use task to show "Loading game"
-            // TODO del
-//            primaryStage.setScene(new Scene(mainWindowLayout));
             primaryStage.setScene(mainWindowScene);
             currentTurnInfoController.setReplayMode(false);
             // TODO select player names....and pictures?!
-            Game activeGame = this.activeGame.getValue();
-            // TODO add computer player?! NO !!
             Player player1 = initializePlayer(1);
             Player player2 = initializePlayer(2);
-            gamesManager.startGame(activeGame, player1, player2);
+            gamesManager.startGame(activeGame.getValue(), player1, player2);
             setInitialValuesForPlayers();
-            gameState.setValue(activeGame.getGameState());
+            updateGameStateProperty();
             updateActivePlayer();
             hidePauseMenu();
         } catch (InvalidGameObjectPlacementException e) {
@@ -236,6 +234,10 @@ public class JavaFXManager extends Application {
             AlertHandlingUtils.showErrorMessage(e, "Error while starting game. ");
             errorWhileStartingGame();
         }
+    }
+
+    private void updateGameStateProperty() {
+        gameState.setValue(activeGame.getValue().getGameState());
     }
 
     // display the initialize player window and return the player according to the data
@@ -273,11 +275,10 @@ public class JavaFXManager extends Application {
     public eAttackResult makeMove(ImageViewProxy cellAsImageView) {
         eAttackResult attackResult = null;
         try {
-            Game activeGame = this.activeGame.getValue();
             BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
             updateActivePlayer();
             ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
-            attackResult = gamesManager.makeMove(activeGame, coordinatesOfTheCell);
+            attackResult = gamesManager.makeMove(activeGame.getValue(), coordinatesOfTheCell);
             // BEFORE move save to previous replay
             if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
                 previousMoves.addLast(replayMove);
@@ -285,7 +286,7 @@ public class JavaFXManager extends Application {
             updateActivePlayerAttackResult(cellAsImageView, attackResult);
             updateActivePlayer();
             // AFTER move save to next replay
-            gameState.setValue(activeGame.getGameState());
+            gameState.setValue(activeGame.getValue().getGameState());
             if (gameState.getValue() != eGameState.PLAYER_QUIT) {
                 if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
                     replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
@@ -346,7 +347,7 @@ public class JavaFXManager extends Application {
             currentTurnInfoController.setEnablePreviousReplay(false);
         }
         currentTurnInfoController.setEnableNextReplay(false);
-        if(currReplayIndex>=0){
+        if (currReplayIndex >= 0) {
             currentTurnInfoController.updateReplayMove(nextMoves.peekLast(), lastReplayCommand);
         }
         lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
@@ -511,7 +512,7 @@ public class JavaFXManager extends Application {
     }
 
     public void showPauseMenu() {
-        if(!secondaryStage.isShowing()){
+        if (!secondaryStage.isShowing()) {
             secondaryStage.showAndWait();
         }
     }
