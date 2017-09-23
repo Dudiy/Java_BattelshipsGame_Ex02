@@ -78,7 +78,7 @@ public class JavaFXManager extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Battleships by Or and Dudi");
-        this.primaryStage.getIcons().add(new Image("/resources/images/gameIcon.ico"));
+        this.primaryStage.getIcons().add(new Image(Constants.GAME_ICON_URL));
         initMainWindow();
         initPlayerInitializerWindow();
         initPauseWindow();

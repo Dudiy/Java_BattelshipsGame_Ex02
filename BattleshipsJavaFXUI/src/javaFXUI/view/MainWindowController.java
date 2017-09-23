@@ -48,6 +48,10 @@ public class MainWindowController {
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
         this.javaFXManager = javaFXManager;
+        addListeners();
+    }
+
+    private void addListeners() {
         javaFXManager.gameStateProperty().addListener((observable, oldValue, newValue) -> gameStateChanged(newValue));
         javaFXManager.activePlayerProperty().addListener((observable, oldValue, newValue) -> activePlayerChanged(newValue));
         javaFXManager.totalMovesCounterProperty().addListener((observable, oldValue, newValue) -> movePlayed());
