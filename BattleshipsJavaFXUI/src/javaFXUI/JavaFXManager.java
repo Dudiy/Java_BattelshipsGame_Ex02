@@ -18,7 +18,6 @@ import javaFXUI.view.PauseWindowController;
 import javaFXUI.view.PlayerInitializerController;
 import javafx.application.Application;
 import javafx.beans.property.*;
-import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Scene;
@@ -29,7 +28,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -391,10 +389,10 @@ public class JavaFXManager extends Application {
 
     private void boardsReplayChanges(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus) {
         try {
-            BoardCoordinates positionThatAttacked = replayMove.getPositionWasAttacked();
-            BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionThatAttacked);
+            BoardCoordinates positionAttacked = replayMove.getPositionAttacked();
+            BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionAttacked);
             myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
-            BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionThatAttacked);
+            BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionAttacked);
             opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
                 replayShipCell(replayMove, replayStatus, opponentBoardCell);
@@ -406,7 +404,7 @@ public class JavaFXManager extends Application {
                 }
             }
         } catch (CellNotOnBoardException e) {
-            AlertHandlingUtils.showErrorMessage(e, "Error while try to get previous move");
+            AlertHandlingUtils.showErrorMessage(e, "Error while trying to get previous move");
         }
     }
 

@@ -49,7 +49,7 @@ public class ReplayGame {
     }
 
     // ===================================== Getter =====================================
-    public BoardCoordinates getPositionWasAttacked() {
+    public BoardCoordinates getPositionAttacked() {
         return positionWasAttacked;
     }
 
