@@ -13,4 +13,5 @@ public class Constants {
     public static final String MULTIPLE_MINES_IMAGE_URL = BASE_IMAGE_URL + "/Multiple mines.png";
     public static final String GAME_ICON_IMAGE_URL = BASE_IMAGE_URL + "/gameIcon.png";
     public static final String DEFAULT_PLAYER_PROFILE_URL = BASE_IMAGE_URL + "/defaultPlayerImage.png";
+    public static final String GAME_ICON_URL = BASE_IMAGE_URL + "/gameIcon.ico";
 }
