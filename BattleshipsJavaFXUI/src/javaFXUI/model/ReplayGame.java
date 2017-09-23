@@ -11,8 +11,8 @@ public class ReplayGame {
     private Player activePlayer;
     // board
     private BoardCoordinates positionWasAttacked;
-    private boolean myBoardCellAttacked;
-    private boolean opponentBoardCellAttacked;
+    private boolean myBoardCellWasAttacked;
+    private boolean opponentsBoardCellWasAttacked;
     // statistic
     //TODO private Image playerPicture;
     private Integer minesAmount;
@@ -32,8 +32,8 @@ public class ReplayGame {
 
     public ReplayGame(Player activePlayer, BoardCoordinates positionWasAttacked) throws CellNotOnBoardException {
         this.positionWasAttacked = positionWasAttacked;
-        this.myBoardCellAttacked = activePlayer.getMyBoard().getBoardCellAtCoordinates(positionWasAttacked).wasAttacked();
-        this.opponentBoardCellAttacked = activePlayer.getOpponentBoard().getBoardCellAtCoordinates(positionWasAttacked).wasAttacked();
+        this.myBoardCellWasAttacked = activePlayer.getMyBoard().getBoardCellAtCoordinates(positionWasAttacked).wasAttacked();
+        this.opponentsBoardCellWasAttacked = activePlayer.getOpponentBoard().getBoardCellAtCoordinates(positionWasAttacked).wasAttacked();
         this.activePlayer = activePlayer;
         minesAmount = activePlayer.getMyBoard().getMinesAvailable();
         currentScore = activePlayer.getScore();
@@ -53,12 +53,12 @@ public class ReplayGame {
         return positionWasAttacked;
     }
 
-    public boolean isMyBoardCellAttacked() {
-        return myBoardCellAttacked;
+    public boolean wasMyBoardCellAttacked() {
+        return myBoardCellWasAttacked;
     }
 
-    public boolean isOpponentBoardCellAttacked() {
-        return opponentBoardCellAttacked;
+    public boolean wasOpponentsBoardCellAttacked() {
+        return opponentsBoardCellWasAttacked;
     }
 
     public Player getActivePlayer() {

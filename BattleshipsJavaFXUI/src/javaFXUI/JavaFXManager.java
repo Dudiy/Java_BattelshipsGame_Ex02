@@ -202,6 +202,10 @@ public class JavaFXManager extends Application {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
         activeGame.setValue(loadedGame);
         gameState.setValue(loadedGame.getGameState());
+        if (gameState.getValue() == eGameState.LOADED){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION , "Game file successfully loaded from location: \n" + xmlFilePath);
+            alert.showAndWait();
+        }
     }
 
     // ===================================== Start Game =====================================
@@ -302,7 +306,7 @@ public class JavaFXManager extends Application {
         return attackResult;
     }
 
-    private void updateActivePlayerAttackResult(ImageViewProxy cellAsImageView, eAttackResult attackResult) throws CellNotOnBoardException {
+    private void updateActivePlayerAttackResult(ImageViewProxy cellAsImageView, eAttackResult attackResult) {
         Game activeGame = this.activeGame.getValue();
         // cell update
         cellAsImageView.updateImageWithTransition();
@@ -353,7 +357,7 @@ public class JavaFXManager extends Application {
 
     public void replayLastMove() {
         ReplayGame currentMoveBeforeAttack = previousMoves.get(currReplayIndex);
-        ReplayGame previousMoveAfterAttack = null;
+        ReplayGame previousMoveAfterAttack;
 
         setReplayActivePlayer(currentMoveBeforeAttack);
         updateLastMoveChanges(currentMoveBeforeAttack);
@@ -391,9 +395,9 @@ public class JavaFXManager extends Application {
         try {
             BoardCoordinates positionAttacked = replayMove.getPositionAttacked();
             BoardCell myBoardCell = activePlayer.getValue().getMyBoard().getBoardCellAtCoordinates(positionAttacked);
-            myBoardCell.setWasAttacked(replayMove.isMyBoardCellAttacked());
+            myBoardCell.setWasAttacked(replayMove.wasMyBoardCellAttacked());
             BoardCell opponentBoardCell = activePlayer.getValue().getOpponentBoard().getBoardCellAtCoordinates(positionAttacked);
-            opponentBoardCell.setWasAttacked(replayMove.isOpponentBoardCellAttacked());
+            opponentBoardCell.setWasAttacked(replayMove.wasOpponentsBoardCellAttacked());
             if (opponentBoardCell.getCellValue() instanceof AbstractShip) {
                 replayShipCell(replayMove, replayStatus, opponentBoardCell);
             } else if (opponentBoardCell.getCellValue() instanceof Mine && myBoardCell.getCellValue() instanceof AbstractShip) {
@@ -411,24 +415,26 @@ public class JavaFXManager extends Application {
     private void replayShipCell(ReplayGame replayMove, ReplayGame.eReplayStatus replayStatus, BoardCell opponentBoardCell) {
         AbstractShip ship = (AbstractShip) opponentBoardCell.getCellValue();
         Player opponentPlayer = activeGame.getValue().getOtherPlayer();
-        boolean prev = replayStatus == ReplayGame.eReplayStatus.PREV || replayStatus == ReplayGame.eReplayStatus.START_LIST;
-        boolean next = replayStatus == ReplayGame.eReplayStatus.NEXT || replayStatus == ReplayGame.eReplayStatus.END_LIST;
+        boolean prevSelected = replayStatus == ReplayGame.eReplayStatus.PREV || replayStatus == ReplayGame.eReplayStatus.START_LIST;
+        boolean nextSelected = replayStatus == ReplayGame.eReplayStatus.NEXT || replayStatus == ReplayGame.eReplayStatus.END_LIST;
         // when update BEFORE state
         if (replayMove.getAttackResult() == null) {
-            if (prev) {
+            if (prevSelected) {
                 if (ship.getHitsRemainingUntilSunk() == 0) {
                     opponentPlayer.OnShipComeBackToLife(ship);
                 }
+
                 ship.increaseHitsRemainingUntilSunk();
             }
         } else {
-            if (next) {
+            if (nextSelected) {
                 ship.decreaseHitsRemainingUntilSunk();
                 if (ship.getHitsRemainingUntilSunk() == 0) {
                     opponentPlayer.OnShipSunk(ship);
                 }
             }
         }
+
         currentTurnInfoController.updateShipsRemainingTable();
     }
 
@@ -450,12 +456,14 @@ public class JavaFXManager extends Application {
         } else {
             nextMoveAfterAttack = nextMoves.get(currReplayIndex);
         }
+
         if (currReplayIndex < nextMoves.size() - 1) {
             lastReplayCommand = ReplayGame.eReplayStatus.NEXT;
         } else {
             currentTurnInfoController.setEnableNextReplay(false);
             lastReplayCommand = ReplayGame.eReplayStatus.END_LIST;
         }
+
         setReplayActivePlayer(nextMoveAfterAttack);
         updateNextMoveChanges(nextMoveAfterAttack);
         currentTurnInfoController.setEnablePreviousReplay(true);
@@ -479,16 +487,16 @@ public class JavaFXManager extends Application {
             if (activeGame.getWinnerPlayer() != null) {
                 activeGame.setGameState(eGameState.PLAYER_WON);
                 gameState.setValue(eGameState.PLAYER_WON);
-                message.append("Congratulations!" + activeGame.getWinnerPlayer().getName() + "has won the game!");
+                message.append("Congratulations! ").append(activeGame.getWinnerPlayer().getName()).append(" has won the game!");
             } else {
                 activeGame.setGameState(eGameState.PLAYER_QUIT);
                 gameState.setValue(eGameState.PLAYER_QUIT);
                 if (moveFinish) {
                     activeGame.swapPlayers();
                 }
-                message.append(activeGame.getActivePlayer().getName() + " was left the game. ");
+                message.append(activeGame.getActivePlayer().getName()).append(" has left the game. ");
                 activeGame.swapPlayers();
-                message.append("So, " + activeGame.getActivePlayer().getName() + " you won the game !!");
+                message.append("So, ").append(activeGame.getActivePlayer().getName()).append(" you won the game !!");
             }
             Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message.toString(), ButtonType.OK);
             playerWonAlert.showAndWait();
@@ -524,7 +532,6 @@ public class JavaFXManager extends Application {
             activeGame.resetGame();
             gameState.setValue(activeGame.getGameState());
             resetGameEvent.forEach(Runnable::run);
-//            }
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while reloading the game, Please load the file again or choose another file", e.getMessage());
             activeGame.setGameState(eGameState.INVALID);

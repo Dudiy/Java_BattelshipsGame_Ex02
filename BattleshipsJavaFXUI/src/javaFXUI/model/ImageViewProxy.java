@@ -18,7 +18,6 @@ import javafx.scene.input.TransferMode;
 
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
-    private int cellSize;
     private boolean isVisible;
     // stronger than getImageForCell rules
     //TODO put in manager
@@ -36,7 +35,6 @@ public class ImageViewProxy extends ImageView {
 
     public ImageViewProxy(BoardCell boardCell, int cellSize, boolean isVisible) {
         this.boardCell = boardCell;
-        this.cellSize = cellSize;
         this.isVisible = isVisible;
         setFitHeight(cellSize);
         setFitWidth(cellSize);
@@ -119,7 +117,7 @@ public class ImageViewProxy extends ImageView {
         RotateTransition rotateTransition = new RotateTransition(Duration.millis(2000), this);
         rotateTransition.setAxis(new Point3D(0, 1, 0));
         rotateTransition.setByAngle(360);
-        Thread rotateThread = new Thread(() -> rotateTransition.play());
+        Thread rotateThread = new Thread(rotateTransition::play);
         rotateTransition.setOnFinished(event -> {
             updateImage();
             setMouseTransparent(false);
