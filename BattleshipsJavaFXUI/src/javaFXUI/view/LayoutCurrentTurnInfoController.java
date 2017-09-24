@@ -10,10 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -71,7 +68,7 @@ public class LayoutCurrentTurnInfoController {
     private void initialize() {
         columnShipType.setCellValueFactory(new PropertyValueFactory<>("shipType"));
         columnInitialShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
-        columnRemainingShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
+        columnRemainingShips.setCellValueFactory(new PropertyValueFactory<>("shipsRemaining"));
         setDragAndDropMine();
     }
 
@@ -192,26 +189,18 @@ public class LayoutCurrentTurnInfoController {
         updateShipsRemainingTable();
     }
 
-    // TODO bug here...
     public void updateShipsRemainingTable() {
-        TableShipsState.setEditable(true);
         ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
-//        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet()
-//                .forEach(entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
-        Iterator<ShipsStateDataModel> iterator = TableShipsState.getItems().iterator();
         int i = 0;
         Set<Map.Entry<String, Integer>> entries = javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet();
-        for (Map.Entry<String, Integer> entry : entries) {
-            TableShipsState.getItems().get(i++).setShipsRemaining(entry.getValue());
-        }
-//                .forEach(entry -> {
-//            iterator.next().setShipsRemaining(entry.getValue());
-//                    shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue()))
-//        });
-//        TableShipsState.setItems(shipsRemaining);
-        TableShipsState.refresh();
-        TableShipsState.setEditable(false);
 
+        for (Map.Entry<String, Integer> entry : entries) {
+            TableShipsState.getItems().get(i).setShipsRemaining(entry.getValue());
+            shipsRemaining.add(TableShipsState.getItems().get(i).clone());
+            i++;
+        }
+
+        TableShipsState.setItems(shipsRemaining);
     }
 
     public void updateStatistics() {
