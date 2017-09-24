@@ -12,10 +12,7 @@ import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.ImageViewProxy;
 import javaFXUI.model.PlayerAdapter;
 import javaFXUI.model.ReplayGame;
-import javaFXUI.view.LayoutCurrentTurnInfoController;
-import javaFXUI.view.MainWindowController;
-import javaFXUI.view.PauseWindowController;
-import javaFXUI.view.PlayerInitializerController;
+import javaFXUI.view.*;
 import javafx.application.Application;
 import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
@@ -202,8 +199,8 @@ public class JavaFXManager extends Application {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
         activeGame.setValue(loadedGame);
         gameState.setValue(loadedGame.getGameState());
-        if (gameState.getValue() == eGameState.LOADED){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION , "Game file successfully loaded from location: \n" + xmlFilePath);
+        if (gameState.getValue() == eGameState.LOADED) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Game file successfully loaded from location: \n" + xmlFilePath);
             alert.showAndWait();
         }
     }
@@ -297,7 +294,7 @@ public class JavaFXManager extends Application {
                 }
             }
             if (gameState.getValue() == eGameState.PLAYER_WON) {
-                endGame(true);
+                onGameEnded();
             }
         } catch (CellNotOnBoardException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while making move");
@@ -476,33 +473,38 @@ public class JavaFXManager extends Application {
     }
 
     // ===================================== End Game =====================================
-    public void endGame(boolean moveFinish) {
-        onGameEnded(activeGame.getValue().getGameState(), moveFinish);
+    public void endGame() {
+        gamesManager.endGame(activeGame.getValue());
+        onGameEnded();
     }
 
-    // TODO add game summary (score of both players) on game summary screen
-    private void onGameEnded(eGameState stateBeforeEndingGame, boolean moveFinish) {
-        if (stateBeforeEndingGame.gameHasStarted()) {
-            StringBuilder message = new StringBuilder();
-            Game activeGame = this.activeGame.getValue();
-            if (activeGame.getWinnerPlayer() != null) {
-                activeGame.setGameState(eGameState.PLAYER_WON);
-                gameState.setValue(eGameState.PLAYER_WON);
-                message.append("Congratulations! ").append(activeGame.getWinnerPlayer().getName()).append(" has won the game!");
-            } else {
-                activeGame.setGameState(eGameState.PLAYER_QUIT);
-                gameState.setValue(eGameState.PLAYER_QUIT);
-                if (moveFinish) {
-                    activeGame.swapPlayers();
-                }
-                message.append(activeGame.getActivePlayer().getName()).append(" has left the game. ");
-                activeGame.swapPlayers();
-                message.append("So, ").append(activeGame.getActivePlayer().getName()).append(" you won the game !!");
-            }
-            Alert playerWonAlert = new Alert(Alert.AlertType.INFORMATION, message.toString(), ButtonType.OK);
-            playerWonAlert.showAndWait();
-        }
+    private void onGameEnded() {
+        gameState.setValue(this.activeGame.getValue().getGameState());
+        showGameEndedWindow();
         showPauseMenu();
+    }
+
+    private void showGameEndedWindow() {
+        try {
+            fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/GameEndedLayout.fxml"));
+            AnchorPane gameEndedLayout = fxmlLoader.load();
+            GameEndedLayoutController gameEndedLayoutController = fxmlLoader.getController();
+
+            Game activeGame = this.activeGame.getValue();
+            gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
+            gameEndedLayoutController.setPlayers(activeGame.getPlayers());
+
+            Stage gameEndedWindow = new Stage();
+            Scene scene = new Scene(gameEndedLayout);
+            gameEndedWindow.setScene(scene);
+            gameEndedWindow.setResizable(false);
+            gameEndedWindow.initOwner(primaryStage);
+            gameEndedWindow.initStyle(StageStyle.UTILITY);
+            gameEndedWindow.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // ===================================== Exit Game =====================================

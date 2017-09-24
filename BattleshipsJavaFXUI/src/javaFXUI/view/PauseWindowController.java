@@ -63,7 +63,7 @@ public class PauseWindowController {
 
     @FXML
     void buttonEndGame_Clicked(ActionEvent event) {
-        javaFXManager.endGame(false);
+        javaFXManager.endGame();
     }
 
     @FXML

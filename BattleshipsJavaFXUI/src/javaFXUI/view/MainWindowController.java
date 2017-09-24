@@ -161,7 +161,7 @@ public class MainWindowController {
 
     @FXML
     public void OnClickEndCurrentGame(ActionEvent actionEvent) {
-        javaFXManager.endGame(false);
+        javaFXManager.endGame();
     }
 
     @FXML
