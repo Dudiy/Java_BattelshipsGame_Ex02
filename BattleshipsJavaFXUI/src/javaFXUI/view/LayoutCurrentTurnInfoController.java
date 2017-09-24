@@ -20,7 +20,6 @@ import javafx.scene.layout.Pane;
 
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +47,9 @@ public class LayoutCurrentTurnInfoController {
     @FXML
     private TableColumn<ShipsStateDataModel, Integer> columnInitialShips;
     @FXML
-    private TableColumn<ShipsStateDataModel, Integer> columnRemainingShips;
+    private TableColumn<ShipsStateDataModel, Integer> columnRemainingShipsMe;
+    @FXML
+    private TableColumn<ShipsStateDataModel, Integer> columnRemainingShipsEnemy;
     @FXML
     private Label labelCurrentScore;
     @FXML
@@ -68,7 +69,9 @@ public class LayoutCurrentTurnInfoController {
     private void initialize() {
         columnShipType.setCellValueFactory(new PropertyValueFactory<>("shipType"));
         columnInitialShips.setCellValueFactory(new PropertyValueFactory<>("initialAmount"));
-        columnRemainingShips.setCellValueFactory(new PropertyValueFactory<>("shipsRemaining"));
+        columnRemainingShipsMe.setCellValueFactory(new PropertyValueFactory<>("shipsRemainingActivePlayer"));
+        columnRemainingShipsEnemy.setCellValueFactory(new PropertyValueFactory<>("shipsRemainingOtherPlayer"));
+
         setDragAndDropMine();
     }
 
@@ -195,7 +198,14 @@ public class LayoutCurrentTurnInfoController {
         Set<Map.Entry<String, Integer>> entries = javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet();
 
         for (Map.Entry<String, Integer> entry : entries) {
-            TableShipsState.getItems().get(i).setShipsRemaining(entry.getValue());
+            TableShipsState.getItems().get(i).setShipsRemainingOtherPlayer(entry.getValue());
+            i++;
+        }
+
+        i = 0;
+        entries = javaFXManager.getActiveGame().getValue().getActivePlayer().getActiveShipsOnBoard().entrySet();
+        for (Map.Entry<String, Integer> entry : entries) {
+            TableShipsState.getItems().get(i).setShipsRemainingActivePlayer(entry.getValue());
             shipsRemaining.add(TableShipsState.getItems().get(i).clone());
             i++;
         }

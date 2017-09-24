@@ -109,11 +109,12 @@
                         <Insets bottom="5.0" />
                      </padding>
                   </Label>
-                  <TableView fx:id="TableShipsState" prefHeight="197.0" prefWidth="205.0">
+                  <TableView fx:id="TableShipsState">
                     <columns>
-                      <TableColumn fx:id="columnShipType" prefWidth="75.0" text="Ship Type" />
-                        <TableColumn fx:id="columnInitialShips" prefWidth="75.0" text="Initial" />
-                      <TableColumn fx:id="columnRemainingShips" prefWidth="75.0" text="Remaining" />
+                      <TableColumn fx:id="columnShipType" prefWidth="62.0" text="Ship Type" />
+                        <TableColumn fx:id="columnInitialShips" prefWidth="49.0" text="Init" />
+                        <TableColumn fx:id="columnRemainingShipsMe" prefWidth="47.0" text="Me" />
+                        <TableColumn fx:id="columnRemainingShipsEnemy" prefWidth="45.0" text="Enemy" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

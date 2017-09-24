@@ -7,24 +7,38 @@ import javafx.beans.property.SimpleStringProperty;
 public class ShipsStateDataModel {
     private final SimpleStringProperty shipType = new SimpleStringProperty();
     private final SimpleIntegerProperty initialAmount = new SimpleIntegerProperty();
-    private final IntegerProperty shipsRemaining = new SimpleIntegerProperty();
+    private final IntegerProperty shipsRemainingActivePlayer = new SimpleIntegerProperty();
+    private final IntegerProperty shipsRemainingOtherPlayer = new SimpleIntegerProperty();
 
     public ShipsStateDataModel(String shipType, int initialAmount) {
-        this(shipType,initialAmount,initialAmount);
+        this(shipType,initialAmount,initialAmount, initialAmount);
     }
 
-    public ShipsStateDataModel(String shipType, int initialAmount, int shipsRemaining) {
+    public ShipsStateDataModel(String shipType, int initialAmount, int shipsRemainingActivePlayer, int shipsRemainingOtherPlayer) {
         this.shipType.setValue(shipType);
         this.initialAmount.setValue(initialAmount);
-        this.shipsRemaining.setValue(shipsRemaining);
+        this.shipsRemainingActivePlayer.setValue(shipsRemainingActivePlayer);
+        this.shipsRemainingOtherPlayer.setValue(shipsRemainingOtherPlayer);
     }
 
-    public IntegerProperty shipsRemainingProperty() {
-        return shipsRemaining;
+    public int getShipsRemainingOtherPlayer() {
+        return shipsRemainingOtherPlayer.get();
     }
 
-    public void setShipsRemaining(int shipsRemaining) {
-        this.shipsRemaining.set(shipsRemaining);
+    public IntegerProperty shipsRemainingOtherPlayerProperty() {
+        return shipsRemainingOtherPlayer;
+    }
+
+    public IntegerProperty shipsRemainingActivePlayerProperty() {
+        return shipsRemainingActivePlayer;
+    }
+
+    public void setShipsRemainingActivePlayer(int shipsRemainingActivePlayer) {
+        this.shipsRemainingActivePlayer.set(shipsRemainingActivePlayer);
+    }
+
+    public void setShipsRemainingOtherPlayer(int shipsRemainingOtherPlayer) {
+        this.shipsRemainingOtherPlayer.set(shipsRemainingOtherPlayer);
     }
 
     public String getShipType() {
@@ -43,11 +57,11 @@ public class ShipsStateDataModel {
         this.initialAmount.set(initialAmount);
     }
 
-    public int getShipsRemaining() {
-        return shipsRemaining.get();
+    public int getShipsRemainingActivePlayer() {
+        return shipsRemainingActivePlayer.get();
     }
 
     public ShipsStateDataModel clone(){
-        return new ShipsStateDataModel(shipType.getValue(),initialAmount.getValue(),shipsRemaining.getValue());
+        return new ShipsStateDataModel(shipType.getValue(),initialAmount.getValue(), shipsRemainingActivePlayer.getValue(), shipsRemainingOtherPlayer.getValue());
     }
 }
