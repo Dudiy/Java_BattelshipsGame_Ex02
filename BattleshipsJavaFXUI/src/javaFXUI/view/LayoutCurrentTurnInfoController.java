@@ -23,7 +23,9 @@ import javafx.scene.layout.Pane;
 
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class LayoutCurrentTurnInfoController {
     @FXML
@@ -170,10 +172,16 @@ public class LayoutCurrentTurnInfoController {
     }
 
     private void setShipTypeValues() {
+        ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
         Map<String, Integer> shipTypes = javaFXManager.getActiveGame().getValue().getActivePlayer().getActiveShipsOnBoard();
+
         for (Map.Entry<String, Integer> entry : shipTypes.entrySet()) {
             shipsState.put(entry.getKey(), new ShipsStateDataModel(entry.getKey(), entry.getValue()));
+            shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue()));
         }
+
+        TableShipsState.setItems(shipsRemaining);
+        TableShipsState.refresh();
     }
 
     // ===================================== Active Player Property =====================================
@@ -184,11 +192,26 @@ public class LayoutCurrentTurnInfoController {
         updateShipsRemainingTable();
     }
 
+    // TODO bug here...
     public void updateShipsRemainingTable() {
+        TableShipsState.setEditable(true);
         ObservableList<ShipsStateDataModel> shipsRemaining = FXCollections.observableArrayList();
-        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet()
-                .forEach(entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
-        TableShipsState.setItems(shipsRemaining);
+//        javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet()
+//                .forEach(entry -> shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue())));
+        Iterator<ShipsStateDataModel> iterator = TableShipsState.getItems().iterator();
+        int i = 0;
+        Set<Map.Entry<String, Integer>> entries = javaFXManager.getActiveGame().getValue().getOtherPlayer().getActiveShipsOnBoard().entrySet();
+        for (Map.Entry<String, Integer> entry : entries) {
+            TableShipsState.getItems().get(i++).setShipsRemaining(entry.getValue());
+        }
+//                .forEach(entry -> {
+//            iterator.next().setShipsRemaining(entry.getValue());
+//                    shipsRemaining.add(new ShipsStateDataModel(entry.getKey(), entry.getValue()))
+//        });
+//        TableShipsState.setItems(shipsRemaining);
+        TableShipsState.refresh();
+        TableShipsState.setEditable(false);
+
     }
 
     public void updateStatistics() {

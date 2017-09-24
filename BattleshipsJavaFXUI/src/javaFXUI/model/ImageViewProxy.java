@@ -24,12 +24,12 @@ public class ImageViewProxy extends ImageView {
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
     // TODO change image
-    private static final Image SUNK_SHIP_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
+    private static final Image SINKING_SHIP_IMAGE = new Image(Constants.SINKING_SHIP_IMAGE_URL);
     private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
     // TODO change image
     private static final Image MINE_EXPLODED_IMAGE = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
     private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
-    private static final Image MISS_IMAGE = new Image(Constants.MISS_IMAGE_URL);
+    private static final Image MISS_IMAGE = new Image(Constants.MISSING_IMAGE_URL);
     private static final Image PROBLEM_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
     private static DataFormat boardCellAsImageDataFormat = new DataFormat("ImageViewProxy");
 
@@ -81,7 +81,7 @@ public class ImageViewProxy extends ImageView {
                 imageToReturn = MINE_EXPLODED_IMAGE;
             } else if (cellValue instanceof AbstractShip) {
                 if (((AbstractShip) cellValue).isSunk()) {
-                    imageToReturn = SUNK_SHIP_IMAGE;
+                    imageToReturn = SINKING_SHIP_IMAGE;
                 } else {
                     imageToReturn = HIT_IMAGE;
                 }
@@ -99,7 +99,6 @@ public class ImageViewProxy extends ImageView {
                 imageToReturn = PROBLEM_IMAGE;
             }
         }
-
         return imageToReturn;
     }
 

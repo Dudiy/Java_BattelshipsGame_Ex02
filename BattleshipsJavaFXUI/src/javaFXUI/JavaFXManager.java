@@ -480,6 +480,7 @@ public class JavaFXManager extends Application {
         onGameEnded(activeGame.getValue().getGameState(), moveFinish);
     }
 
+    // TODO add game summary (score of both players) on game summary screen
     private void onGameEnded(eGameState stateBeforeEndingGame, boolean moveFinish) {
         if (stateBeforeEndingGame.gameHasStarted()) {
             StringBuilder message = new StringBuilder();
