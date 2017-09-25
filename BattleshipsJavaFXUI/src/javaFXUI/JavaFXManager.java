@@ -14,6 +14,7 @@ import javaFXUI.model.PlayerAdapter;
 import javaFXUI.model.ReplayGame;
 import javaFXUI.view.*;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
@@ -47,12 +48,13 @@ public class JavaFXManager extends Application {
     private Scene pauseWindowScene;
     private Scene playerInitializerScene;
     private Scene gameEndedScene;
-    //    private Scene welcomeScreenScene;
+    private Scene welcomeScreenScene;
     // ============== controllers ==============
     private MainWindowController mainWindowController;
     private LayoutCurrentTurnInfoController currentTurnInfoController;
     private PlayerInitializerController playerInitializerController;
     private GameEndedLayoutController gameEndedLayoutController;
+    private WelcomeSceneController welcomeSceneController;
     // ============== properties ==============
     private final Property<eGameState> gameState = new SimpleObjectProperty<>();
     private final Property<Game> activeGame = new SimpleObjectProperty<>();
@@ -70,6 +72,7 @@ public class JavaFXManager extends Application {
     private ReplayGame.eReplayStatus lastReplayCommand;
     private boolean animationsDisabled;
     private String styleSheetURL;
+    private Thread javaFxManagerThread = Thread.currentThread();
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -82,6 +85,11 @@ public class JavaFXManager extends Application {
         this.primaryStage.setTitle("Battleships by Or and Dudi");
         this.primaryStage.getIcons().add(new Image(Constants.GAME_ICON_URL));
         initMainWindow();
+        welcomeSceneController.gameTaskFinishedProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+            if (newValue) {
+                onLoadGameComplete();
+            }
+        }));
         initPlayerInitializerWindow();
         initGameEndedWindow();
         initPauseWindow();
@@ -113,8 +121,8 @@ public class JavaFXManager extends Application {
             mainWindowScene = new Scene(mainWindowLayout);
 
             loadWelcomeScreen();
-            Scene scene = new Scene(welcomeScreen);
-            primaryStage.setScene(scene);
+            welcomeScreenScene = new Scene(welcomeScreen);
+            primaryStage.setScene(welcomeScreenScene);
             primaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream(Constants.GAME_ICON_IMAGE_URL)));
             primaryStage.show();
         } catch (IOException e) {
@@ -150,6 +158,8 @@ public class JavaFXManager extends Application {
         fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/WelcomeScene.fxml"));
         welcomeScreen = fxmlLoader.load();
+        welcomeSceneController = fxmlLoader.getController();
+        welcomeSceneController.setJavaFXManager(this);
     }
 
     private void initPlayerInitializerWindow() throws IOException {
@@ -227,6 +237,12 @@ public class JavaFXManager extends Application {
         return animationsDisabled;
     }
 
+    public Thread getJavaFxManagerThread() {
+        return javaFxManagerThread;
+    }
+
+    // ===================================== Setters =====================================
+
     public void setAnimationsDisabled(boolean animationsDisabled) {
         this.animationsDisabled = animationsDisabled;
     }
@@ -244,6 +260,15 @@ public class JavaFXManager extends Application {
 
     // ===================================== Start Game =====================================
     public void startGame() {
+        if (!welcomeSceneController.gameTaskFinishedProperty().getValue()) {
+            hidePauseMenu();
+            welcomeSceneController.onStartGameSelected();
+        } else {
+            onLoadGameComplete();
+        }
+    }
+
+    public void onLoadGameComplete() {
         try {
             updateGameStateProperty();
             if (gameState.getValue() != eGameState.LOADED) {
@@ -565,8 +590,11 @@ public class JavaFXManager extends Application {
     // ===================================== Other Methods =====================================
     private void errorWhileStartingGame() {
         activeGame.setValue(null);
+        primaryStage.setScene(welcomeScreenScene);
+        welcomeSceneController.gameTaskFinishedProperty().setValue(false);
         String message = "game file given was invalid therefor it was not loaded. \nPlease check the file and try again.";
         AlertHandlingUtils.showErrorMessage(new Exception("Invalid game file"), "Game file validation error", message);
+        showPauseMenu();
     }
 
     public void showPauseMenu() {
@@ -605,7 +633,7 @@ public class JavaFXManager extends Application {
             gameEndedScene.getStylesheets().clear();
             gameEndedScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
         } catch (Exception e) {
-            AlertHandlingUtils.showErrorMessage(e,"Error while setting style sheets");
+            AlertHandlingUtils.showErrorMessage(e, "Error while setting style sheets");
         }
     }
 
@@ -619,4 +647,6 @@ public class JavaFXManager extends Application {
         playerInitializerScene.getStylesheets().clear();
         gameEndedScene.getStylesheets().clear();
     }
+
+
 }
