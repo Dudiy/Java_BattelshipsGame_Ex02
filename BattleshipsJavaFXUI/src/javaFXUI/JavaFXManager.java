@@ -160,9 +160,6 @@ public class JavaFXManager extends Application {
             secondaryStage.initStyle(StageStyle.UNDECORATED);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
-            // TODO delete?
-//            secondaryStage.setOnCloseRequest(Event::consume);
-            //secondaryStage.setOnCloseRequest(event -> exitGame());
             showPauseMenu();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
@@ -221,10 +218,8 @@ public class JavaFXManager extends Application {
                 // set the game to be as if it was just started
                 resetGame(activeGame.getValue());
             }
-            // TODO use task to show "Loading game"
             primaryStage.setScene(mainWindowScene);
             currentTurnInfoController.setReplayMode(false);
-            // TODO select player names....and pictures?!
             Player player1 = initializePlayer(1);
             Player player2 = initializePlayer(2);
             gamesManager.startGame(activeGame.getValue(), player1, player2);
@@ -334,14 +329,6 @@ public class JavaFXManager extends Application {
         activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
         mainWindowController.plantMine(boardCellAsImage);
         updateActivePlayer();
-//        try {
-//            BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
-//            activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
-//            mainWindowController.plantMine(boardCellAsImage);
-//            updateActivePlayer();
-//        } catch (Exception e) {
-//            AlertHandlingUtils.showErrorMessage(e, "Error while plant mine");
-//        }
     }
 
     // ===================================== Replay Mode =====================================

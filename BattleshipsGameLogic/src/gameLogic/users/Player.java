@@ -34,7 +34,6 @@ public class Player implements User, Serializable {
         this.name = name;
     }
 
-
     // ======================================= setters =======================================
     public void setActiveShipsOnBoard(HashMap<String, Integer> activeShipsOnBoard) {
         for (Map.Entry<String, Integer> entry : activeShipsOnBoard.entrySet()) {

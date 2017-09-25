@@ -5,6 +5,7 @@ import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.users.Player;
 
+import java.awt.*;
 import java.time.Duration;
 
 public class ReplayGame {
@@ -14,7 +15,6 @@ public class ReplayGame {
     private boolean myBoardCellWasAttacked;
     private boolean opponentsBoardCellWasAttacked;
     // statistic
-    //TODO private Image playerPicture;
     private Integer minesAmount;
     private Integer currentScore;
     private Duration totalPlayerTurnsDuration;
