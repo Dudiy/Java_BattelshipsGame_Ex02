@@ -91,6 +91,7 @@ public class MainWindowController {
     public void setReplayMode(boolean enable) {
         vBoxMyBoard.setDisable(enable);
         vBoxOpponentsBoard.setDisable(enable);
+        buttonEndCurrentGame.setDisable(enable);
     }
 
     // ===================================== Getter =====================================

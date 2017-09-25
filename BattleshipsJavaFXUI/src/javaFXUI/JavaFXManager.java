@@ -160,9 +160,6 @@ public class JavaFXManager extends Application {
             secondaryStage.initStyle(StageStyle.UNDECORATED);
             secondaryStage.setTitle("Game Paused");
             secondaryStage.getIcons().add(new Image(JavaFXManager.class.getResourceAsStream("/resources/images/gameIcon.png")));
-            // TODO delete?
-//            secondaryStage.setOnCloseRequest(Event::consume);
-            //secondaryStage.setOnCloseRequest(event -> exitGame());
             showPauseMenu();
         } catch (IOException e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while loading pause window");
@@ -192,6 +189,14 @@ public class JavaFXManager extends Application {
 
     public Property<eAttackResult> attackResultProperty() {
         return attackResult;
+    }
+
+    public LinkedList<ReplayGame> getPreviousMoves() {
+        return previousMoves;
+    }
+
+    public LinkedList<ReplayGame> getNextMoves() {
+        return nextMoves;
     }
 
     public boolean getAnimationsDisabled() {
@@ -224,7 +229,6 @@ public class JavaFXManager extends Application {
             // TODO use task to show "Loading game"
             primaryStage.setScene(mainWindowScene);
             currentTurnInfoController.setReplayMode(false);
-            // TODO select player names....and pictures?!
             Player player1 = initializePlayer(1);
             Player player2 = initializePlayer(2);
             gamesManager.startGame(activeGame.getValue(), player1, player2);
@@ -298,8 +302,8 @@ public class JavaFXManager extends Application {
             if (gameState.getValue() != eGameState.PLAYER_QUIT) {
                 if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
                     replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
-                    nextMoves.addLast(replayMove);
                     replayMove.setAttackResult(attackResult);
+                    nextMoves.addLast(replayMove);
                 }
             }
             if (gameState.getValue() == eGameState.PLAYER_WON) {
@@ -333,15 +337,11 @@ public class JavaFXManager extends Application {
         moveResult.showAndWait();
     }
 
-    public void plantMine(ImageViewProxy boardCellAsImage) {
-        try {
-            BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
-            activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
-            mainWindowController.plantMine(boardCellAsImage);
-            updateActivePlayer();
-        } catch (Exception e) {
-            AlertHandlingUtils.showErrorMessage(e, "Error while plant mine");
-        }
+    public void plantMine(ImageViewProxy boardCellAsImage) throws InvalidGameObjectPlacementException, NoMinesAvailableException, CellNotOnBoardException {
+        BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
+        activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
+        mainWindowController.plantMine(boardCellAsImage);
+        updateActivePlayer();
     }
 
     // ===================================== Replay Mode =====================================
@@ -367,10 +367,15 @@ public class JavaFXManager extends Application {
 
     public void replayLastMove() {
         ReplayGame currentMoveBeforeAttack = previousMoves.get(currReplayIndex);
+        ReplayGame currentMoveAfterAttack = nextMoves.get(currReplayIndex);
         ReplayGame previousMoveAfterAttack;
 
         setReplayActivePlayer(currentMoveBeforeAttack);
-        updateLastMoveChanges(currentMoveBeforeAttack);
+        if(currentMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+            updateLastMoveChanges(currentMoveBeforeAttack);
+        }else{
+            removeReplayMine(currentMoveBeforeAttack);
+        }
         if (currReplayIndex > 0) {
             currReplayIndex--;
             previousMoveAfterAttack = nextMoves.get(currReplayIndex);
@@ -458,6 +463,17 @@ public class JavaFXManager extends Application {
         currentTurnInfoController.updateReplayMove(replayMove, lastReplayCommand);
     }
 
+    private void removeReplayMine(ReplayGame replayMoveBack) {
+        try {
+            BoardCoordinates positionOfMine = replayMoveBack.getPositionAttacked();
+            BoardCell mineCell = replayMoveBack.getActivePlayer().getMyBoard().getBoardCellAtCoordinates(positionOfMine);
+            mineCell.removeGameObjectFromCell();
+        } catch (CellNotOnBoardException e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while remove replay mine");
+        }
+        statisticReplayChanges(replayMoveBack);
+    }
+
     public void replayNextMove() {
         ReplayGame nextMoveAfterAttack;
         if (lastReplayCommand != ReplayGame.eReplayStatus.START_LIST) {
@@ -475,13 +491,28 @@ public class JavaFXManager extends Application {
         }
 
         setReplayActivePlayer(nextMoveAfterAttack);
-        updateNextMoveChanges(nextMoveAfterAttack);
+        if(nextMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+            updateNextMoveChanges(nextMoveAfterAttack);
+        }else{
+            addReplayMine(nextMoveAfterAttack);
+        }
         currentTurnInfoController.setEnablePreviousReplay(true);
         mainWindowController.redrawBoards(activePlayer.getValue());
     }
 
     private void updateNextMoveChanges(ReplayGame replayMoveForward) {
         boardsReplayChanges(replayMoveForward, ReplayGame.eReplayStatus.NEXT);
+        statisticReplayChanges(replayMoveForward);
+    }
+
+    private void addReplayMine(ReplayGame replayMoveForward) {
+        try {
+            BoardCoordinates positionOfPlantMine = replayMoveForward.getPositionAttacked();
+            BoardCell cellToPlantMine = replayMoveForward.getActivePlayer().getMyBoard().getBoardCellAtCoordinates(positionOfPlantMine);
+            cellToPlantMine.setCellValue(new Mine(positionOfPlantMine));
+        } catch (Exception e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while remove replay mine");
+        }
         statisticReplayChanges(replayMoveForward);
     }
 
