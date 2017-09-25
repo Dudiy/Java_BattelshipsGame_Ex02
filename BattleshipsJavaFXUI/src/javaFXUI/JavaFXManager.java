@@ -69,7 +69,7 @@ public class JavaFXManager extends Application {
     private int currReplayIndex;
     private ReplayGame.eReplayStatus lastReplayCommand;
     private boolean animationsDisabled;
-    private String styleSheetURL = "/javaFXUI/TestCss.css";
+    private String styleSheetURL;
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -85,6 +85,11 @@ public class JavaFXManager extends Application {
         initPlayerInitializerWindow();
         initGameEndedWindow();
         initPauseWindow();
+        // TODO delete
+//        styleSheetURL = "/javaFXUI/Styles/StyleC.css";
+//        setStyleSheets();
+        // TODO delete
+
         previousMoves = new LinkedList<>();
         nextMoves = new LinkedList<>();
     }
@@ -111,7 +116,6 @@ public class JavaFXManager extends Application {
             loadMainWindow();
             loadRightPane();
             mainWindowScene = new Scene(mainWindowLayout);
-            mainWindowScene.getStylesheets().addAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
 
             loadWelcomeScreen();
             Scene scene = new Scene(welcomeScreen);
@@ -161,7 +165,6 @@ public class JavaFXManager extends Application {
         playerInitializerController.setOwnerWindow(primaryStage, this);
 
         playerInitializerScene = new Scene(playerInitializerLayout);
-        playerInitializerScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
         playerInitializerStage.setScene(playerInitializerScene);
         playerInitializerStage.setOnCloseRequest(event -> playerInitializerController.updatePlayerInfo());
         playerInitializerStage.initOwner(primaryStage);
@@ -179,7 +182,6 @@ public class JavaFXManager extends Application {
             pauseWindowController.setJavaFXManager(this);
 
             pauseWindowScene = new Scene(pauseWindowLayout);
-            pauseWindowScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
             secondaryStage.setScene(pauseWindowScene);
             secondaryStage.initOwner(primaryStage);
             secondaryStage.initModality(Modality.WINDOW_MODAL);
@@ -556,21 +558,6 @@ public class JavaFXManager extends Application {
     }
 
     private void showGameEndedWindow() {
-//            fxmlLoader = new FXMLLoader();
-//            fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/GameEndedLayout.fxml"));
-//            AnchorPane gameEndedLayout = fxmlLoader.load();
-//            GameEndedLayoutController gameEndedLayoutController = fxmlLoader.getController();
-//
-//            Game activeGame = this.activeGame.getValue();
-//            gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
-//            gameEndedLayoutController.setPlayers(activeGame.getPlayers());
-//
-//            Stage gameEndedWindow = new Stage();
-//            gameEndedScene = new Scene(gameEndedLayout);
-//            gameEndedWindow.setScene(gameEndedScene);
-//            gameEndedWindow.setResizable(false);
-//            gameEndedWindow.initOwner(primaryStage);
-//            gameEndedWindow.initStyle(StageStyle.UTILITY);
         Game activeGame = this.activeGame.getValue();
         gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
         gameEndedLayoutController.setPlayers(activeGame.getPlayers());
@@ -631,6 +618,13 @@ public class JavaFXManager extends Application {
     }
 
     public void setStyleSheetURL(String styleSheetURL) {
-        this.styleSheetURL = JavaFXManager.class.getResource(styleSheetURL).toExternalForm();
+        this.styleSheetURL = styleSheetURL;
+    }
+
+    public void clearStyleSheets() {
+        mainWindowScene.getStylesheets().clear();
+        pauseWindowScene.getStylesheets().clear();
+        playerInitializerScene.getStylesheets().clear();
+        gameEndedScene.getStylesheets().clear();
     }
 }

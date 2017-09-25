@@ -30,11 +30,12 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Options">
               <items>
-                  <Menu mnemonicParsing="false" text="Unspecified Menu">
+                  <Menu mnemonicParsing="false" text="Change Style">
                     <items>
-                        <RadioMenuItem mnemonicParsing="false" text="Style A" />
-                        <RadioMenuItem mnemonicParsing="false" text="Style B" />
-                        <RadioMenuItem mnemonicParsing="false" text="Style C" />
+                        <RadioMenuItem fx:id="menuItemNoStyle" mnemonicParsing="false" onAction="#menuItemNoStyle_Clicked" selected="true" text="No Style" />
+                        <RadioMenuItem fx:id="menuItemStyleA" mnemonicParsing="false" onAction="#menuItemStyleA_Clicked" text="Style A" />
+                        <RadioMenuItem fx:id="menuItemStyleB" mnemonicParsing="false" onAction="#menuItemStyleB_Clicked" text="Style B" />
+                        <RadioMenuItem fx:id="menuItemStyleC" mnemonicParsing="false" onAction="#menuItemStyleC_clicked" text="Style C" />
                     </items>
                   </Menu>
                   <CheckMenuItem fx:id="menuItemTransitionsEnabled" mnemonicParsing="false" onAction="#OnAnimationsDisabled_Click" text="Disable Animations" />
@@ -51,9 +52,9 @@
                   <HBox prefHeight="548.0" prefWidth="582.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Region styleClass="Region" HBox.hgrow="ALWAYS" />
-                        <ScrollPane blendMode="DARKEN" styleClass="ScrollPane">
+                        <ScrollPane prefHeight="573.0" prefWidth="402.0" styleClass="ScrollPane">
                            <content>
-                              <VBox fx:id="vBoxMyBoard" prefWidth="400.0">
+                              <VBox fx:id="vBoxMyBoard" prefHeight="598.0" prefWidth="400.0" styleClass="BackgroundArea">
                                  <children>
                                     <HBox prefWidth="400.0">
                                        <children>
@@ -84,9 +85,9 @@
              <AnchorPane prefWidth="420.0" HBox.hgrow="ALWAYS">
                <HBox prefHeight="548.0" prefWidth="582.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
-                     <Region HBox.hgrow="ALWAYS" />
-                       <ScrollPane style="-fx-background-color: transparent;" styleClass="BackgroundArea">
-                           <VBox fx:id="vBoxOpponentsBoard" minWidth="400.0" prefWidth="400.0">
+                     <Region styleClass="Region" HBox.hgrow="ALWAYS" />
+                       <ScrollPane styleClass="ScrollPane">
+                           <VBox fx:id="vBoxOpponentsBoard" minWidth="400.0" prefHeight="598.0" prefWidth="400.0" styleClass="BackgroundArea">
                            <HBox minWidth="400.0" prefWidth="400.0">
                               <children>
                                  <Region styleClass="Region" HBox.hgrow="ALWAYS" />

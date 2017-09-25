@@ -3,19 +3,11 @@
 }
 
 .scroll-pane {
-    -fx-background-color: transparent;
-    -fx-blend-mode: darken;
-}
-
-.imageView {
-    -fx-border-insets: 1px;
-    -fx-border-color: black;
-    -fx-highlight-fill: yellow;
+    -fx-background-color: antiquewhite;
 }
 
 .label {
     -fx-font-family: Forte;
-
 }
 
 .BoardTitle {

@@ -17,4 +17,7 @@ public class Constants {
     public static final String GAME_ICON_URL = BASE_IMAGE_URL + "/gameIcon.ico";
     public static final String PLAYER1_IMAGE_URL = BASE_IMAGE_URL + "/Player1 Image.png";
     public static final String PLAYER2_IMAGE_URL = BASE_IMAGE_URL + "/Player2 Image.png";
+    public static final String STYLESHEET_A_URL = "/javaFXUI/Styles/StyleA.css";
+    public static final String STYLESHEET_B_URL = "/javaFXUI/Styles/StyleB.css";
+    public static final String STYLESHEET_C_URL = "/javaFXUI/Styles/StyleC.css";
 }

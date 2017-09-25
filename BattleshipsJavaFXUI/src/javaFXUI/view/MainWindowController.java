@@ -3,6 +3,7 @@ package javaFXUI.view;
 import gameLogic.game.Game;
 import gameLogic.game.eGameState;
 import gameLogic.users.Player;
+import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.AlertHandlingUtils;
 import javaFXUI.model.BoardAdapter;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
@@ -47,6 +49,15 @@ public class MainWindowController {
     private MenuItem buttonExit;
     @FXML
     private CheckMenuItem menuItemTransitionsEnabled;
+    @FXML
+    private RadioMenuItem menuItemStyleA;
+    @FXML
+    private RadioMenuItem menuItemStyleB;
+    @FXML
+    private RadioMenuItem menuItemStyleC;
+    @FXML
+    private RadioMenuItem menuItemNoStyle;
+
 
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
@@ -188,5 +199,52 @@ public class MainWindowController {
 
     public void OnAnimationsDisabled_Click(ActionEvent actionEvent) {
         javaFXManager.setAnimationsDisabled(!javaFXManager.getAnimationsDisabled());
+    }
+
+    public void menuItemStyleA_Clicked(ActionEvent actionEvent) {
+        if (menuItemStyleA.isSelected()) {
+            menuItemNoStyle.setSelected(false);
+            menuItemStyleB.setSelected(false);
+            menuItemStyleC.setSelected(false);
+            javaFXManager.setStyleSheetURL(Constants.STYLESHEET_A_URL);
+            javaFXManager.setStyleSheets();
+        } else {
+            menuItemStyleA.setSelected(true);
+        }
+    }
+
+    public void menuItemStyleB_Clicked(ActionEvent actionEvent) {
+        if (menuItemStyleB.isSelected()) {
+            menuItemNoStyle.setSelected(false);
+            menuItemStyleA.setSelected(false);
+            menuItemStyleC.setSelected(false);
+            javaFXManager.setStyleSheetURL(Constants.STYLESHEET_B_URL);
+            javaFXManager.setStyleSheets();
+        } else {
+            menuItemStyleB.setSelected(true);
+        }
+    }
+
+    public void menuItemStyleC_clicked(ActionEvent actionEvent) {
+        if (menuItemStyleC.isSelected()) {
+            menuItemNoStyle.setSelected(false);
+            menuItemStyleA.setSelected(false);
+            menuItemStyleB.setSelected(false);
+            javaFXManager.setStyleSheetURL(Constants.STYLESHEET_C_URL);
+            javaFXManager.setStyleSheets();
+        } else {
+            menuItemStyleC.setSelected(true);
+        }
+    }
+
+    public void menuItemNoStyle_Clicked(ActionEvent actionEvent) {
+        if (menuItemNoStyle.isSelected()) {
+            menuItemStyleA.setSelected(false);
+            menuItemStyleB.setSelected(false);
+            menuItemStyleC.setSelected(false);
+            javaFXManager.clearStyleSheets();
+        } else {
+            menuItemNoStyle.setSelected(true);
+        }
     }
 }
