@@ -109,14 +109,12 @@ public class LayoutCurrentTurnInfoController {
                     Player activePlayerWhoMakeMove = javaFXManager.getActiveGame().getValue().getActivePlayer();
                     BoardCoordinates coordinatesOfTheCell = selectedBoardCellAsImage.getBoardCell().getPosition();
                     ReplayGame replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
-                    replayMove.setMineVisible(false);
                     javaFXManager.plantMine(selectedBoardCellAsImage);
                     // if we got here is mean the mine plant safe
                     javaFXManager.getPreviousMoves().addLast(replayMove);
                     // AFTER move save to next replay
                     replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
                     replayMove.setAttackResult(eAttackResult.PLANT_MINE);
-                    replayMove.setMineVisible(selectedBoardCellAsImage.getBoardCell().getCellValue().isVisible());
                     javaFXManager.getNextMoves().addLast(replayMove);
 
                     updateMinesAvailableImageView();

@@ -509,7 +509,6 @@ public class JavaFXManager extends Application {
         try {
             BoardCoordinates positionOfPlantMine = replayMoveForward.getPositionAttacked();
             BoardCell cellToPlantMine = replayMoveForward.getActivePlayer().getMyBoard().getBoardCellAtCoordinates(positionOfPlantMine);
-            // ugly way
             cellToPlantMine.setCellValue(new Mine(positionOfPlantMine));
         } catch (Exception e) {
             AlertHandlingUtils.showErrorMessage(e, "Error while remove replay mine");
