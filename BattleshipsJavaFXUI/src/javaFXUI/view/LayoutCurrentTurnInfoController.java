@@ -1,5 +1,9 @@
 package javaFXUI.view;
 
+import gameLogic.exceptions.CellNotOnBoardException;
+import gameLogic.exceptions.InvalidGameObjectPlacementException;
+import gameLogic.exceptions.NoMinesAvailableException;
+import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
 import gameLogic.users.Player;
@@ -97,10 +101,28 @@ public class LayoutCurrentTurnInfoController {
 
         imageViewMinesAvailable.setOnDragDone((event) -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
-                Dragboard dragboard = event.getDragboard();
-                ImageViewProxy selectedBoardCellAsImage = getSelectedBoardCell(dragboard);
-                javaFXManager.plantMine(selectedBoardCellAsImage);
-                updateMinesAvailableImageView();
+                try {
+                    Dragboard dragboard = event.getDragboard();
+                    ImageViewProxy selectedBoardCellAsImage = getSelectedBoardCell(dragboard);
+
+                    // BEFORE move save to previous replay
+                    Player activePlayerWhoMakeMove = javaFXManager.getActiveGame().getValue().getActivePlayer();
+                    BoardCoordinates coordinatesOfTheCell = selectedBoardCellAsImage.getBoardCell().getPosition();
+                    ReplayGame replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
+                    replayMove.setMineVisible(false);
+                    javaFXManager.plantMine(selectedBoardCellAsImage);
+                    // if we got here is mean the mine plant safe
+                    javaFXManager.getPreviousMoves().addLast(replayMove);
+                    // AFTER move save to next replay
+                    replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
+                    replayMove.setAttackResult(eAttackResult.PLANT_MINE);
+                    replayMove.setMineVisible(selectedBoardCellAsImage.getBoardCell().getCellValue().isVisible());
+                    javaFXManager.getNextMoves().addLast(replayMove);
+
+                    updateMinesAvailableImageView();
+                } catch (Exception e){
+                    AlertHandlingUtils.showErrorMessage(e, "Error while plant mine");
+                }
             }
             event.consume();
         });

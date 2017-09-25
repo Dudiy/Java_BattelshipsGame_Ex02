@@ -16,6 +16,7 @@ public class ReplayGame {
     // statistic
     //TODO private Image playerPicture;
     private Integer minesAmount;
+    private Boolean mineVisible =null;
     private Integer currentScore;
     private Duration totalPlayerTurnsDuration;
     private Integer numPlayerTurnsPlayed;
@@ -48,6 +49,10 @@ public class ReplayGame {
         this.attackResult = attackResult;
     }
 
+    public void setMineVisible(Boolean mineVisible) {
+        this.mineVisible = mineVisible;
+    }
+
     // ===================================== Getter =====================================
     public BoardCoordinates getPositionAttacked() {
         return positionWasAttacked;
@@ -67,6 +72,10 @@ public class ReplayGame {
 
     public Integer getMinesAmount() {
         return minesAmount;
+    }
+
+    public Boolean getMineVisible() {
+        return mineVisible;
     }
 
     public Integer getCurrentScore() {

@@ -194,6 +194,14 @@ public class JavaFXManager extends Application {
         return attackResult;
     }
 
+    public LinkedList<ReplayGame> getPreviousMoves() {
+        return previousMoves;
+    }
+
+    public LinkedList<ReplayGame> getNextMoves() {
+        return nextMoves;
+    }
+
     // ===================================== Load Game =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
@@ -290,8 +298,8 @@ public class JavaFXManager extends Application {
             if (gameState.getValue() != eGameState.PLAYER_QUIT) {
                 if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
                     replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
-                    nextMoves.addLast(replayMove);
                     replayMove.setAttackResult(attackResult);
+                    nextMoves.addLast(replayMove);
                 }
             }
             if (gameState.getValue() == eGameState.PLAYER_WON) {
@@ -321,15 +329,19 @@ public class JavaFXManager extends Application {
         moveResult.showAndWait();
     }
 
-    public void plantMine(ImageViewProxy boardCellAsImage) {
-        try {
-            BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
-            activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
-            mainWindowController.plantMine(boardCellAsImage);
-            updateActivePlayer();
-        } catch (Exception e) {
-            AlertHandlingUtils.showErrorMessage(e, "Error while plant mine");
-        }
+    public void plantMine(ImageViewProxy boardCellAsImage) throws InvalidGameObjectPlacementException, NoMinesAvailableException, CellNotOnBoardException {
+        BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
+        activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
+        mainWindowController.plantMine(boardCellAsImage);
+        updateActivePlayer();
+//        try {
+//            BoardCoordinates minePosition = boardCellAsImage.getBoardCell().getPosition();
+//            activeGame.getValue().plantMineOnActivePlayersBoard(minePosition);
+//            mainWindowController.plantMine(boardCellAsImage);
+//            updateActivePlayer();
+//        } catch (Exception e) {
+//            AlertHandlingUtils.showErrorMessage(e, "Error while plant mine");
+//        }
     }
 
     // ===================================== Replay Mode =====================================
@@ -355,10 +367,15 @@ public class JavaFXManager extends Application {
 
     public void replayLastMove() {
         ReplayGame currentMoveBeforeAttack = previousMoves.get(currReplayIndex);
+        ReplayGame currentMoveAfterAttack = nextMoves.get(currReplayIndex);
         ReplayGame previousMoveAfterAttack;
 
         setReplayActivePlayer(currentMoveBeforeAttack);
-        updateLastMoveChanges(currentMoveBeforeAttack);
+        if(currentMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+            updateLastMoveChanges(currentMoveBeforeAttack);
+        }else{
+            removeReplayMine(currentMoveBeforeAttack);
+        }
         if (currReplayIndex > 0) {
             currReplayIndex--;
             previousMoveAfterAttack = nextMoves.get(currReplayIndex);
@@ -446,6 +463,17 @@ public class JavaFXManager extends Application {
         currentTurnInfoController.updateReplayMove(replayMove, lastReplayCommand);
     }
 
+    private void removeReplayMine(ReplayGame replayMoveBack) {
+        try {
+            BoardCoordinates positionOfMine = replayMoveBack.getPositionAttacked();
+            BoardCell mineCell = replayMoveBack.getActivePlayer().getMyBoard().getBoardCellAtCoordinates(positionOfMine);
+            mineCell.removeGameObjectFromCell();
+        } catch (CellNotOnBoardException e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while remove replay mine");
+        }
+        statisticReplayChanges(replayMoveBack);
+    }
+
     public void replayNextMove() {
         ReplayGame nextMoveAfterAttack;
         if (lastReplayCommand != ReplayGame.eReplayStatus.START_LIST) {
@@ -463,13 +491,29 @@ public class JavaFXManager extends Application {
         }
 
         setReplayActivePlayer(nextMoveAfterAttack);
-        updateNextMoveChanges(nextMoveAfterAttack);
+        if(nextMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+            updateNextMoveChanges(nextMoveAfterAttack);
+        }else{
+            addReplayMine(nextMoveAfterAttack);
+        }
         currentTurnInfoController.setEnablePreviousReplay(true);
         mainWindowController.redrawBoards(activePlayer.getValue());
     }
 
     private void updateNextMoveChanges(ReplayGame replayMoveForward) {
         boardsReplayChanges(replayMoveForward, ReplayGame.eReplayStatus.NEXT);
+        statisticReplayChanges(replayMoveForward);
+    }
+
+    private void addReplayMine(ReplayGame replayMoveForward) {
+        try {
+            BoardCoordinates positionOfPlantMine = replayMoveForward.getPositionAttacked();
+            BoardCell cellToPlantMine = replayMoveForward.getActivePlayer().getMyBoard().getBoardCellAtCoordinates(positionOfPlantMine);
+            // ugly way
+            cellToPlantMine.setCellValue(new Mine(positionOfPlantMine));
+        } catch (Exception e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while remove replay mine");
+        }
         statisticReplayChanges(replayMoveForward);
     }
 

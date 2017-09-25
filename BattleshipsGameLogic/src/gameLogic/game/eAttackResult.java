@@ -5,6 +5,7 @@ public enum eAttackResult {
     HIT_AND_SUNK_SHIP("Sunk a ship"),
     CELL_ALREADY_ATTACKED("Cell already attacked"),
     HIT_MINE("Hit a mine"),
+    PLANT_MINE("Plant a mine"),
     HIT_WATER("Missed");
 
     private String description;
