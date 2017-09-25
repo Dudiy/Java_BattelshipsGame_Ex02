@@ -25,7 +25,7 @@ public abstract class AbstractShip extends GameObject {
         this.direction = direction;
     }
 
-    protected abstract LinkedList<BoardCoordinates> getShipCoordinatesList();
+    public abstract LinkedList<BoardCoordinates> getShipCoordinatesList();
 
     protected abstract void setDirection(String direction) throws Exception;
 

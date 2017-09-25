@@ -1,6 +1,8 @@
 package javaFXUI.model;
 
 import gameLogic.game.board.BoardCell;
+import gameLogic.game.board.BoardCoordinates;
+import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
@@ -17,6 +19,8 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
+
+import java.util.LinkedList;
 
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
@@ -113,11 +117,27 @@ public class ImageViewProxy extends ImageView {
         setImage(getImageForCell());
     }
 
-    public void updateImageWithTransition() {
+    public void updateImageWithTransition(eAttackResult attackResult) {
         Transition transition;
-        transition = new RotateTransition(Duration.millis(1000), this);
-        ((RotateTransition) transition).setAxis(new Point3D(0, 1, 0));
-        ((RotateTransition) transition).setByAngle(360);
+
+        if (attackResult == eAttackResult.HIT_MINE) {
+            transition = new FadeTransition(Duration.millis(1000),this );
+            ((FadeTransition)transition).setFromValue(0);
+            ((FadeTransition)transition).setToValue(1);
+        } else if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
+            // TODO do this on all ship cells
+            double[] xPoint = new double[]{
+                    (this.getX() + (this.getFitWidth() / 2)),
+                    (this.getY() - this.getFitHeight()),
+                    this.getY()};
+            Shape line = new Polygon(xPoint);
+            transition = new PathTransition(Duration.millis(2000), line);
+        } else {
+            transition = new RotateTransition(Duration.millis(1000), this);
+            ((RotateTransition) transition).setAxis(new Point3D(0, 1, 0));
+            ((RotateTransition) transition).setByAngle(360);
+        }
+
         Thread transitionThread = new Thread(transition::play);
         transition.setOnFinished(event -> {
             updateImage();

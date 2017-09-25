@@ -11,7 +11,7 @@ public class RegularShip extends AbstractShip {
     }
 
     @Override
-    protected LinkedList<BoardCoordinates> getShipCoordinatesList() {
+    public LinkedList<BoardCoordinates> getShipCoordinatesList() {
         LinkedList<BoardCoordinates> shipCoordinatesListToReturn = new LinkedList<>();
         BoardCoordinates tempCoordinates = getPosition();
 

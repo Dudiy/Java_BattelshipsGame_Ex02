@@ -14,7 +14,7 @@ public class LShapeShip extends AbstractShip {
     }
 	
 	@Override
-    protected LinkedList<BoardCoordinates> getShipCoordinatesList() {
+    public LinkedList<BoardCoordinates> getShipCoordinatesList() {
         LinkedList<BoardCoordinates> shipCoordinatesListToReturn = new LinkedList<>();
         BoardCoordinates tempRowCoordinates = getPosition();
         BoardCoordinates tempColCoordinates = getPosition();

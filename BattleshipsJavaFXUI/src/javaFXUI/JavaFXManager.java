@@ -322,7 +322,7 @@ public class JavaFXManager extends Application {
         if (animationsDisabled) {
             cellAsImageView.updateImage();
         } else {
-            cellAsImageView.updateImageWithTransition();
+            cellAsImageView.updateImageWithTransition(attackResult);
         }
         // statistic update
         currentTurnInfoController.attackResultUpdated(attackResult);
@@ -371,9 +371,9 @@ public class JavaFXManager extends Application {
         ReplayGame previousMoveAfterAttack;
 
         setReplayActivePlayer(currentMoveBeforeAttack);
-        if(currentMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+        if (currentMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE) {
             updateLastMoveChanges(currentMoveBeforeAttack);
-        }else{
+        } else {
             removeReplayMine(currentMoveBeforeAttack);
         }
         if (currReplayIndex > 0) {
@@ -491,9 +491,9 @@ public class JavaFXManager extends Application {
         }
 
         setReplayActivePlayer(nextMoveAfterAttack);
-        if(nextMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE){
+        if (nextMoveAfterAttack.getAttackResult() != eAttackResult.PLANT_MINE) {
             updateNextMoveChanges(nextMoveAfterAttack);
-        }else{
+        } else {
             addReplayMine(nextMoveAfterAttack);
         }
         currentTurnInfoController.setEnablePreviousReplay(true);
