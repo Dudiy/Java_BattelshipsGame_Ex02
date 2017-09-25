@@ -25,14 +25,10 @@ import java.util.LinkedList;
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
     private boolean isVisible;
-    // stronger than getImageForCell rules
-    //TODO put in manager
     private static final Image WATER_IMAGE = new Image(Constants.WATER_IMAGE_URL);
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
-    // TODO change image
     private static final Image SINKING_SHIP_IMAGE = new Image(Constants.SINKING_SHIP_IMAGE_URL);
     private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
-    // TODO change image
     private static final Image MINE_EXPLODED_IMAGE = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
     private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
     private static final Image MISS_IMAGE = new Image(Constants.MISSING_IMAGE_URL);
@@ -124,14 +120,6 @@ public class ImageViewProxy extends ImageView {
             transition = new FadeTransition(Duration.millis(1000),this );
             ((FadeTransition)transition).setFromValue(0);
             ((FadeTransition)transition).setToValue(1);
-        } else if (attackResult == eAttackResult.HIT_AND_SUNK_SHIP) {
-            // TODO do this on all ship cells
-            double[] xPoint = new double[]{
-                    (this.getX() + (this.getFitWidth() / 2)),
-                    (this.getY() - this.getFitHeight()),
-                    this.getY()};
-            Shape line = new Polygon(xPoint);
-            transition = new PathTransition(Duration.millis(2000), line);
         } else {
             transition = new RotateTransition(Duration.millis(1000), this);
             ((RotateTransition) transition).setAxis(new Point3D(0, 1, 0));

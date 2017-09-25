@@ -16,9 +16,6 @@ public abstract class AbstractShip extends GameObject {
     protected int hitsRemainingUntilSunk;
     eShipDirection direction;
 
-    // TODO implement in exercise 2
-//    private int score;
-
     AbstractShip(ShipType shipType, BoardCoordinates position, eShipDirection direction) {
         super(position, !VISIBLE);
         this.shipType = shipType;

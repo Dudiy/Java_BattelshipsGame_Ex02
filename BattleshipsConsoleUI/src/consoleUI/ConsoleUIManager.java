@@ -198,7 +198,6 @@ public class ConsoleUIManager {
         Player[] players = activeGame.getPlayers();
 
         for (Player player : players){
-            // TODO change to parameters
             player.getMyBoard().setMinesAvailable(2);
             player.setActiveShipsOnBoard(activeGame.getGameSettings().getShipAmountsOnBoard());
         }

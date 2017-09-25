@@ -149,7 +149,6 @@ public class MainWindowController {
 
     public void redrawBoards(Player activePlayer) {
         BoardAdapter.updateImages(myBoardAsTilePane.get(activePlayer));
-        //TODO test
         BoardAdapter.updateImages(opponentsBoardAsTilePane.get(activePlayer));
         vBoxMyBoard.getChildren().set(2, myBoardAsTilePane.get(activePlayer));
         vBoxOpponentsBoard.getChildren().set(2, opponentsBoardAsTilePane.get(activePlayer));
