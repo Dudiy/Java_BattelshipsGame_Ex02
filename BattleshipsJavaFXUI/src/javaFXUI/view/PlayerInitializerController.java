@@ -34,7 +34,6 @@ public class PlayerInitializerController {
     @FXML
     private Button buttonOK;
 
-    private Window ownerWindow;
     private JavaFXManager javaFXManager;
     private PlayerAdapter player;
     private Image playerImage;
@@ -67,7 +66,7 @@ public class PlayerInitializerController {
     }
 
     public void setOwnerWindow(Window ownerWindow, JavaFXManager javaFXManager) {
-        this.ownerWindow = ownerWindow;
+        Window ownerWindow1 = ownerWindow;
         this.javaFXManager = javaFXManager;
     }
 
