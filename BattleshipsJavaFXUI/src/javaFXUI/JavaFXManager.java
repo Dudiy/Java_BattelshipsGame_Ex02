@@ -276,7 +276,8 @@ public class JavaFXManager extends Application {
         try {
             BoardCoordinates coordinatesOfTheCell = BoardCoordinates.Parse(cellAsImageView.getId());
             updateActivePlayer();
-            ReplayGame replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
+            Player activePlayerWhoMakeMove = activePlayer.getValue();
+            ReplayGame replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
             attackResult = gamesManager.makeMove(activeGame.getValue(), coordinatesOfTheCell);
             // BEFORE move save to previous replay
             if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
@@ -288,7 +289,7 @@ public class JavaFXManager extends Application {
             gameState.setValue(activeGame.getValue().getGameState());
             if (gameState.getValue() != eGameState.PLAYER_QUIT) {
                 if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {
-                    replayMove = new ReplayGame(activePlayer.getValue(), coordinatesOfTheCell);
+                    replayMove = new ReplayGame(activePlayerWhoMakeMove, coordinatesOfTheCell);
                     nextMoves.addLast(replayMove);
                     replayMove.setAttackResult(attackResult);
                 }
