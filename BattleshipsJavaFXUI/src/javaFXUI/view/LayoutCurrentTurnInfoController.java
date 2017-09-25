@@ -299,7 +299,7 @@ public class LayoutCurrentTurnInfoController {
 
     public void setReplayStatus(ReplayGame replayGame) {
         String attackResult = replayGame.getAttackResult() != null ?
-                "You Attacked " + replayGame.getPositionAttacked().toString() : "";
+                "Attacked " + replayGame.getPositionAttacked().toString() : "";
         String hitOrMiss = replayGame.getAttackResult() != null ? replayGame.getAttackResult().toString() : "";
         labelAttackResult.setText(attackResult);
         labelHitOrMiss.setText(hitOrMiss);
