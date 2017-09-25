@@ -51,7 +51,11 @@ public class LayoutCurrentTurnInfoController {
     @FXML
     private TableColumn<ShipsStateDataModel, Integer> columnRemainingShipsEnemy;
     @FXML
-    private Label labelCurrentScore;
+    private Label labelCurrentScoreMe;
+    @FXML
+    private Label labelTotalMovesCounter;
+    @FXML
+    private Label labelCurrentScoreOpponent;
     @FXML
     private Label labelAvgTurnDuration;
     @FXML
@@ -215,7 +219,9 @@ public class LayoutCurrentTurnInfoController {
 
     public void updateStatistics() {
         Player activePlayer = javaFXManager.activePlayerProperty().getValue();
-        labelCurrentScore.setText(((Integer) activePlayer.getScore()).toString());
+        labelTotalMovesCounter.setText(String.valueOf(javaFXManager.getActiveGame().getValue().getMovesCounter()));
+        labelCurrentScoreMe.setText(((Integer) activePlayer.getScore()).toString());
+        labelCurrentScoreOpponent.setText(String.valueOf(javaFXManager.getActiveGame().getValue().getOtherPlayer().getScore()));
         Duration avgDuration = activePlayer.getAvgTurnDuration();
         labelAvgTurnDuration.setText(String.format("%d:%02d", avgDuration.toMinutes(), avgDuration.getSeconds() % 60));
         labelHitsCounter.setText(((Integer) activePlayer.getTimesHit()).toString());

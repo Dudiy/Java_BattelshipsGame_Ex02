@@ -137,6 +137,12 @@ public class Player implements User, Serializable {
             timesHit++;
         } else if (attackResult == eAttackResult.HIT_MINE) {
             timesHit++;
+            myBoard.attack(position);
+//            eAttackResult mineExplosionResult = myBoard.attack(position);
+//            if (mineExplosionResult == eAttackResult.HIT_MINE) {
+//                BoardCell cellHit = opponentBoard.getBoardCellAtCoordinates(position);
+////                cellHit.removeGameObjectFromCell();
+//            }
         }
 
         if (attackResult != eAttackResult.CELL_ALREADY_ATTACKED) {

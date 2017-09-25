@@ -77,10 +77,8 @@ public class ImageViewProxy extends ImageView {
         if (boardCell.wasAttacked()) {
             if (cellValue instanceof Water) {
                 imageToReturn = MISS_IMAGE;
-            } else if (cellValue instanceof Mine) {
-                imageToReturn = MINE_EXPLODED_IMAGE;
-            } else if (cellValue instanceof AbstractShip) {
-                if (((AbstractShip) cellValue).isSunk()) {
+            } else if (cellValue instanceof Mine || cellValue instanceof AbstractShip) {
+                if (cellValue instanceof AbstractShip && ((AbstractShip) cellValue).isSunk()) {
                     imageToReturn = SINKING_SHIP_IMAGE;
                 } else {
                     imageToReturn = HIT_IMAGE;
@@ -99,6 +97,7 @@ public class ImageViewProxy extends ImageView {
                 imageToReturn = PROBLEM_IMAGE;
             }
         }
+
         return imageToReturn;
     }
 
