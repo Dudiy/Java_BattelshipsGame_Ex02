@@ -40,14 +40,19 @@ public class JavaFXManager extends Application {
     private Stage primaryStage;
     private final Stage secondaryStage = new Stage();
     private final Stage playerInitializerStage = new Stage();
+    private final Stage gameEndedStage = new Stage();
     private AnchorPane welcomeScreen;
     private BorderPane mainWindowLayout;
     private Scene mainWindowScene;
+    private Scene pauseWindowScene;
+    private Scene playerInitializerScene;
+    private Scene gameEndedScene;
     //    private Scene welcomeScreenScene;
     // ============== controllers ==============
     private MainWindowController mainWindowController;
     private LayoutCurrentTurnInfoController currentTurnInfoController;
     private PlayerInitializerController playerInitializerController;
+    private GameEndedLayoutController gameEndedLayoutController;
     // ============== properties ==============
     private final Property<eGameState> gameState = new SimpleObjectProperty<>();
     private final Property<Game> activeGame = new SimpleObjectProperty<>();
@@ -64,6 +69,7 @@ public class JavaFXManager extends Application {
     private int currReplayIndex;
     private ReplayGame.eReplayStatus lastReplayCommand;
     private boolean animationsDisabled;
+    private String styleSheetURL = "/javaFXUI/TestCss.css";
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -77,9 +83,27 @@ public class JavaFXManager extends Application {
         this.primaryStage.getIcons().add(new Image(Constants.GAME_ICON_URL));
         initMainWindow();
         initPlayerInitializerWindow();
+        initGameEndedWindow();
         initPauseWindow();
         previousMoves = new LinkedList<>();
         nextMoves = new LinkedList<>();
+    }
+
+    private void initGameEndedWindow() {
+        try {
+            fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/GameEndedLayout.fxml"));
+            AnchorPane gameEndedLayout = fxmlLoader.load();
+            gameEndedLayoutController = fxmlLoader.getController();
+
+            gameEndedScene = new Scene(gameEndedLayout);
+            gameEndedStage.setScene(gameEndedScene);
+            gameEndedStage.setResizable(false);
+            gameEndedStage.initOwner(primaryStage);
+            gameEndedStage.initStyle(StageStyle.UTILITY);
+        } catch (IOException e) {
+            AlertHandlingUtils.showErrorMessage(e, "Error while initializing game ended window");
+        }
     }
 
     private void initMainWindow() {
@@ -87,6 +111,7 @@ public class JavaFXManager extends Application {
             loadMainWindow();
             loadRightPane();
             mainWindowScene = new Scene(mainWindowLayout);
+            mainWindowScene.getStylesheets().addAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
 
             loadWelcomeScreen();
             Scene scene = new Scene(welcomeScreen);
@@ -135,8 +160,9 @@ public class JavaFXManager extends Application {
         playerInitializerController = fxmlLoader.getController();
         playerInitializerController.setOwnerWindow(primaryStage, this);
 
-        Scene scene = new Scene(playerInitializerLayout);
-        playerInitializerStage.setScene(scene);
+        playerInitializerScene = new Scene(playerInitializerLayout);
+        playerInitializerScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+        playerInitializerStage.setScene(playerInitializerScene);
         playerInitializerStage.setOnCloseRequest(event -> playerInitializerController.updatePlayerInfo());
         playerInitializerStage.initOwner(primaryStage);
         playerInitializerStage.initStyle(StageStyle.UTILITY);
@@ -152,8 +178,9 @@ public class JavaFXManager extends Application {
             PauseWindowController pauseWindowController = fxmlLoader.getController();
             pauseWindowController.setJavaFXManager(this);
 
-            Scene scene = new Scene(pauseWindowLayout);
-            secondaryStage.setScene(scene);
+            pauseWindowScene = new Scene(pauseWindowLayout);
+            pauseWindowScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+            secondaryStage.setScene(pauseWindowScene);
             secondaryStage.initOwner(primaryStage);
             secondaryStage.initModality(Modality.WINDOW_MODAL);
             secondaryStage.setResizable(false);
@@ -529,26 +556,25 @@ public class JavaFXManager extends Application {
     }
 
     private void showGameEndedWindow() {
-        try {
-            fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/GameEndedLayout.fxml"));
-            AnchorPane gameEndedLayout = fxmlLoader.load();
-            GameEndedLayoutController gameEndedLayoutController = fxmlLoader.getController();
-
-            Game activeGame = this.activeGame.getValue();
-            gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
-            gameEndedLayoutController.setPlayers(activeGame.getPlayers());
-
-            Stage gameEndedWindow = new Stage();
-            Scene scene = new Scene(gameEndedLayout);
-            gameEndedWindow.setScene(scene);
-            gameEndedWindow.setResizable(false);
-            gameEndedWindow.initOwner(primaryStage);
-            gameEndedWindow.initStyle(StageStyle.UTILITY);
-            gameEndedWindow.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//            fxmlLoader = new FXMLLoader();
+//            fxmlLoader.setLocation(JavaFXManager.class.getResource("/javaFXUI/view/GameEndedLayout.fxml"));
+//            AnchorPane gameEndedLayout = fxmlLoader.load();
+//            GameEndedLayoutController gameEndedLayoutController = fxmlLoader.getController();
+//
+//            Game activeGame = this.activeGame.getValue();
+//            gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
+//            gameEndedLayoutController.setPlayers(activeGame.getPlayers());
+//
+//            Stage gameEndedWindow = new Stage();
+//            gameEndedScene = new Scene(gameEndedLayout);
+//            gameEndedWindow.setScene(gameEndedScene);
+//            gameEndedWindow.setResizable(false);
+//            gameEndedWindow.initOwner(primaryStage);
+//            gameEndedWindow.initStyle(StageStyle.UTILITY);
+        Game activeGame = this.activeGame.getValue();
+        gameEndedLayoutController.setWinnerName(activeGame.getWinnerPlayer().getName());
+        gameEndedLayoutController.setPlayers(activeGame.getPlayers());
+        gameEndedStage.showAndWait();
     }
 
     // ===================================== Exit Game =====================================
@@ -584,5 +610,27 @@ public class JavaFXManager extends Application {
             activeGame.setGameState(eGameState.INVALID);
             gameState.setValue(activeGame.getGameState());
         }
+    }
+
+    public void setStyleSheets() {
+        try {
+            mainWindowScene.getStylesheets().clear();
+            mainWindowScene.getStylesheets().addAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+
+            pauseWindowScene.getStylesheets().clear();
+            pauseWindowScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+
+            playerInitializerScene.getStylesheets().clear();
+            playerInitializerScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+
+            gameEndedScene.getStylesheets().clear();
+            gameEndedScene.getStylesheets().setAll(JavaFXManager.class.getResource(styleSheetURL).toExternalForm());
+        } catch (Exception e) {
+            AlertHandlingUtils.showErrorMessage(e,"Error while setting style sheets");
+        }
+    }
+
+    public void setStyleSheetURL(String styleSheetURL) {
+        this.styleSheetURL = JavaFXManager.class.getResource(styleSheetURL).toExternalForm();
     }
 }

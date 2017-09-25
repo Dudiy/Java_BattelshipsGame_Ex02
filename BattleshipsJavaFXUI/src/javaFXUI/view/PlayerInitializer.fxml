@@ -18,7 +18,7 @@
       <HBox prefHeight="164.0" prefWidth="334.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Region HBox.hgrow="ALWAYS" />
-            <VBox prefHeight="164.0" prefWidth="123.0">
+            <VBox prefHeight="164.0" prefWidth="123.0" styleClass="BackgroundArea">
                <children>
                   <Region layoutX="20.0" layoutY="120.0" VBox.vgrow="ALWAYS" />
                   <ImageView fx:id="imageViewProfilePic" fitHeight="125.0" fitWidth="125.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS">
@@ -36,7 +36,7 @@
                </padding>
             </VBox>
             <Region HBox.hgrow="ALWAYS" />
-            <VBox prefHeight="164.0" prefWidth="164.0">
+            <VBox prefHeight="164.0" prefWidth="164.0" styleClass="BackgroundArea">
                <children>
                   <Label fx:id="labelPlayerNumber" text="Player #" textAlignment="CENTER">
                      <font>

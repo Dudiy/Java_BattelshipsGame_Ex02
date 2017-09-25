@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefWidth="1171.0" stylesheets="@../TestCss.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
+<BorderPane prefWidth="1171.0" styleClass="BackgroundArea" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.MainWindowController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -28,6 +30,13 @@
           </Menu>
             <Menu mnemonicParsing="false" text="Options">
               <items>
+                  <Menu mnemonicParsing="false" text="Unspecified Menu">
+                    <items>
+                        <RadioMenuItem mnemonicParsing="false" text="Style A" />
+                        <RadioMenuItem mnemonicParsing="false" text="Style B" />
+                        <RadioMenuItem mnemonicParsing="false" text="Style C" />
+                    </items>
+                  </Menu>
                   <CheckMenuItem fx:id="menuItemTransitionsEnabled" mnemonicParsing="false" onAction="#OnAnimationsDisabled_Click" text="Disable Animations" />
               </items>
             </Menu>
@@ -41,24 +50,28 @@
                <children>
                   <HBox prefHeight="548.0" prefWidth="582.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <ScrollPane>
+                        <Region styleClass="Region" HBox.hgrow="ALWAYS" />
+                        <ScrollPane blendMode="DARKEN" styleClass="ScrollPane">
                            <content>
                               <VBox fx:id="vBoxMyBoard" prefWidth="400.0">
                                  <children>
                                     <HBox prefWidth="400.0">
                                        <children>
-                                          <Region HBox.hgrow="ALWAYS" />
-                                          <Label alignment="CENTER" text="My Board" textAlignment="CENTER">
+                                          <Region styleClass="Region" HBox.hgrow="ALWAYS" />
+                                          <Label alignment="CENTER" styleClass="BoardTitle" text="My Board" textAlignment="CENTER">
                                              <font>
                                                 <Font size="22.0" />
                                              </font>
                                           </Label>
-                                          <Region HBox.hgrow="ALWAYS" />
+                                          <Region styleClass="Region" HBox.hgrow="ALWAYS" />
                                        </children>
+                                       <padding>
+                                          <Insets top="20.0" />
+                                       </padding>
                                     </HBox>
-                                    <Region prefHeight="54.0" prefWidth="281.0" />
+                                    <Region prefHeight="54.0" prefWidth="281.0" styleClass="Region" />
                                     <TilePane fx:id="tilePaneMyBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="386.0" prefHeight="400.0" prefWidth="386.0" />
+                                    <Region layoutX="10.0" layoutY="42.0" prefHeight="54.0" prefWidth="281.0" styleClass="Region" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </content>
@@ -72,21 +85,28 @@
                <HBox prefHeight="548.0" prefWidth="582.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
                      <Region HBox.hgrow="ALWAYS" />
-                       <ScrollPane>
+                       <ScrollPane style="-fx-background-color: transparent;" styleClass="BackgroundArea">
                            <VBox fx:id="vBoxOpponentsBoard" minWidth="400.0" prefWidth="400.0">
                            <HBox minWidth="400.0" prefWidth="400.0">
                               <children>
-                                 <Region HBox.hgrow="ALWAYS" />
-                                     <Label alignment="TOP_CENTER" text="Opponent's Board" textAlignment="CENTER">
+                                 <Region styleClass="Region" HBox.hgrow="ALWAYS" />
+                                     <Label alignment="TOP_CENTER" styleClass="BoardTitle" text="Opponent's Board" textAlignment="CENTER">
                                     <font>
                                        <Font size="22.0" />
                                     </font>
                                  </Label>
-                                 <Region HBox.hgrow="ALWAYS" />
+                                 <Region styleClass="Region" HBox.hgrow="ALWAYS" />
                               </children>
+                              <opaqueInsets>
+                                 <Insets />
+                              </opaqueInsets>
+                              <padding>
+                                 <Insets top="20.0" />
+                              </padding>
                            </HBox>
-                               <Region prefHeight="54.0" prefWidth="281.0" />
+                               <Region prefHeight="54.0" prefWidth="281.0" styleClass="Region" />
                            <TilePane fx:id="tilePaneOpponentsBoard" maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0" />
+                           <Region layoutX="10.0" layoutY="42.0" prefHeight="54.0" prefWidth="281.0" styleClass="Region" VBox.vgrow="ALWAYS" />
                            </VBox>
                        </ScrollPane>
                      <Region HBox.hgrow="ALWAYS" />

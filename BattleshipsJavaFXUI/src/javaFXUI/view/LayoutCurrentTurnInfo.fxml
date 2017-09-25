@@ -26,7 +26,7 @@
    <content>
       <AnchorPane prefHeight="592.0" prefWidth="219.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="511.0" prefWidth="219.0" spacing="5.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
+            <VBox alignment="CENTER" prefHeight="511.0" prefWidth="219.0" spacing="5.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
                <children>
                   <Label text="Current Player: " />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">

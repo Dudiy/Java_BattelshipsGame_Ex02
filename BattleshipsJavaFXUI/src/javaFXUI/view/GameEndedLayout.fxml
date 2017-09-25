@@ -14,8 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="231.0" prefWidth="367.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.GameEndedLayoutController">
+<AnchorPane prefHeight="231.0" prefWidth="367.0" styleClass="BackgroundArea" stylesheets="@../TestCss.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFXUI.view.GameEndedLayoutController">
    <children>
       <HBox layoutX="28.0" layoutY="36.0" prefHeight="231.0" prefWidth="357.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
