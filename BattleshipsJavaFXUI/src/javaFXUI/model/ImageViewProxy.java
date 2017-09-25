@@ -6,16 +6,15 @@ import gameLogic.game.gameObjects.Mine;
 import gameLogic.game.gameObjects.Water;
 import gameLogic.game.gameObjects.ship.AbstractShip;
 import javaFXUI.Constants;
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.geometry.Point3D;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
 
@@ -115,15 +114,16 @@ public class ImageViewProxy extends ImageView {
     }
 
     public void updateImageWithTransition() {
-        RotateTransition rotateTransition = new RotateTransition(Duration.millis(1000), this);
-        rotateTransition.setAxis(new Point3D(0, 1, 0));
-        rotateTransition.setByAngle(360);
-        Thread rotateThread = new Thread(rotateTransition::play);
-        rotateTransition.setOnFinished(event -> {
+        Transition transition;
+        transition = new RotateTransition(Duration.millis(1000), this);
+        ((RotateTransition) transition).setAxis(new Point3D(0, 1, 0));
+        ((RotateTransition) transition).setByAngle(360);
+        Thread transitionThread = new Thread(transition::play);
+        transition.setOnFinished(event -> {
             updateImage();
             setMouseTransparent(false);
         });
         setMouseTransparent(true);
-        rotateThread.start();
+        transitionThread.start();
     }
 }

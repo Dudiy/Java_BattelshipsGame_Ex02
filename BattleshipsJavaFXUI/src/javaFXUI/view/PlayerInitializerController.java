@@ -1,5 +1,6 @@
 package javaFXUI.view;
 
+import javaFXUI.Constants;
 import javaFXUI.JavaFXManager;
 import javaFXUI.model.PlayerAdapter;
 import javafx.embed.swing.SwingFXUtils;
@@ -38,21 +39,21 @@ public class PlayerInitializerController {
     private PlayerAdapter player;
     private Image playerImage;
 
-    @FXML
-    void buttonChangePicture_Clicked(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setSelectedExtensionFilter(
-                new FileChooser.ExtensionFilter("image files (*.jpg,*png)", "*.jpg", "*png")
-        );
-        File imageFile = fileChooser.showOpenDialog(ownerWindow);
-        try {
-            BufferedImage bufferedImage = ImageIO.read(imageFile);
-            playerImage = SwingFXUtils.toFXImage(bufferedImage, null);
-            imageViewProfilePic.setImage(playerImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    @FXML
+//    void buttonChangePicture_Clicked(ActionEvent event) {
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setSelectedExtensionFilter(
+//                new FileChooser.ExtensionFilter("image files (*.jpg,*png)", "*.jpg", "*png")
+//        );
+//        File imageFile = fileChooser.showOpenDialog(ownerWindow);
+//        try {
+//            BufferedImage bufferedImage = ImageIO.read(imageFile);
+//            playerImage = SwingFXUtils.toFXImage(bufferedImage, null);
+//            imageViewProfilePic.setImage(playerImage);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @FXML
     void buttonOK_Clicked(ActionEvent event) {
@@ -62,7 +63,7 @@ public class PlayerInitializerController {
 
     public void updatePlayerInfo() {
         player.setName(textFieldPlayerName.getText());
-        player.setPlayerImage(playerImage);
+        player.setPlayerImage(imageViewProfilePic.getImage());
     }
 
     public void setOwnerWindow(Window ownerWindow, JavaFXManager javaFXManager) {
@@ -74,13 +75,10 @@ public class PlayerInitializerController {
         this.player = player;
         labelPlayerNumber.setText("Player " + playerNumber);
         textFieldPlayerName.setText(player.getName());
-
-        // TODO uncomment
-//        if (player.getPlayerImage() != null) {
-//            imageViewProfilePic.setImage(player.getPlayerImage());
-//        }
-//        else{
-//            imageViewProfilePic.setImage(new Image(DEFAULT_PLAYER_PROFILE_URL));
-//        }
+        if (playerNumber == 1) {
+            imageViewProfilePic.setImage(new Image(Constants.PLAYER1_IMAGE_URL));
+        } else {
+            imageViewProfilePic.setImage(new Image(Constants.PLAYER2_IMAGE_URL));
+        }
     }
 }

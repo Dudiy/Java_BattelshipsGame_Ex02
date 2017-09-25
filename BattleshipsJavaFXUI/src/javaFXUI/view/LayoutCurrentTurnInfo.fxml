@@ -29,21 +29,14 @@
             <VBox alignment="CENTER" prefHeight="511.0" prefWidth="219.0" spacing="5.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
                <children>
                   <Label text="Current Player: " />
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fx:id="imageViewPlayerProfile" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../resources/images/defaultPlayerImage.png" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="imageViewPlayerProfile" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="labelCurrentPlayer" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                            <font>
                               <Font name="System Bold" size="25.0" />
                            </font>
-                           <padding>
-                              <Insets bottom="10.0" />
-                           </padding>
                         </Label>
                         <Region layoutX="70.0" layoutY="10.0" HBox.hgrow="ALWAYS">
                            <HBox.margin>

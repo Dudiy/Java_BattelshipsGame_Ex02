@@ -170,7 +170,6 @@ public class Game implements Serializable {
 
             if (gameObjectMineHit instanceof Mine) {
                 myCell.removeGameObjectFromCell();
-//                ((Mine)gameObjectMineHit).setExplosionResult(eAttackResult.HIT_MINE);
             } else if (gameObjectMineHit instanceof AbstractShip) {
                 if (((AbstractShip) gameObjectMineHit).getHitsRemainingUntilSunk() == 0) {
                     AbstractShip shipSunk = (AbstractShip) getActivePlayer().getMyBoard().getBoardCellAtCoordinates(position).getCellValue();

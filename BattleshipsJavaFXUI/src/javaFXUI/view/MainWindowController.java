@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseDragEvent;
@@ -44,6 +45,8 @@ public class MainWindowController {
     public TilePane tilePaneMines;
     @FXML
     private MenuItem buttonExit;
+    @FXML
+    private CheckMenuItem menuItemTransitionsEnabled;
 
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
@@ -180,5 +183,9 @@ public class MainWindowController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("!!");
         mouseDragEvent.consume();
+    }
+
+    public void OnAnimationsDisabled_Click(ActionEvent actionEvent) {
+        javaFXManager.setAnimationsDisabled(!javaFXManager.getAnimationsDisabled());
     }
 }

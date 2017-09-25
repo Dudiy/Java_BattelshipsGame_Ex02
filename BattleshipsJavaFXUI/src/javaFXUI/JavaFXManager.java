@@ -19,7 +19,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -64,6 +63,7 @@ public class JavaFXManager extends Application {
     private LinkedList<ReplayGame> nextMoves;
     private int currReplayIndex;
     private ReplayGame.eReplayStatus lastReplayCommand;
+    private boolean animationsDisabled;
 
     // ===================================== Init =====================================
     static void Run(String[] args) {
@@ -194,6 +194,14 @@ public class JavaFXManager extends Application {
         return attackResult;
     }
 
+    public boolean getAnimationsDisabled() {
+        return animationsDisabled;
+    }
+
+    public void setAnimationsDisabled(boolean animationsDisabled) {
+        this.animationsDisabled = animationsDisabled;
+    }
+
     // ===================================== Load Game =====================================
     public void loadGame(String xmlFilePath) throws LoadException {
         Game loadedGame = gamesManager.loadGameFile(xmlFilePath);
@@ -307,7 +315,11 @@ public class JavaFXManager extends Application {
     private void updateActivePlayerAttackResult(ImageViewProxy cellAsImageView, eAttackResult attackResult) {
         Game activeGame = this.activeGame.getValue();
         // cell update
-        cellAsImageView.updateImageWithTransition();
+        if (animationsDisabled) {
+            cellAsImageView.updateImage();
+        } else {
+            cellAsImageView.updateImageWithTransition();
+        }
         // statistic update
         currentTurnInfoController.attackResultUpdated(attackResult);
         if (attackResult.moveEnded() || activeGame.getGameState() == eGameState.PLAYER_WON) {

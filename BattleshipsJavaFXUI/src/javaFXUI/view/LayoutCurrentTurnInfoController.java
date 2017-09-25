@@ -25,6 +25,8 @@ import java.util.Set;
 
 public class LayoutCurrentTurnInfoController {
     @FXML
+    private ImageView imageViewPlayerProfile;
+    @FXML
     private Label labelCurrentPlayer;
     @FXML
     public Pane paneReplay;
@@ -191,7 +193,7 @@ public class LayoutCurrentTurnInfoController {
     // ===================================== Active Player Property =====================================
     private void playerChanged(Player currentPlayer) {
         labelCurrentPlayer.setText(currentPlayer.getName());
-        imageViewMinesAvailable.setImage(((PlayerAdapter) currentPlayer).getPlayerImage());
+        imageViewPlayerProfile.setImage(((PlayerAdapter) currentPlayer).getPlayerImage());
         updateStatistics();
         updateShipsRemainingTable();
     }

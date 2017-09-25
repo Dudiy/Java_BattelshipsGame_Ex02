@@ -15,4 +15,6 @@ public class Constants {
     public static final String GAME_ICON_IMAGE_URL = BASE_IMAGE_URL + "/gameIcon.png";
     public static final String DEFAULT_PLAYER_PROFILE_URL = BASE_IMAGE_URL + "/defaultPlayerImage.png";
     public static final String GAME_ICON_URL = BASE_IMAGE_URL + "/gameIcon.ico";
+    public static final String PLAYER1_IMAGE_URL = BASE_IMAGE_URL + "/Player1 Image.png";
+    public static final String PLAYER2_IMAGE_URL = BASE_IMAGE_URL + "/Player2 Image.png";
 }
