@@ -1,1 +1,1 @@
-java -jar .\out\artifacts\BattleshipsGame\BattleshipsConsoleUI.jar
+java -jar .\out\artifacts\BattleshipsJavaFXUI.jar
