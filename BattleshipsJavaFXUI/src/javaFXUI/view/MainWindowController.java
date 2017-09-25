@@ -11,10 +11,7 @@ import javaFXUI.model.ImageViewProxy;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.TransferMode;
@@ -25,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainWindowController {
-
     private Map<Player, TilePane> myBoardAsTilePane = new HashMap<>();
     private Map<Player, TilePane> opponentsBoardAsTilePane = new HashMap<>();
     private JavaFXManager javaFXManager;
@@ -57,7 +53,6 @@ public class MainWindowController {
     private RadioMenuItem menuItemStyleC;
     @FXML
     private RadioMenuItem menuItemNoStyle;
-
 
     // ===================================== Init =====================================
     public void setJavaFXManager(JavaFXManager javaFXManager) {
