@@ -93,11 +93,6 @@ public class JavaFXManager extends Application {
         initPlayerInitializerWindow();
         initGameEndedWindow();
         initPauseWindow();
-        // TODO delete
-//        styleSheetURL = "/javaFXUI/Styles/StyleC.css";
-//        setStyleSheets();
-        // TODO delete
-
         previousMoves = new LinkedList<>();
         nextMoves = new LinkedList<>();
     }
@@ -280,7 +275,6 @@ public class JavaFXManager extends Application {
                 // set the game to be as if it was just started
                 resetGame(activeGame.getValue());
             }
-            // TODO use task to show "Loading game"
             primaryStage.setScene(mainWindowScene);
             currentTurnInfoController.setReplayMode(false);
             Player player1 = initializePlayer(1);
@@ -306,7 +300,6 @@ public class JavaFXManager extends Application {
     }
 
     // display the initialize player window and return the player according to the data
-    // TODO check for bugs when not closing correctly, currently there is a problem with the images
     private Player initializePlayer(int playerNumber) {
         PlayerAdapter newPlayer = new PlayerAdapter("Player" + playerNumber, "Player " + playerNumber);
         playerInitializerController.setPlayer(newPlayer, playerNumber);
@@ -591,7 +584,6 @@ public class JavaFXManager extends Application {
 
     // ===================================== Exit Game =====================================
     public void exitGame() {
-        // TODO say goodbye before closing :)
         primaryStage.close();
     }
 
