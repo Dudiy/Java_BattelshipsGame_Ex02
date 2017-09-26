@@ -8,7 +8,7 @@ public class StartGameTask extends Task<Boolean> {
     protected Boolean call() throws Exception {
         for (int i = 0; i < 100; i++) {
             updateProgress(i, 100);
-            Thread.sleep(100);
+            Thread.sleep(25);
         }
         return true;
     }
