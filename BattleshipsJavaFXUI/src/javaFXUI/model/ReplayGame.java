@@ -4,8 +4,6 @@ import gameLogic.exceptions.CellNotOnBoardException;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.users.Player;
-
-import java.awt.*;
 import java.time.Duration;
 
 public class ReplayGame {

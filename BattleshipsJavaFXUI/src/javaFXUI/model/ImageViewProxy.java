@@ -1,7 +1,6 @@
 package javaFXUI.model;
 
 import gameLogic.game.board.BoardCell;
-import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
@@ -15,12 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
-
-import java.util.LinkedList;
 
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
@@ -29,7 +24,6 @@ public class ImageViewProxy extends ImageView {
     private static final Image SHIP_IMAGE = new Image(Constants.SHIP_IMAGE_URL);
     private static final Image SINKING_SHIP_IMAGE = new Image(Constants.SINKING_SHIP_IMAGE_URL);
     private static final Image MINE_IMAGE = new Image(Constants.MINE_ON_WATER_IMAGE_URL);
-    private static final Image MINE_EXPLODED_IMAGE = new Image(Constants.NO_MINES_AVAILABLE_IMAGE_URL);
     private static final Image HIT_IMAGE = new Image(Constants.HIT_IMAGE_URL);
     private static final Image MISS_IMAGE = new Image(Constants.MISSING_IMAGE_URL);
     private static final Image PROBLEM_IMAGE = new Image(Constants.PROBLEM_IMAGE_URL);
