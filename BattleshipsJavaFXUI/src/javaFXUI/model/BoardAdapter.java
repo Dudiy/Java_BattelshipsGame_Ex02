@@ -31,8 +31,6 @@ public class BoardAdapter {
                 try {
                     BoardCell cell = board.getBoardCellAtCoordinates(coordinates);
                     addCellToTilePane(cell, cellSize);
-                } catch (CellNotOnBoardException e) {
-                    AlertHandlingUtils.showErrorMessage(e,"Error while generating tile pane");
                 } catch (Exception e) {
                     AlertHandlingUtils.showErrorMessage(e,"Error while generating tile pane");
                 }

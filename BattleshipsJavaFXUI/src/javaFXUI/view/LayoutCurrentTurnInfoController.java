@@ -1,8 +1,5 @@
 package javaFXUI.view;
 
-import gameLogic.exceptions.CellNotOnBoardException;
-import gameLogic.exceptions.InvalidGameObjectPlacementException;
-import gameLogic.exceptions.NoMinesAvailableException;
 import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.eGameState;
@@ -21,7 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +128,7 @@ public class LayoutCurrentTurnInfoController {
         ImageViewProxy boardCellAsImage = null;
         for (DataFormat dataFormat : dragboard.getContentTypes()) {
             for (String className : dataFormat.getIdentifiers()) {
-                if (className == "ImageViewProxy") {
+                if (className.equals("ImageViewProxy")) {
                     boardCellAsImage = (ImageViewProxy) dragboard.getContent(dataFormat);
                     break;
                 }

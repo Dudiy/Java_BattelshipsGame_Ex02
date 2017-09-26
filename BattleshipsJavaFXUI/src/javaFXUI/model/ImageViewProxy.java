@@ -1,7 +1,6 @@
 package javaFXUI.model;
 
 import gameLogic.game.board.BoardCell;
-import gameLogic.game.board.BoardCoordinates;
 import gameLogic.game.eAttackResult;
 import gameLogic.game.gameObjects.GameObject;
 import gameLogic.game.gameObjects.Mine;
@@ -15,12 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import javafx.scene.input.TransferMode;
-
-import java.util.LinkedList;
 
 public class ImageViewProxy extends ImageView {
     private BoardCell boardCell;
